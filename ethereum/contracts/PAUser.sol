@@ -18,6 +18,11 @@ contract PAUser is PAUserI, Ownable {
         return users[addr].isRegistered;
     }
 
+    function getUser(address addr) public view returns(bytes32, bytes32, bytes32, bytes32) {
+        User storage u = users[addr];
+        return (u.publicKeyLeft, u.publicKeyRight, u.name, u.avatarUrl);
+    }
+
     function register(address sender, bytes32 publicKeyLeft, bytes32 publicKeyRight, bytes32 name, bytes32 avatarUrl) public onlyOwner {
         require(users[sender].isRegistered == false);
 

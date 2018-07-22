@@ -5,6 +5,7 @@ interface PAUserI {
     event UserProfileUpdated(address indexed owner, bytes32 name, bytes32 avatarUrl);
 
     function isRegistered(address addr) external view returns(bool);
+    function getUser(address addr) external view returns(bytes32, bytes32, bytes32, bytes32);
     function register(address sender, bytes32 publicKeyLeft, bytes32 publicKeyRight, bytes32 name, bytes32 avatarUrl) external;
     function updateProfile(address sender, bytes32 name, bytes32 avatarUrl) external;
 }

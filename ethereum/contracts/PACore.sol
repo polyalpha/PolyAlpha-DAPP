@@ -24,6 +24,10 @@ contract PACore is Ownable {
         return userContract.isRegistered(addr);
     }
 
+    function getUser(address addr) public view returns(bytes32, bytes32, bytes32, bytes32) {
+        return userContract.getUser(addr);
+    }
+
     function register(bytes32 publicKeyLeft, bytes32 publicKeyRight, bytes32 name, bytes32 avatarUrl) public {
         userContract.register(msg.sender, publicKeyLeft, publicKeyRight, name, avatarUrl);
     }
