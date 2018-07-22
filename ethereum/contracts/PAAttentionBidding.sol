@@ -40,7 +40,7 @@ contract PAAttentionBidding is PAAttentionBiddingI, Ownable {
         emit BidCreated(sender, toUser, tokenAmount);
     }
 
-    function accepteBid(address sender, address fromUser) public onlyOwner {
+    function acceptBid(address sender, address fromUser) public onlyOwner {
         require(userContract.isRegistered(sender) == true);
         require(userContract.isRegistered(fromUser) == true);
 

@@ -14,8 +14,8 @@ contract PAUser is PAUserI, Ownable {
 
     mapping(address => User) users;
 
-    function isRegistered(address sender) public view returns(bool) {
-        return users[sender].isRegistered;
+    function isRegistered(address addr) public view returns(bool) {
+        return users[addr].isRegistered;
     }
 
     function register(address sender, bytes32 publicKeyLeft, bytes32 publicKeyRight, bytes32 name, bytes32 avatarUrl) public onlyOwner {

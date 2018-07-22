@@ -11,6 +11,6 @@ interface PAAttentionBiddingI {
 
     function getBid(address fromUser, address toUser) external view returns(uint256, Static.BidStatus);
     function createBid(address sender, address toUser, uint256 tokenAmount) external;
-    function accepteBid(address sender, address fromUser) external;
+    function acceptBid(address sender, address fromUser) external;
     function blockBid(address sender, address fromUser) external;
 }
