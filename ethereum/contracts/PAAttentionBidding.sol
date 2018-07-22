@@ -1,9 +1,19 @@
 pragma solidity ^0.4.24;
 
 import "./PAAttentionBiddingI.sol";
+import "./Ownable.sol";
+import "./Static.sol";
 
-contract PAAttentionBidding is PAAttentionBiddingI {
-    
+contract PAAttentionBidding is PAAttentionBiddingI, Ownable {
+
+    PAUserI userContract;
+    PATokenI tokenContract;
+
+    struct Bid {
+        uint256 value;
+        Static.BidStatus status;
+    }
+
     mapping (address => mapping(address => Bid)) bids;
 
     constructor(address userContractAddress, address tokenContractAddress) public {
@@ -11,7 +21,7 @@ contract PAAttentionBidding is PAAttentionBiddingI {
         tokenContract = PATokenI(tokenContractAddress);
     }
 
-    function getBid(address fromUser, address toUser) public view returns(uint256, BidStatus) {
+    function getBid(address fromUser, address toUser) public view returns(uint256, Static.BidStatus) {
         require(userContract.isRegistered(fromUser) == true);
         require(userContract.isRegistered(toUser) == true);
 
@@ -24,7 +34,7 @@ contract PAAttentionBidding is PAAttentionBiddingI {
         require(userContract.isRegistered(toUser) == true);
         require(tokenContract.balanceOf(sender) >= tokenAmount);
 
-        bids[sender][toUser] = Bid(tokenAmount, BidStatus.CREATED);
+        bids[sender][toUser] = Bid(tokenAmount, Static.BidStatus.CREATED);
         tokenContract.ownerApprove(sender, tokenAmount);
 
         emit BidCreated(sender, toUser, tokenAmount);
@@ -35,9 +45,9 @@ contract PAAttentionBidding is PAAttentionBiddingI {
         require(userContract.isRegistered(fromUser) == true);
 
         Bid storage b = bids[fromUser][sender];
-        require(b.status == BidStatus.CREATED);
+        require(b.status == Static.BidStatus.CREATED);
 
-        b.status = BidStatus.ACCEPTED;
+        b.status = Static.BidStatus.ACCEPTED;
         tokenContract.transferFrom(fromUser, sender, b.value);
         
         bids[fromUser][sender] = b;
@@ -51,9 +61,9 @@ contract PAAttentionBidding is PAAttentionBiddingI {
         require(userContract.isRegistered(fromUser) == true);
 
         Bid storage b = bids[fromUser][sender];
-        require(b.status == BidStatus.CREATED || b.status == BidStatus.ACCEPTED);
+        require(b.status == Static.BidStatus.CREATED || b.status == Static.BidStatus.ACCEPTED);
 
-        b.status = BidStatus.BLOCKED;
+        b.status = Static.BidStatus.BLOCKED;
         bids[fromUser][sender] = b;
         bids[sender][fromUser] = b;
 

@@ -7,7 +7,8 @@ pragma solidity ^0.4.24;
 import "./PATokenI.sol";
 import "./Ownable.sol";
 
-contract PAToken is PATokenI {
+contract PAToken is PATokenI, Ownable {
+    uint256 public totalSupply;
 
     uint256 constant private MAX_UINT256 = 2**256 - 1;
     mapping (address => uint256) public balances;

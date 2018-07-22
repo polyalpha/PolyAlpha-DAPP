@@ -1,8 +1,17 @@
 pragma solidity ^0.4.24;
 
+import "./Ownable.sol";
 import "./PAUserI.sol";
 
-contract PAUser is PAUserI {
+contract PAUser is PAUserI, Ownable {
+    struct User {
+        bytes32 publicKeyLeft;
+        bytes32 publicKeyRight;
+        bytes32 name;
+        bytes32 avatarUrl;
+        bool isRegistered;
+    }
+
     mapping(address => User) users;
 
     function isRegistered(address sender) public view returns(bool) {
