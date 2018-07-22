@@ -1,0 +1,30 @@
+{
+  "name": "polyalpha-dapp",
+  "version": "1.0.0",
+  "description": "A DAPP run on Ethereum network which allows secure communication with attention bidding",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/polyalpha/PolyAlpha-DAPP.git"
+  },
+  "author": "PolyAlpha team",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/polyalpha/PolyAlpha-DAPP/issues"
+  },
+  "homepage": "https://github.com/polyalpha/PolyAlpha-DAPP#readme",
+  "dependencies": {
+    "fs-extra": "^7.0.0",
+    "ganache-cli": "^6.1.6",
+    "mocha": "^5.2.0",
+    "next": "^4.1.4",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "solc": "^0.4.24",
+    "truffle-hdwallet-provider": "0.0.3",
+    "web3": "^1.0.0-beta.26"
+  }
+}
