@@ -13,7 +13,7 @@ contract PAMessaging is PAMessagingI, Ownable {
         bidContract = PAAttentionBiddingI(bidContractAddress);
     }
 
-    function sendMessage(address sender, address toUser, bytes message) public onlyOwner {
+    function sendMessage(address sender, address toUser, bytes message) external onlyOwner {
         (, Static.BidStatus status) = bidContract.getBid(sender, toUser);
         require(status == Static.BidStatus.ACCEPTED);
         emit MessageSent(sender, toUser, message);

@@ -4,7 +4,8 @@
   "description": "A DAPP run on Ethereum network which allows secure communication with attention bidding",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha",
+    "compile": "node ethereum/compile.js"
   },
   "repository": {
     "type": "git",
