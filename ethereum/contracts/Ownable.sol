@@ -8,6 +8,7 @@ pragma solidity ^0.4.24;
 contract Ownable {
     address public owner;
 
+    /**
     * @dev The Ownable constructor sets the original `owner` of the contract to the sender
     * account.
     */
