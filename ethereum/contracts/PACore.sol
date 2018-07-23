@@ -44,6 +44,10 @@ contract PACore is Ownable {
         bidContract.createBid(msg.sender, toUser, tokenAmount);
     }
 
+    function cancelBid(address toUser) public {
+        bidContract.cancelBid(msg.sender, toUser);
+    }
+
     function acceptBid(address fromUser) public {
         bidContract.acceptBid(msg.sender, fromUser);
     }

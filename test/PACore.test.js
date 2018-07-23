@@ -123,6 +123,17 @@ describe('PolyAlpha core testing', function() {
         await assertFailTransaction([0, 1, 1000], createBid);
     })
 
+    it('can cancel bid', async() => {
+        await register(0, "sample", "sample");
+        await register(1, "sample", "sample");
+        await createBid(0, 1, 1000);
+        await cancelBid(0, 1);
+
+        let bid = await getBid(0, 1);
+        assert.equal(0, bid[0]);
+        assert.equal(Static.BidStatus.NOBID, bid[1]);
+    })
+
     it('can accept bid', async() => {
         await register(0, "sample", "sample");
         await register(1, "sample", "sample");
@@ -131,6 +142,20 @@ describe('PolyAlpha core testing', function() {
 
         let bid = await getBid(0, 1);
         assert.equal(Static.BidStatus.ACCEPTED, bid[1]);
+    })
+
+    it('cannot accept bid twice', async() => {
+        await register(0, "sample", "sample");
+        await register(1, "sample", "sample");
+        await createBid(0, 1, 1000);
+        await acceptBid(1, 0);
+        await assertFailTransaction([1, 0], acceptBid);
+    });
+
+    it('cannot accept a bid that is not exists', async() => {
+        await register(0, "sample", "sample");
+        await register(1, "sample", "sample");
+        await assertFailTransaction([1, 0], acceptBid);
     })
 
     it('can block bid', async() => {
@@ -193,6 +218,11 @@ describe('PolyAlpha core testing', function() {
 
     createBid = async(accountId, toId, tokenAmount) => {
         await contract.methods.createBid(accounts[toId], tokenAmount)
+            .send({from: accounts[accountId], gas: defaultGas});
+    }
+
+    cancelBid = async(accountId, toId) => {
+        await contract.methods.cancelBid(accounts[toId])
             .send({from: accounts[accountId], gas: defaultGas});
     }
 
