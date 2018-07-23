@@ -134,6 +134,26 @@ describe('PolyAlpha core testing', function() {
         assert.equal(Static.BidStatus.NOBID, bid[1]);
     })
 
+    it('cannot accept a canncelled bid', async() => {
+        await register(0, "sample", "sample");
+        await register(1, "sample", "sample");
+        await createBid(0, 1, 1000);
+        await cancelBid(0, 1);
+        await assertFailTransaction([1, 0], acceptBid);
+    })
+
+    it('can create bid again after cancelled', async() => {
+        await register(0, "sample", "sample");
+        await register(1, "sample", "sample");
+        await createBid(0, 1, 1000);
+        await cancelBid(0, 1);
+        await createBid(0, 1, 10000);
+        
+        let bid = await getBid(0, 1);
+        assert.equal(10000, bid[0]);
+        assert.equal(Static.BidStatus.CREATED, bid[1]);
+    })
+
     it('can accept bid', async() => {
         await register(0, "sample", "sample");
         await register(1, "sample", "sample");
@@ -142,6 +162,13 @@ describe('PolyAlpha core testing', function() {
 
         let bid = await getBid(0, 1);
         assert.equal(Static.BidStatus.ACCEPTED, bid[1]);
+    })
+
+    it('cannot accept your own bid', async() => {
+        await register(0, "sample", "sample");
+        await register(1, "sample", "sample");
+        await createBid(0, 1, 1000);
+        assertFailTransaction([0,1], acceptBid);
     })
 
     it('cannot accept bid twice', async() => {
@@ -168,6 +195,36 @@ describe('PolyAlpha core testing', function() {
         assert.equal(Static.BidStatus.BLOCKED, bid[1]);
     })
 
+    it('cannot block bid twice', async() => {
+        await register(0, "sample", "sample");
+        await register(1, "sample", "sample");
+        await createBid(0, 1, 1000);
+        await blockBid(1, 0);
+        await assertFailTransaction([1, 0], blockBid);
+    });
+
+    it('cannot block a bid that is not exists', async() => {
+        await register(0, "sample", "sample");
+        await register(1, "sample", "sample");
+        await assertFailTransaction([1, 0], blockBid);
+    })
+
+    it('cannot cancel a blocked bid', async() => {
+        await register(0, "sample", "sample");
+        await register(1, "sample", "sample");
+        await createBid(0, 1, 1000);
+        await blockBid(1, 0);
+        await assertFailTransaction([0, 1], cancelBid);
+    })
+
+    it('cannot cancel an accepted bid', async() => {
+        await register(0, "sample", "sample");
+        await register(1, "sample", "sample");
+        await createBid(0, 1, 1000);
+        await acceptBid(1, 0);
+        await assertFailTransaction([0, 1], cancelBid);
+    })
+
     it('can send message', async() => {
         await register(0, "sample", "sample");
         await register(1, "sample", "sample");
@@ -182,6 +239,29 @@ describe('PolyAlpha core testing', function() {
 
         let msgOnChain = msgEvents[0]['returnValues'].message;
         assert.equal(msg, Utils.hexToString(msgOnChain));
+    })
+
+    it('cannot send message before bid get accepted', async() => {
+        await register(0, "sample", "sample");
+        await register(1, "sample", "sample");
+        await createBid(0, 1, 1000);
+
+        let msg = "how are you?";
+        await assertFailTransaction([0, 1, msg], sendMessage);
+
+        await acceptBid(1, 0);
+        await sendMessage(0, 1, msg);
+        assert(true);
+    })
+
+    it('cannot send message if bid get blocked', async() => {
+        await register(0, "sample", "sample");
+        await register(1, "sample", "sample");
+        await createBid(0, 1, 1000);
+        await blockBid(1, 0);
+
+        let msg = "how are you?";
+        await assertFailTransaction([0, 1, msg], sendMessage);
     })
 
 
