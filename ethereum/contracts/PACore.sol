@@ -36,7 +36,6 @@ contract PACore is Ownable {
         userContract.updateProfile(msg.sender, name, avatarUrl);
     }
 
-
     function getBid(address fromUser, address toUser) public view returns(uint256, Static.BidStatus){
         return bidContract.getBid(fromUser, toUser);
     }
