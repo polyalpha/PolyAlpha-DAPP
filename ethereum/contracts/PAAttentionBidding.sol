@@ -34,6 +34,7 @@ contract PAAttentionBidding is PAAttentionBiddingI, Ownable {
         require(userContract.isRegistered(toUser) == true);
         require(tokenContract.balanceOf(sender) >= tokenAmount);
         require(bids[sender][toUser].status == Static.BidStatus.NOBID);
+        require(bids[toUser][sender].status == Static.BidStatus.NOBID);
 
         bids[sender][toUser] = Bid(tokenAmount, Static.BidStatus.CREATED);
         tokenContract.ownerApprove(sender, tokenAmount);

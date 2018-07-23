@@ -4,12 +4,15 @@ const Web3 = require('web3');
 const {testAccounts} = require('./testAccounts');
 const Utils = require('../utils/Utils');
 const Static = require('../utils/Static');
+const BigNumber = require('big-number');
 
 const web3 = new Web3(ganache.provider({accounts: testAccounts}));
 
 let contract;
 let tokenContract;
+let userContract;
 let messagingContract;
+let bidContract;
 let accounts;
 let decimals = 100000000;
 let defaultGas = 5000000;
@@ -24,12 +27,12 @@ describe('PolyAlpha core testing', function() {
             .send({from: accounts[0], gas: defaultGas});
     
         const compiledUserContract = require('../ethereum/build/PAUser.json');
-        const userContract = await new web3.eth.Contract(JSON.parse(compiledUserContract.interface))
+        userContract = await new web3.eth.Contract(JSON.parse(compiledUserContract.interface))
             .deploy({data: compiledUserContract.bytecode, arguments: []})
             .send({from: accounts[0], gas: defaultGas});
     
         const compiledBidContract = require('../ethereum/build/PAAttentionBidding.json');
-        const bidContract = await new web3.eth.Contract(JSON.parse(compiledBidContract.interface))
+        bidContract = await new web3.eth.Contract(JSON.parse(compiledBidContract.interface))
             .deploy({data: compiledBidContract.bytecode, arguments: [userContract.options.address, tokenContract.options.address]})
             .send({from: accounts[0], gas: defaultGas});
         
@@ -57,6 +60,13 @@ describe('PolyAlpha core testing', function() {
         await bidContract.methods.transferOwnership(contract.options.address)
             .send({from: accounts[0], gas: defaultGas});
         await messagingContract.methods.transferOwnership(contract.options.address)
+            .send({from: accounts[0], gas: defaultGas});
+
+        await tokenContract.methods.transfer(accounts[1], 1000*decimals)
+            .send({from: accounts[0], gas: defaultGas});
+        await tokenContract.methods.transfer(accounts[2], 1000*decimals)
+            .send({from: accounts[0], gas: defaultGas});
+        await tokenContract.methods.transfer(accounts[3], 1000*decimals)
             .send({from: accounts[0], gas: defaultGas});
     });
 
@@ -121,6 +131,13 @@ describe('PolyAlpha core testing', function() {
         await register(1, "sample", "sample");
         await createBid(0, 1, 1000);
         await assertFailTransaction([0, 1, 1000], createBid);
+    })
+
+    it('cannot create bid if a bid has been sent from the other side', async() => {
+        await register(0, "sample", "sample");
+        await register(1, "sample", "sample");
+        await createBid(0, 1, 1000);
+        await assertFailTransaction([1, 0, 1000], createBid);
     })
 
     it('can cancel bid', async() => {
@@ -241,6 +258,16 @@ describe('PolyAlpha core testing', function() {
         assert.equal(msg, Utils.hexToString(msgOnChain));
     })
 
+    it('cannot send message to an unregistered user', async() => {
+        await register(0, "sample", "sample");
+        await assertFailTransaction([0, 1, "how are you?"], sendMessage);
+    })
+
+    it('cannot send message if have not registered', async() => {
+        await register(1, "sample", "sample");
+        await assertFailTransaction([0, 1, "how are you?"], sendMessage);
+    })
+
     it('cannot send message before bid get accepted', async() => {
         await register(0, "sample", "sample");
         await register(1, "sample", "sample");
@@ -264,7 +291,121 @@ describe('PolyAlpha core testing', function() {
         await assertFailTransaction([0, 1, msg], sendMessage);
     })
 
+    it('has UserJoined events', async() => {
+        await register(0, "user 1", "user 1 avatar");
+        await register(1, "user 2", "user 2 avatar");
 
+        let joinEvents = await userContract.getPastEvents('UserJoined', {filter: {}, fromBlock: 0});
+        assert.equal(2, joinEvents.length);
+
+        let event0 = joinEvents[0].returnValues;
+        let event1 = joinEvents[1].returnValues;
+        assert.equal("user 1", Utils.hexToString(event0.name));
+        assert.equal("user 1 avatar", Utils.hexToString(event0.avatarUrl));
+        assert.equal("user 2", Utils.hexToString(event1.name));
+        assert.equal("user 2 avatar", Utils.hexToString(event1.avatarUrl));
+    })
+
+    it('has UserProfileUpdated events', async() => {
+        await register(0, "user 1", "user 1 avatar");
+        await register(1, "user 2", "user 2 avatar");
+        await updateProfile(1, "updated user 2", "updated user 2 avatar");
+        await updateProfile(0, "updated user 1", "updated user 1 avatar");
+        let profileUpdateEvents = await userContract.getPastEvents('UserProfileUpdated', {filter: {}, fromBlock: 0});
+        assert.equal(2, profileUpdateEvents.length);
+
+        let event1 = profileUpdateEvents[0].returnValues;
+        let event0 = profileUpdateEvents[1].returnValues;
+        assert.equal("updated user 1", Utils.hexToString(event0.name));
+        assert.equal("updated user 1 avatar", Utils.hexToString(event0.avatarUrl));
+        assert.equal("updated user 2", Utils.hexToString(event1.name));
+        assert.equal("updated user 2 avatar", Utils.hexToString(event1.avatarUrl));
+    })
+
+    it('has BidCreated event', async() => {
+        await register(0, "user 1", "user 1 avatar");
+        await register(1, "user 2", "user 2 avatar");
+        await createBid(0,1,1000);
+
+        let events = await bidContract.getPastEvents('BidCreated', {filter: {}, fromBlock: 0});
+        let event0 = events[0].returnValues;
+        assert.equal(event0.tokenAmount, 1000);
+        assert.equal(event0.toUser, accounts[1]);
+        assert.equal(event0.owner, accounts[0]);
+    })
+
+    it('has BidCancelled event', async() => {
+        await register(0, "user 1", "user 1 avatar");
+        await register(1, "user 2", "user 2 avatar");
+        await createBid(0,1,1000);
+        await cancelBid(0,1);
+
+        let events = await bidContract.getPastEvents('BidCancelled', {filter: {}, fromBlock: 0});
+        let event0 = events[0].returnValues;
+        assert.equal(event0.toUser, accounts[1]);
+        assert.equal(event0.owner, accounts[0]);
+    })
+
+    it('has BidAccepted event', async() => {
+        await register(0, "user 1", "user 1 avatar");
+        await register(1, "user 2", "user 2 avatar");
+        await createBid(0, 1, 1000);
+        await acceptBid(1, 0);
+
+        let events = await bidContract.getPastEvents('BidAccepted', {filter: {}, fromBlock: 0});
+        let event0 = events[0].returnValues;
+        assert.equal(event0.fromUser, accounts[0]);
+        assert.equal(event0.owner, accounts[1]);
+    })
+
+    it('has BidBlocked event', async() => {
+        await register(0, "user 1", "user 1 avatar");
+        await register(1, "user 2", "user 2 avatar");
+        await createBid(0, 1, 1000);
+        await blockBid(1, 0);
+
+        let events = await bidContract.getPastEvents('BidBlocked', {filter: {}, fromBlock: 0});
+        let event0 = events[0].returnValues;
+        assert.equal(event0.fromUser, accounts[0]);
+        assert.equal(event0.owner, accounts[1]);
+    })
+
+    it('has MessageSent event', async() => {
+        await register(0, "user 1", "user 1 avatar");
+        await register(1, "user 2", "user 2 avatar");
+        await createBid(0, 1, 1000);
+        await acceptBid(1, 0);
+        await sendMessage(0, 1, "hello 1");
+        await sendMessage(1, 0, "hello 0");
+
+        let events = await messagingContract.getPastEvents('MessageSent', {filter: {}, fromBlock: 0});
+        let event0 = events[0].returnValues;
+        let event1 = events[1].returnValues;
+
+        assert.equal(event0.owner, accounts[0]);
+        assert.equal(event0.toUser, accounts[1]);
+        assert.equal(Utils.hexToString(event0.message), "hello 1");
+
+        assert.equal(event1.owner, accounts[1]);
+        assert.equal(event1.toUser, accounts[0]);
+        assert.equal(Utils.hexToString(event1.message), "hello 0");
+    })
+
+    it('has correct token amount after accepting a bid', async() => {
+        let initialBalance0 = BigNumber(await tokenContract.methods.balanceOf(accounts[0]).call());
+        let initialBalance1 = BigNumber(await tokenContract.methods.balanceOf(accounts[1]).call());
+
+        await register(0, "user 1", "user 1 avatar");
+        await register(1, "user 2", "user 2 avatar");
+        await createBid(0, 1, 1000);
+        await acceptBid(1, 0);
+
+        let balance0 = BigNumber(await tokenContract.methods.balanceOf(accounts[0]).call());
+        let balance1 = BigNumber(await tokenContract.methods.balanceOf(accounts[1]).call());
+
+        assert.equal(initialBalance0.subtract(balance0), 1000);
+        assert.equal(balance1.subtract(initialBalance1), 1000);
+    })
 
 
     ///--------------- Helper methods --------------------

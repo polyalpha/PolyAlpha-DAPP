@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/polyalpha/PolyAlpha-DAPP#readme",
   "dependencies": {
+    "big-number": "^1.0.0",
     "fs-extra": "^7.0.0",
     "ganache-cli": "^6.1.6",
     "mocha": "^5.2.0",
