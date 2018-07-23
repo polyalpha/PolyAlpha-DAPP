@@ -41,6 +41,18 @@ contract PAAttentionBidding is PAAttentionBiddingI, Ownable {
         emit BidCreated(sender, toUser, tokenAmount);
     }
 
+    function cancelBid(address sender, address toUser) public onlyOwner {
+        require(userContract.isRegistered(sender) == true);
+        require(userContract.isRegistered(toUser) == true);
+        require(bids[sender][toUser].status == Static.BidStatus.CREATED);
+
+        Bid storage b = bids[sender][toUser];
+        b.value = 0;
+        b.status = Static.BidStatus.NOBID;
+
+        emit BidCancelled(sender, toUser);
+    }
+
     function acceptBid(address sender, address fromUser) public onlyOwner {
         require(userContract.isRegistered(sender) == true);
         require(userContract.isRegistered(fromUser) == true);
