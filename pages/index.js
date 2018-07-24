@@ -3,6 +3,7 @@ import LocalData from '../core/LocalData';
 
 class Index extends Component {
     componentDidMount() {
+        LocalData.tryMaxLocalStorage();
     }
 
     render() {

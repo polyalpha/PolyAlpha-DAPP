@@ -14,6 +14,8 @@ module.exports.KEY = {
     USER_NAME: 'un',
     USER_AVARTAR_URL: 'uau',
     USER_ADDRESS: 'ua',
+    USER_PUBKEY_LEFT: 'upkl',
+    USER_PUBKEY_RIGHT: 'upkr',
     USER_LIST: 'ul',
     BID_TO: 'bt',
     BID_AMOUNT: 'ba',
