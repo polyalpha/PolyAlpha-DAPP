@@ -163,6 +163,34 @@ describe('Test local storage', function() {
         assert.equal(bids[0], 'address1');
     })
 
+    it('can accept bids', () => {
+        for (var i=0;i<10;i++) {
+            LocalData.addUser('address' + i, 'pubkeyleft' + i,
+                'pubkeyright' + i, 'name' + i, 'avatar' + i);
+        }
+        LocalData.addBid('address0', 1000, Static.BidType.FROM);
+        LocalData.addBid('address1', 1000, Static.BidType.FROM);
+        LocalData.addBid('address3', 1000, Static.BidType.FROM);
+        LocalData.addBid('address5', 1000, Static.BidType.TO);
+        LocalData.addBid('address6', 1000, Static.BidType.TO);
+
+        LocalData.acceptBid('address0', Static.BidType.FROM);
+        LocalData.acceptBid('address3', Static.BidType.FROM);
+        LocalData.acceptBid('address5', Static.BidType.TO);
+
+        let bids = LocalData.getBidAddresses();
+        assert.equal(bids.length, 1);
+        assert.equal(bids[0], 'address1');
+
+        let myBids = LocalData.getMyBidAddresses();
+        assert.equal(myBids.length, 1);
+        assert.equal(myBids[0], 'address6');
+
+        let connectedAddresses = LocalData.getConenctedAddresses();
+        assert.equal(connectedAddresses.length, 3);
+        assert.equal(connectedAddresses[2], 'address5');
+    })
+
     it('can add messages', () => {
         for (var i=0;i<10;i++) {
             LocalData.addUser('address' + i, 'pubkeyleft' + i,

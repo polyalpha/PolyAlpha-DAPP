@@ -1,4 +1,5 @@
 const Static = require("../utils/Static");
+const Utils = require('../utils/Utils');
 
 Array.prototype.remove = function() {
     var what, a = arguments, L = a.length, ax;
@@ -16,6 +17,13 @@ class LocalData {
     static getNewUserAddresses() {
         if (this.hasLocalStorage()) {
             return this.getArrayItem(Static.KEY.USER_LIST);
+        }
+        return [];
+    }
+
+    static getConenctedAddresses() {
+        if (this.hasLocalStorage()) {
+            return this.getArrayItem(Static.KEY.ACCEPTED_BIDS);
         }
         return [];
     }
@@ -68,27 +76,6 @@ class LocalData {
         }
     }
 
-    // static addMyBid(toAddress, tokenAmount) {
-    //     if (this.hasLocalStorage()) {
-    //         let user = localStorage.getItem(toAddress);
-    //         if (user == undefined) {
-    //             user = {};
-
-    //             let myBidAddressArray = localStorage.getItem(Static.KEY.MY_BIDS);
-    //             if (myBidAddressArray == undefined) {
-    //                 myBidAddressArray = [];
-    //             }
-    //             myBidAddressArray.push(toAddress);
-    //             localStorage.setItem(Static.KEY.MY_BIDS, myBidAddressArray);
-    //         }
-    //         user[Static.KEY.BID_TYPE] = Static.BidType.TO;
-    //         user[Static.KEY.BID_STATUS] = Static.BidStatus.CREATED;
-    //         user[Static.KEY.BID_AMOUNT] = tokenAmount;
-            
-    //         localStorage.setItem(toAddress, user);
-    //     }
-    // }
-
     /// Cancel a bid that you have sent
     static cancelMyBid(toAddress) {
         if (this.hasLocalStorage()) {
@@ -134,6 +121,22 @@ class LocalData {
             let user = this.getObjectItem(fromAddress);
             user[Static.KEY.BID_STATUS] = Static.BidStatus.BLOCKED;
             this.setObjectItem(fromAddress, user);
+        }
+    }
+
+    static acceptBid(address, bidType) {
+        if (this.hasLocalStorage()) {
+            let arrayKey = Static.KEY.BIDS;
+            if (bidType == Static.BidType.TO) {
+                arrayKey = Static.KEY.MY_BIDS;
+            }
+            let bids = this.getArrayItem(arrayKey);
+            bids.remove(address);
+            this.setObjectItem(arrayKey, bids);
+
+            let accepteds = this.getArrayItem(Static.KEY.ACCEPTED_BIDS);
+            accepteds.push(address);
+            this.setObjectItem(Static.KEY.ACCEPTED_BIDS, accepteds);
         }
     }
 
@@ -185,6 +188,8 @@ class LocalData {
 
     static setPrivateKey(value) {
         this.setItem(Static.KEY.PRIVATE_KEY, value);
+        let address = Utils.privateToAddress(value);
+        this.setItem(Static.KEY.ADDRESS, address);
     }
 
     static getPrivateKey() {
