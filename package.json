@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha ./test/PACore.test.js && mocha ./test/LocalData.test.js",
+    "quicktest": "mocha ./test/LocalData.test.js",
     "compile": "node ethereum/compile.js",
     "dev": "next dev",
     "build": "next build",

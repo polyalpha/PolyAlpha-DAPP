@@ -17,6 +17,10 @@ module.exports.privateToPublic = (privateKey) => {
     return account.getPublicKey().slice(1);
 }
 
+module.export.privateToAddress = (privateKey) => {
+    let publicKey = module.exports.privateToPublic(privateKey);
+}
+
 module.exports.computeSecret = (privateKeyFromA, publicKeyFromB) => {
     var A = crypto.createECDH('secp256k1');
     A.setPrivateKey(privateKeyFromA);
@@ -35,6 +39,14 @@ module.exports.decrypt = (encryptedMessage, secret) => {
     var dec = decipher.update(encryptedMessage,'hex','utf8')
     dec += decipher.final('utf8');
     return dec;
+}
+
+module.exports.parseIntSafe = (value) => {
+    return parseInt(value) || 0;
+}
+
+module.exports.parseFloatSafe = (value) => {
+    return parseFloat(value) || 0;
 }
 
 module.exports.getObjectSize = () => {
