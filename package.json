@@ -4,7 +4,7 @@
   "description": "A DAPP run on Ethereum network which allows secure communication with attention bidding",
   "main": "index.js",
   "scripts": {
-    "test": "mocha",
+    "test": "mocha ./test/PACore.test.js && mocha ./test/LocalData.test.js",
     "compile": "node ethereum/compile.js",
     "dev": "next dev",
     "build": "next build",
