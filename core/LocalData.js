@@ -59,6 +59,15 @@ class LocalData {
         }
     }
 
+    static updateUserProfile(address, name, avatarUrl) {
+        if (this.hasLocalStorage()) {
+            let user = this.getObjectItem(address);
+            user[Static.KEY.USER_NAME] = name;
+            user[Static.KEY.USER_AVARTAR_URL] = avatarUrl;
+            this.setObjectItem(address, user);
+        }
+    }
+
     // static addMyBid(toAddress, tokenAmount) {
     //     if (this.hasLocalStorage()) {
     //         let user = localStorage.getItem(toAddress);
@@ -166,6 +175,26 @@ class LocalData {
         this.setObjectItem(userAddress, user);
     }
 
+    static setLastBlockNumber(value) {
+        this.setObjectItem(Static.KEY.LAST_BLOCK_NUMBER, value);
+    }
+
+    static getLastBlockNumber() {
+        this.getItem(Static.KEY.LAST_BLOCK_NUMBER);
+    }
+
+    static setPrivateKey(value) {
+        this.setItem(Static.KEY.PRIVATE_KEY, value);
+    }
+
+    static getPrivateKey() {
+        this.getItem(Static.KEY.PRIVATE_KEY);
+    }
+
+    static getAddress() {
+        this.getItem(Static.KEY.ADDRESS);
+    }
+
     
     // /// Test read and write speed in localStorage
     // static testSpeed() {
@@ -201,7 +230,11 @@ class LocalData {
     }
 
     static getItem(key) {
-        return localStorage.getItem(key);
+        let result = localStorage.getItem(key);
+        if (result == undefined) {
+            result = "";
+        }
+        return result;
     }
 
     static getArrayItem(key) {

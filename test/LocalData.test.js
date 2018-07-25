@@ -36,6 +36,17 @@ describe('Test local storage', function() {
         }
     })
 
+    it('can update user profile', () => {
+        for (var i=0;i<10;i++) {
+            LocalData.addUser('address' + i, 'pubkeyleft' + i,
+                'pubkeyright' + i, 'name' + i, 'avatar' + i);
+        }
+        LocalData.updateUserProfile('address2', 'name2 updated', 'avatar2 updated');
+        let user = LocalData.getUser('address2');
+        assert.equal(user[Static.KEY.USER_NAME], 'name2 updated');
+        assert.equal(user[Static.KEY.USER_AVARTAR_URL], 'avatar2 updated');
+    })
+
     it('can add my bids', () => {
         for (var i=0;i<10;i++) {
             LocalData.addUser('address' + i, 'pubkeyleft' + i,
