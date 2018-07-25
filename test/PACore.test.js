@@ -17,7 +17,9 @@ let accounts;
 let decimals = 100000000;
 let defaultGas = 5000000;
 
-describe('PolyAlpha core testing', function() {
+describe('PolyAlpha core contract testing', function() {
+    this.timeout(90000);
+
     beforeEach(async () => {
         accounts = await web3.eth.getAccounts();
     
