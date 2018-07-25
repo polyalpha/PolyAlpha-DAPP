@@ -1,4 +1,4 @@
-module.exports.testAccounts = [
+module.exports = [
     {
         balance: 100000000000000000000,
         secretKey: Buffer.from('d9f7fa47642327ba9bb81a3ea7d12939fd33cb47786689b2cfa7cd574db62f68', 'hex')

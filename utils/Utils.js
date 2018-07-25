@@ -1,5 +1,5 @@
 var crypto = require('crypto');
-
+var EthUtil = require('ethereumjs-util');
 var algorithm = 'aes256';
 
 module.exports.stringToHex = (text) => {
@@ -17,8 +17,8 @@ module.exports.privateToPublic = (privateKey) => {
     return account.getPublicKey().slice(1);
 }
 
-module.export.privateToAddress = (privateKey) => {
-    let publicKey = module.exports.privateToPublic(privateKey);
+module.exports.privateToAddress = (privateKey) => {
+    return '0x' + EthUtil.privateToAddress(privateKey).toString('hex');
 }
 
 module.exports.computeSecret = (privateKeyFromA, publicKeyFromB) => {

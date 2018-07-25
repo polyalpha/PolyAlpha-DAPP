@@ -4,8 +4,8 @@
   "description": "A DAPP run on Ethereum network which allows secure communication with attention bidding",
   "main": "index.js",
   "scripts": {
-    "test": "mocha ./test/PACore.test.js && mocha ./test/LocalData.test.js",
-    "quicktest": "mocha ./test/LocalData.test.js",
+    "fulltest": "mocha ./test/PACore.test.js && mocha ./test/LocalData.test.js && mocha ./test/Utils.test.js",
+    "test": "mocha ./test/BlockReader.test.js",
     "compile": "node ethereum/compile.js",
     "dev": "next dev",
     "build": "next build",
@@ -23,6 +23,7 @@
   "homepage": "https://github.com/polyalpha/PolyAlpha-DAPP#readme",
   "dependencies": {
     "big-number": "^1.0.0",
+    "ethereumjs-util": "^5.2.0",
     "fs-extra": "^7.0.0",
     "ganache-cli": "^6.1.6",
     "mocha": "^5.2.0",
