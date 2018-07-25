@@ -7,9 +7,9 @@ import "./PAAttentionBiddingI.sol";
 import "./PAMessagingI.sol";
 
 contract PACore is Ownable {
-    PAUserI userContract;
-    PAAttentionBiddingI bidContract;
-    PAMessagingI messagingContract;
+    PAUserI public userContract;
+    PAAttentionBiddingI public bidContract;
+    PAMessagingI public messagingContract;
 
     constructor(address userContractAddress, address bidContractAddress,
         address messagingContractAddress) public {
