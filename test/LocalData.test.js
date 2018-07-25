@@ -2,9 +2,10 @@ const LocalData = require('../core/LocalData');
 const assert = require('assert');
 const MockLocalStorage = require('../utils/MockLocalStorage');
 const Static = require('../utils/Static');
+const Utils = require('../utils/Utils');
 
-GLOBAL.window = {};
-GLOBAL.localStorage = new MockLocalStorage();
+global.window = {};
+global.localStorage = new MockLocalStorage();
 
 describe('Test local storage', function() {
     this.timeout(90000);
@@ -23,7 +24,7 @@ describe('Test local storage', function() {
             LocalData.addUser('address' + i, 'pubkeyleft' + i,
                 'pubkeyright' + i, 'name' + i, 'avatar' + i);
         }
-        let users = LocalData.getNewUsers();
+        let users = LocalData.getNewUserAddresses();
         
         assert.equal(users.length, 10);
         for (var i=0;i<users.length;i++) {
@@ -35,7 +36,7 @@ describe('Test local storage', function() {
         }
     })
 
-    it('can add bids', () => {
+    it('can add my bids', () => {
         for (var i=0;i<10;i++) {
             LocalData.addUser('address' + i, 'pubkeyleft' + i,
                 'pubkeyright' + i, 'name' + i, 'avatar' + i);
@@ -44,10 +45,133 @@ describe('Test local storage', function() {
         LocalData.addBid('address1', 1000, Static.BidType.TO);
         LocalData.addBid('address3', 1000, Static.BidType.TO);
 
-        let users = LocalData.getNewUsers();
+        let users = LocalData.getNewUserAddresses();
         assert.equal(users.length, 7);
         assert.equal(users[0], 'address2');
         assert.equal(users[1], 'address4');
+
+        let bids = LocalData.getMyBidAddresses();
+        assert.equal(bids[2], 'address3');
+    })
+
+    it('can cancel my bids', () => {
+        for (var i=0;i<10;i++) {
+            LocalData.addUser('address' + i, 'pubkeyleft' + i,
+                'pubkeyright' + i, 'name' + i, 'avatar' + i);
+        }
+        LocalData.addBid('address0', 1000, Static.BidType.TO);
+        LocalData.addBid('address1', 1000, Static.BidType.TO);
+        LocalData.addBid('address3', 1000, Static.BidType.TO);
+        LocalData.addBid('address4', 1000, Static.BidType.TO);
+
+        LocalData.cancelMyBid('address1');
+        LocalData.cancelMyBid('address3');
+
+        let bids = LocalData.getMyBidAddresses();
+        assert.equal(bids[1], 'address4');
+
+        let users = LocalData.getNewUserAddresses();
+        assert.equal(users.length, 8);
+        assert.equal(users[0], 'address2');
+        assert.equal(users[1], 'address5');
+        assert.equal(users[7], 'address3');
+    })
+
+    it('my bids get blocked', () => {
+        for (var i=0;i<10;i++) {
+            LocalData.addUser('address' + i, 'pubkeyleft' + i,
+                'pubkeyright' + i, 'name' + i, 'avatar' + i);
+        }
+        LocalData.addBid('address0', 1000, Static.BidType.TO);
+        LocalData.addBid('address1', 1000, Static.BidType.TO);
+        LocalData.addBid('address3', 1000, Static.BidType.TO);
+
+        LocalData.myBidGetBlocked('address1');
+
+        let user = LocalData.getUser('address1');
+        assert.equal(user[Static.KEY.BID_STATUS], Static.BidStatus.BLOCKED);
+
+        let users = LocalData.getNewUserAddresses();
+        assert.equal(users.length, 7);
+        assert.equal(users[0], 'address2');
+
+        let bids = LocalData.getMyBidAddresses();
+        assert.equal(bids[2], 'address3');
+    })
+
+    it('can add bids from others', () => {
+        for (var i=0;i<10;i++) {
+            LocalData.addUser('address' + i, 'pubkeyleft' + i,
+                'pubkeyright' + i, 'name' + i, 'avatar' + i);
+        }
+        LocalData.addBid('address0', 1000, Static.BidType.TO);
+        LocalData.addBid('address1', 1000, Static.BidType.FROM);
+        LocalData.addBid('address3', 1000, Static.BidType.FROM);
+
+        let users = LocalData.getNewUserAddresses();
+        assert.equal(users.length, 7);
+        assert.equal(users[0], 'address2');
+
+        let bids = LocalData.getBidAddresses();
+        assert.equal(bids[1], 'address3');
+    })
+
+    it('can block bids from others', () => {
+        for (var i=0;i<10;i++) {
+            LocalData.addUser('address' + i, 'pubkeyleft' + i,
+                'pubkeyright' + i, 'name' + i, 'avatar' + i);
+        }
+        LocalData.addBid('address0', 1000, Static.BidType.FROM);
+        LocalData.addBid('address1', 1000, Static.BidType.FROM);
+        LocalData.addBid('address3', 1000, Static.BidType.FROM);
+        LocalData.blockBid('address1');
+
+        let user = LocalData.getUser('address1');
+        assert.equal(user[Static.KEY.BID_STATUS], Static.BidStatus.BLOCKED);
+
+        let bids = LocalData.getBidAddresses();
+        assert.equal(bids[2], 'address3');
+    })
+
+    it('bids get cancelled', () => {
+        for (var i=0;i<10;i++) {
+            LocalData.addUser('address' + i, 'pubkeyleft' + i,
+                'pubkeyright' + i, 'name' + i, 'avatar' + i);
+        }
+        LocalData.addBid('address0', 1000, Static.BidType.FROM);
+        LocalData.addBid('address1', 1000, Static.BidType.FROM);
+        LocalData.addBid('address3', 1000, Static.BidType.FROM);
+        LocalData.bidGetCancelled('address0');
+        LocalData.bidGetCancelled('address3');
+
+        let users = LocalData.getNewUserAddresses();
+        assert.equal(users.length, 9);
+        assert.equal(users[8], 'address3');
+
+        let bids = LocalData.getBidAddresses();
+        assert.equal(bids[0], 'address1');
+    })
+
+    it('can add messages', () => {
+        for (var i=0;i<10;i++) {
+            LocalData.addUser('address' + i, 'pubkeyleft' + i,
+                'pubkeyright' + i, 'name' + i, 'avatar' + i);
+        }
+
+        LocalData.addMessage('address2', Utils.makeid(20), Static.MsgType.TO);
+        LocalData.addMessage('address2', Utils.makeid(20), Static.MsgType.TO);
+        LocalData.addMessage('address2', Utils.makeid(20), Static.MsgType.FROM);
+        LocalData.addMessage('address2', Utils.makeid(20), Static.MsgType.FROM);
+        LocalData.addMessage('address2', Utils.makeid(20), Static.MsgType.FROM);
+        LocalData.addMessage('address2', Utils.makeid(20), Static.MsgType.TO);
+
+        LocalData.addMessage('address3', Utils.makeid(20), Static.MsgType.TO);
+        LocalData.addMessage('address3', Utils.makeid(20), Static.MsgType.FROM);
+
+        let user2 = LocalData.getUser('address2');
+        let user3 = LocalData.getUser('address3');
+        assert.equal(user2[Static.KEY.MESSAGES].length, 6);
+        assert.equal(user3[Static.KEY.MESSAGES].length, 2);
     })
 
 
@@ -56,42 +180,20 @@ describe('Test local storage', function() {
 
 
 
-    it('localStorage can stores 5000 users', () => {
-        generateUserData(5000);
-        let size = getStorageSize();
-        assert(size < 10000);
-        console.log(size + ' KB');
-    })
-
-    makeid = (len) => {
-        var text = "";
-        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-      
-        for (var i = 0; i < len; i++)
-          text += possible.charAt(Math.floor(Math.random() * possible.length));
-      
-        return text;
-    }
-
-    getStorageSize = () => {
-        var obj = localStorage.data;
-        var _lsTotal=0,_xLen,_x;
-        for(_x in obj) {
-            if (_x != 'length') {
-                _xLen= ((obj[_x].length + _x.length)* 2);
-                _lsTotal+=_xLen;
-            }
-        };
-        return (_lsTotal / 1024).toFixed(2); /// in KB
-    }
+    // it('localStorage can stores 5000 users', () => {
+    //     generateUserData(5000);
+    //     let size = Utils.getObjectSize(localStorage.data);
+    //     assert(size < 10000);
+    //     console.log(size + ' KB');
+    // })
     
     /// LocalStorage seems to be enough if the Dapp has less than about 5000 users (on Chrome).
     generateUserData = (numUser) => {
         for(var i=0;i<numUser;i++) {
-            let address = makeid(40)
-            LocalData.addUser(address, makeid(32), makeid(32), makeid(32), makeid(32));
+            let address = Utils.makeid(40)
+            LocalData.addUser(address, Utils.makeid(32), Utils.makeid(32), Utils.makeid(32), Utils.makeid(32));
             let user = LocalData.getObjectItem(address);
-            user.messages = makeid(500);
+            user.messages = Utils.makeid(500);
             LocalData.setObjectItem(address, user);
         }
     }

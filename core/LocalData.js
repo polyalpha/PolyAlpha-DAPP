@@ -12,6 +12,34 @@ Array.prototype.remove = function() {
 };
 
 class LocalData {
+    /// Get a list of all users who has registered with PolyAlpha
+    static getNewUserAddresses() {
+        if (this.hasLocalStorage()) {
+            return this.getArrayItem(Static.KEY.USER_LIST);
+        }
+        return [];
+    }
+
+    static getMyBidAddresses() {
+        if (this.hasLocalStorage()) {
+            return this.getArrayItem(Static.KEY.MY_BIDS);
+        }
+        return [];
+    }
+
+    static getBidAddresses() {
+        if (this.hasLocalStorage()) {
+            return this.getArrayItem(Static.KEY.BIDS);
+        }
+        return [];
+    }
+
+    static getUser(address) {
+        if (this.hasLocalStorage()) {
+            return this.getObjectItem(address);
+        }
+        return {};
+    }
 
     /// Add a new user who has registered with PolyAlpha to local storage
     static addUser(address, publicKeyLeft, publicKeyRight, name, avatarUrl) {
@@ -29,14 +57,6 @@ class LocalData {
             userList.push(address);
             this.setObjectItem(Static.KEY.USER_LIST, userList);
         }
-    }
-
-    /// Get a list of all users who has registered with PolyAlpha
-    static getNewUsers() {
-        if (this.hasLocalStorage()) {
-            return this.getArrayItem(Static.KEY.USER_LIST);
-        }
-        return [];
     }
 
     // static addMyBid(toAddress, tokenAmount) {
@@ -63,7 +83,7 @@ class LocalData {
     /// Cancel a bid that you have sent
     static cancelMyBid(toAddress) {
         if (this.hasLocalStorage()) {
-            let user = this.getItem(toAddress);
+            let user = this.getObjectItem(toAddress);
             user[Static.KEY.BID_STATUS] = Static.BidStatus.NOBID;
             this.setObjectItem(toAddress, user);
 
@@ -78,7 +98,7 @@ class LocalData {
     }
 
     /// Your bid get blocked by the other side user.
-    static myBidBeBlocked(toAddress) {
+    static myBidGetBlocked(toAddress) {
         if (this.hasLocalStorage()) {
             let user = this.getObjectItem(toAddress);
             user[Static.KEY.BID_STATUS] = Static.BidStatus.BLOCKED;
@@ -87,14 +107,14 @@ class LocalData {
     }
 
     /// A bid that you received get cancelled by the other side user
-    static bidGetCancelled(fromAddress) {
+    static bidGetCancelled(address) {
         if (this.hasLocalStorage()) {
             let bids = this.getArrayItem(Static.KEY.BIDS);
-            bids.remove(fromAddress);
+            bids.remove(address);
             this.setObjectItem(Static.KEY.BIDS, bids);
 
             let users = this.getArrayItem(Static.KEY.USER_LIST);
-            users.push(toAddress);
+            users.push(address);
             this.setObjectItem(Static.KEY.USER_LIST, users);
         }
     }
@@ -111,7 +131,7 @@ class LocalData {
     static addBid(userAddress, tokenAmount, bidType) {
         let arrayKey = Static.KEY.BIDS;
         if (bidType == Static.BidType.TO) {
-            Static.KEY.MY_BIDS;
+            arrayKey = Static.KEY.MY_BIDS;
         }
 
         if (this.hasLocalStorage()) {
@@ -133,32 +153,41 @@ class LocalData {
         }
     }
 
+    static addMessage(userAddress, message, type) {
+        let user = this.getObjectItem(userAddress);
+        if (user[Static.KEY.MESSAGES] == undefined) {
+            user[Static.KEY.MESSAGES] = [];
+        }
+        let msg = {};
+        msg[Static.KEY.MESSAGE_CONTENT] = message;
+        msg[Static.KEY.MESSAGE_TYPE] = type;
+
+        user[Static.KEY.MESSAGES].push(msg);
+        this.setObjectItem(userAddress, user);
+    }
+
     
-
-    // Messages
-
-    // Bid received array
-    // Bid sent array
-
-    // static setItem(name, value) {
-    //     if (this.hasLocalStorage()) {
-    //         localStorage.setItem(name, value);
+    // /// Test read and write speed in localStorage
+    // static testSpeed() {
+    //     console.log(Date.now());
+    //     let count = 1000;
+    //     /// Storing into localStorage is very slow
+    //     for (var i=0;i<count;i++) {
+    //         this.addUser('address' + i, 'publicKeyLeft' + i, 'publicKeyRight' + i,
+    //             'name' + i, 'avatarUrl' + i);
     //     }
-    // }
+    //     console.log(Date.now());
 
-    // static getItem(name) {
-    //     if (this.hasLocalStorage()) {
-    //         let value = localStorage.getItem(name);
-    //         if (value == undefined) {
-    //             return "";
-    //         } else {
-    //             return value;
-    //         }
-    //     } else {
-    //         return "";
+    //     /// Reading from localStorage is very fast
+    //     var result = "";
+    //     for (var i=0;i<count;i++) {
+    //         let user = this.getUser('address' + i);
+    //         result += user[Static.KEY.USER_NAME] + "::";
+    //         result += user[Static.KEY.USER_AVARTAR_URL] + "<br />";
     //     }
+    //     console.log(Date.now());
+    //     return result;
     // }
-
 
 
     /// PRIVATE METHODS
@@ -200,19 +229,6 @@ class LocalData {
             return false;
         }
     }
-
-    // static getStorageSize() {
-    //     var _lsTotal=0,_xLen,_x;
-    //     for(_x in localStorage) {
-    //         if (_x != 'length') {
-    //             _xLen= ((localStorage[_x].length + _x.length)* 2);
-    //             _lsTotal+=_xLen;
-    //             console.log(_x.substr(0,50)+" = "+ (_xLen/1024).toFixed(2)+" KB")
-    //         }
-    //     };
-    //     console.log("Total = " + (_lsTotal / 1024).toFixed(2) + " KB");
-    //     return (_lsTotal / 1024).toFixed(2); /// in KB
-    // }
 }
 
 module.exports = LocalData;

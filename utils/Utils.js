@@ -23,16 +23,38 @@ module.exports.computeSecret = (privateKeyFromA, publicKeyFromB) => {
     return A.computeSecret(publicKeyFromB);
 }
 
-exports.encrypt = (message, secret) => {
+module.exports.encrypt = (message, secret) => {
     var cipher = crypto.createCipher(algorithm, secret);
     var crypted = cipher.update(message,'utf8','hex')
     crypted += cipher.final('hex');
     return crypted;
   }
   
-exports.decrypt = (encryptedMessage, secret) => {
+module.exports.decrypt = (encryptedMessage, secret) => {
     var decipher = crypto.createDecipher(algorithm,secret)
     var dec = decipher.update(encryptedMessage,'hex','utf8')
     dec += decipher.final('utf8');
     return dec;
+}
+
+module.exports.getObjectSize = () => {
+    var obj = localStorage.data;
+    var _lsTotal=0,_xLen,_x;
+    for(_x in obj) {
+        if (_x != 'length') {
+            _xLen= ((obj[_x].length + _x.length)* 2);
+            _lsTotal+=_xLen;
+        }
+    };
+    return (_lsTotal / 1024).toFixed(2); /// in KB
+}
+
+module.exports.makeid = (len) => {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  
+    for (var i = 0; i < len; i++)
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+  
+    return text;
 }
