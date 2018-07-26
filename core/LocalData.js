@@ -51,7 +51,12 @@ class LocalData {
 
     /// Add a new user who has registered with PolyAlpha to local storage
     static addUser(address, publicKeyLeft, publicKeyRight, name, avatarUrl) {
+        address = address.toLowerCase();
+
         if (this.hasLocalStorage()) {
+            
+            if (address == this.getAddress()) return;
+
             let user = this.getObjectItem(address);
             user[Static.KEY.USER_ADDRESS] = address;
             user[Static.KEY.USER_NAME] = name;
@@ -68,6 +73,8 @@ class LocalData {
     }
 
     static updateUserProfile(address, name, avatarUrl) {
+        address = address.toLowerCase();
+
         if (this.hasLocalStorage()) {
             let user = this.getObjectItem(address);
             user[Static.KEY.USER_NAME] = name;
@@ -78,6 +85,8 @@ class LocalData {
 
     /// Cancel a bid that you have sent
     static cancelMyBid(toAddress) {
+        toAddress = toAddress.toLowerCase();
+
         if (this.hasLocalStorage()) {
             let user = this.getObjectItem(toAddress);
             user[Static.KEY.BID_STATUS] = Static.BidStatus.NOBID;
@@ -95,6 +104,8 @@ class LocalData {
 
     /// Your bid get blocked by the other side user.
     static myBidGetBlocked(toAddress) {
+        toAddress = toAddress.toLowerCase();
+
         if (this.hasLocalStorage()) {
             let user = this.getObjectItem(toAddress);
             user[Static.KEY.BID_STATUS] = Static.BidStatus.BLOCKED;
@@ -104,6 +115,8 @@ class LocalData {
 
     /// A bid that you received get cancelled by the other side user
     static bidGetCancelled(address) {
+        address = address.toLowerCase();
+
         if (this.hasLocalStorage()) {
             let bids = this.getArrayItem(Static.KEY.BIDS);
             bids.remove(address);
@@ -117,6 +130,8 @@ class LocalData {
 
     /// Block a bid that you received
     static blockBid(fromAddress) {
+        fromAddress = fromAddress.toLowerCase();
+
         if (this.hasLocalStorage()) {
             let user = this.getObjectItem(fromAddress);
             user[Static.KEY.BID_STATUS] = Static.BidStatus.BLOCKED;
@@ -125,6 +140,8 @@ class LocalData {
     }
 
     static acceptBid(address, bidType) {
+        address = address.toLowerCase();
+
         if (this.hasLocalStorage()) {
             let arrayKey = Static.KEY.BIDS;
             if (bidType == Static.BidType.TO) {
@@ -141,6 +158,8 @@ class LocalData {
     }
 
     static addBid(userAddress, tokenAmount, bidType) {
+        userAddress = userAddress.toLowerCase();
+
         let arrayKey = Static.KEY.BIDS;
         if (bidType == Static.BidType.TO) {
             arrayKey = Static.KEY.MY_BIDS;
@@ -166,6 +185,8 @@ class LocalData {
     }
 
     static addMessage(userAddress, message, type) {
+        userAddress = userAddress.toLowerCase();
+
         let user = this.getObjectItem(userAddress);
         if (user[Static.KEY.MESSAGES] == undefined) {
             user[Static.KEY.MESSAGES] = [];
@@ -186,18 +207,18 @@ class LocalData {
         this.getItem(Static.KEY.LAST_BLOCK_NUMBER);
     }
 
-    static setPrivateKey(value) {
-        this.setItem(Static.KEY.PRIVATE_KEY, value);
-        let address = Utils.privateToAddress(value);
+    static setPrivateKey(valueBuffer) {
+        this.setItem(Static.KEY.PRIVATE_KEY, valueBuffer.toString('hex'));
+        let address = Utils.privateToAddress(valueBuffer).toLowerCase();
         this.setItem(Static.KEY.ADDRESS, address);
     }
 
     static getPrivateKey() {
-        this.getItem(Static.KEY.PRIVATE_KEY);
+        return this.getItem(Static.KEY.PRIVATE_KEY);
     }
 
     static getAddress() {
-        this.getItem(Static.KEY.ADDRESS);
+        return this.getItem(Static.KEY.ADDRESS);
     }
 
     

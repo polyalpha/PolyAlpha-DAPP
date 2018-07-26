@@ -40,17 +40,17 @@ class BlockReader {
         let currentBlockNumber = Utils.parseIntSafe(await this.web3.eth.getBlockNumber()) - 1;
         if (storedBlockNumber >= currentBlockNumber) return;
 
-        let userEvents = this.userContract.getPastEvents('allEvents', {
+        let userEvents = await this.userContract.getPastEvents('allEvents', {
             filter: {},
             fromBlock: storedBlockNumber,
             toBlock: currentBlockNumber
         });
-        let bidEvents = this.bidContract.getPastEvents('allEvents', {
+        let bidEvents = await this.bidContract.getPastEvents('allEvents', {
             filter: {},
             fromBlock: storedBlockNumber,
             toBlock: currentBlockNumber
         });
-        let messageEvents = this.messagingContract.getPastEvents('allEvents', {
+        let messageEvents = await this.messagingContract.getPastEvents('allEvents', {
             filter: {},
             fromBlock: storedBlockNumber,
             toBlock: currentBlockNumber
@@ -68,8 +68,8 @@ class BlockReader {
         }
 
         for (var i=0;i<bidEvents.length;i++) {
-            let name = userEvents[i].event;
-            let values = userEvents[i].returnValues;
+            let name = bidEvents[i].event;
+            let values = bidEvents[i].returnValues;
             if (name == 'BidCreated') {
                 if (values.owner == this.myAddress) {
                     LocalData.addBid(values.toUser, values.tokenAmount, Static.BidType.TO);
@@ -98,7 +98,7 @@ class BlockReader {
         }
 
         for (var i=0;i<messageEvents.length;i++) {
-            let values = userEvents[i].returnValues;
+            let values = messageEvents[i].returnValues;
             if (values.owner == this.myAddress) {
                 LocalData.addMessage(values.toUser, values.message, Static.MsgType.TO);
             } else {
