@@ -332,8 +332,8 @@ describe('PolyAlpha core contract testing', function() {
         let events = await connector.bidContract.getPastEvents('BidCreated', {filter: {}, fromBlock: 0});
         let event0 = events[0].returnValues;
         assert.equal(event0.tokenAmount, 1000);
-        assert.equal(event0.toUser, connector.accounts[1]);
-        assert.equal(event0.owner, connector.accounts[0]);
+        assert.equal(event0.receiver, connector.accounts[1]);
+        assert.equal(event0.sender, connector.accounts[0]);
     })
 
     it('has BidCancelled event', async() => {
@@ -344,8 +344,8 @@ describe('PolyAlpha core contract testing', function() {
 
         let events = await connector.bidContract.getPastEvents('BidCancelled', {filter: {}, fromBlock: 0});
         let event0 = events[0].returnValues;
-        assert.equal(event0.toUser, connector.accounts[1]);
-        assert.equal(event0.owner, connector.accounts[0]);
+        assert.equal(event0.receiver, connector.accounts[1]);
+        assert.equal(event0.sender, connector.accounts[0]);
     })
 
     it('has BidAccepted event', async() => {
@@ -356,8 +356,8 @@ describe('PolyAlpha core contract testing', function() {
 
         let events = await connector.bidContract.getPastEvents('BidAccepted', {filter: {}, fromBlock: 0});
         let event0 = events[0].returnValues;
-        assert.equal(event0.fromUser, connector.accounts[0]);
-        assert.equal(event0.owner, connector.accounts[1]);
+        assert.equal(event0.receiver, connector.accounts[0]);
+        assert.equal(event0.sender, connector.accounts[1]);
     })
 
     it('has BidBlocked event', async() => {
@@ -368,8 +368,8 @@ describe('PolyAlpha core contract testing', function() {
 
         let events = await connector.bidContract.getPastEvents('BidBlocked', {filter: {}, fromBlock: 0});
         let event0 = events[0].returnValues;
-        assert.equal(event0.fromUser, connector.accounts[0]);
-        assert.equal(event0.owner, connector.accounts[1]);
+        assert.equal(event0.receiver, connector.accounts[0]);
+        assert.equal(event0.sender, connector.accounts[1]);
     })
 
     it('has MessageSent event', async() => {
@@ -384,12 +384,12 @@ describe('PolyAlpha core contract testing', function() {
         let event0 = events[0].returnValues;
         let event1 = events[1].returnValues;
 
-        assert.equal(event0.owner, connector.accounts[0]);
-        assert.equal(event0.toUser, connector.accounts[1]);
+        assert.equal(event0.sender, connector.accounts[0]);
+        assert.equal(event0.receiver, connector.accounts[1]);
         assert.equal(Utils.hexToString(event0.message), "hello 1");
 
-        assert.equal(event1.owner, connector.accounts[1]);
-        assert.equal(event1.toUser, connector.accounts[0]);
+        assert.equal(event1.sender, connector.accounts[1]);
+        assert.equal(event1.receiver, connector.accounts[0]);
         assert.equal(Utils.hexToString(event1.message), "hello 0");
     })
 

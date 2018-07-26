@@ -1,9 +1,9 @@
 pragma solidity ^0.4.24;
 
 interface PAUserI {
-    event UserJoined(address indexed owner, bytes32 publicKeyLeft, bytes32 publicKeyRight, bytes32 username, bytes32 name, bytes32 avatarUrl);
-    event UserProfileUpdated(address indexed owner, bytes32 username, bytes32 name, bytes32 avatarUrl);
-    event UserAvailabilityUpdated(address indexed owner, bool availability);
+    event UserJoined(address indexed sender, bytes32 publicKeyLeft, bytes32 publicKeyRight, bytes32 username, bytes32 name, bytes32 avatarUrl);
+    event UserProfileUpdated(address indexed sender, bytes32 username, bytes32 name, bytes32 avatarUrl);
+    event UserAvailabilityUpdated(address indexed sender, bool availability);
 
     function isRegistered(address addr) external view returns(bool);
     function isUserAvailable(address addr) external view returns(bool);
