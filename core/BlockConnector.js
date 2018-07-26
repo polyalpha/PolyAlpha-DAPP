@@ -72,22 +72,35 @@ class BlockConnector {
         return await this.contract.methods.isRegistered(this.accounts[accountId]).call();
     }
 
+    async isUserAvailable(accountId) {
+        return await this.contract.methods.isUserAvailable(this.accounts[accountId]).call();
+    }
+
+    async isUsernameAvailable(username) {
+        return await this.contract.methods.isUsernameAvailable(Utils.stringToHex(username)).call();
+    }
+
     async getAccount(accountId) {
         return await this.contract.methods.getUser(this.accounts[accountId]).call();
     }
     
-    async register(accountId, name, avatarUrl) {
+    async register(accountId, username, name, avatarUrl) {
         let publicKey = Utils.privateToPublic(testAccounts[accountId].secretKey);
         var publicKeyLeft = '0x' + publicKey.toString('hex', 0, 32);
         var publicKeyRight = '0x' + publicKey.toString('hex', 32, 64);
 
         await this.contract.methods.register(publicKeyLeft, publicKeyRight, 
-            Utils.stringToHex(name), Utils.stringToHex(avatarUrl))
+            Utils.stringToHex(username), Utils.stringToHex(name), Utils.stringToHex(avatarUrl))
             .send({from: this.accounts[accountId], gas: this.defaultGas});
     }
 
-    async updateProfile(accountId, name, avatarUrl) {
-        await this.contract.methods.updateProfile(Utils.stringToHex(name), Utils.stringToHex(avatarUrl))
+    async updateAvailability(accountId, availability) {
+        await this.contract.methods.updateAvailability(availability)
+            .send({from: this.accounts[accountId], gas: this.defaultGas});
+    }
+
+    async updateProfile(accountId, username, name, avatarUrl) {
+        await this.contract.methods.updateProfile(Utils.stringToHex(username), Utils.stringToHex(name), Utils.stringToHex(avatarUrl))
             .send({from: this.accounts[accountId], gas: this.defaultGas});
     }
 

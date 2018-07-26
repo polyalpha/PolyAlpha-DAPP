@@ -24,16 +24,28 @@ contract PACore is Ownable {
         return userContract.isRegistered(addr);
     }
 
-    function getUser(address addr) public view returns(bytes32, bytes32, bytes32, bytes32) {
+    function isUserAvailable(address addr) public view returns (bool) {
+        return userContract.isUserAvailable(addr);
+    }
+
+    function isUsernameAvailable(bytes32 username) public view returns(bool) {
+        return userContract.isUsernameAvailable(username);
+    }
+
+    function getUser(address addr) public view returns(bytes32, bytes32, bytes32, bytes32, bytes32, bool) {
         return userContract.getUser(addr);
     }
 
-    function register(bytes32 publicKeyLeft, bytes32 publicKeyRight, bytes32 name, bytes32 avatarUrl) public {
-        userContract.register(msg.sender, publicKeyLeft, publicKeyRight, name, avatarUrl);
+    function register(bytes32 publicKeyLeft, bytes32 publicKeyRight, bytes32 username, bytes32 name, bytes32 avatarUrl) public {
+        userContract.register(msg.sender, publicKeyLeft, publicKeyRight, username, name, avatarUrl);
     }
 
-    function updateProfile(bytes32 name, bytes32 avatarUrl) public {
-        userContract.updateProfile(msg.sender, name, avatarUrl);
+    function updateProfile(bytes32 username, bytes32 name, bytes32 avatarUrl) public {
+        userContract.updateProfile(msg.sender, username, name, avatarUrl);
+    }
+
+    function updateAvailability(bool availability) public {
+        userContract.updateAvailability(msg.sender, availability);
     }
 
     function getBid(address fromUser, address toUser) public view returns(uint256, Static.BidStatus){

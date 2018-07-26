@@ -21,13 +21,17 @@ contract PAUser is PAUserI, Ownable {
         return users[addr].isRegistered;
     }
 
-    function isAvailable(address addr) public view returns(bool) {
+    function isUserAvailable(address addr) public view returns(bool) {
         return users[addr].available;
     }
 
-    function getUser(address addr) public view returns(bytes32, bytes32, bytes32, bytes32) {
+    function isUsernameAvailable(bytes32 username) public view returns(bool) {
+        return !usernameUseds[lowerCase(username)];
+    }
+
+    function getUser(address addr) public view returns(bytes32, bytes32, bytes32, bytes32, bytes32, bool) {
         User storage u = users[addr];
-        return (u.publicKeyLeft, u.publicKeyRight, u.name, u.avatarUrl);
+        return (u.publicKeyLeft, u.publicKeyRight, u.username, u.name, u.avatarUrl, u.available);
     }
 
     function register(address sender, bytes32 publicKeyLeft, bytes32 publicKeyRight, bytes32 username, bytes32 name, bytes32 avatarUrl) public onlyOwner {
@@ -38,7 +42,7 @@ contract PAUser is PAUserI, Ownable {
         users[sender] = u;
         usernameUseds[lowerCase(username)] = true;
 
-        emit UserJoined(sender, publicKeyLeft, publicKeyRight, name, avatarUrl);
+        emit UserJoined(sender, publicKeyLeft, publicKeyRight, username, name, avatarUrl);
     }
 
     function updateProfile(address sender, bytes32 username, bytes32 name, bytes32 avatarUrl) public onlyOwner {
@@ -48,25 +52,21 @@ contract PAUser is PAUserI, Ownable {
         if (lowerCase(u.username) != lowerCase(username)) {
             usernameUseds[u.username] = false;
             u.username = username;
-            usernameUseds[u.username] = true;
+            usernameUseds[lowerCase(u.username)] = true;
         }
         u.name = name;
         u.avatarUrl = avatarUrl;
 
-        emit UserProfileUpdated(sender, name, avatarUrl);
+        emit UserProfileUpdated(sender, username, name, avatarUrl);
     }
 
-    function updateAvailability(address sender, bool availability) external {
+    function updateAvailability(address sender, bool availability) external onlyOwner{
         require(users[sender].isRegistered == true);
         require(users[sender].available != availability);
 
         users[sender].available = availability;
 
         emit UserAvailabilityUpdated(sender, availability);
-    }
-
-    function isUsernameAvailable(bytes32 username) public returns(bool) {
-        return usernameUseds[lowerCase(username)];
     }
 
     function lowerCase(bytes32 value) private pure returns (bytes32) {

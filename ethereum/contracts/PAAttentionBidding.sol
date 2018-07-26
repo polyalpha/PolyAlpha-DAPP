@@ -32,7 +32,7 @@ contract PAAttentionBidding is PAAttentionBiddingI, Ownable {
     function createBid(address sender, address toUser, uint256 tokenAmount) public onlyOwner {
         require(userContract.isRegistered(sender) == true);
         require(userContract.isRegistered(toUser) == true);
-        require(userContract.isAvailable(toUser) == true);
+        require(userContract.isUserAvailable(toUser) == true);
         require(tokenContract.balanceOf(sender) >= tokenAmount);
         require(bids[sender][toUser].status == Static.BidStatus.NOBID);
         require(bids[toUser][sender].status == Static.BidStatus.NOBID);
