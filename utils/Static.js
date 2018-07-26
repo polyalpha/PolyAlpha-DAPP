@@ -16,6 +16,7 @@ module.exports.MsgType = {
 }
 
 module.exports.KEY = {
+    USER_UNAME: 'uun',
     USER_NAME: 'un',
     USER_AVARTAR_URL: 'uau',
     USER_ADDRESS: 'ua',

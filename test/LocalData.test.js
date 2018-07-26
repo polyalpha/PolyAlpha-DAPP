@@ -22,7 +22,7 @@ describe('Test local storage', function() {
     it('can add users', () => {
         for (var i=0;i<10;i++) {
             LocalData.addUser('address' + i, 'pubkeyleft' + i,
-                'pubkeyright' + i, 'name' + i, 'avatar' + i);
+                'pubkeyright' + i, 'username' +i, 'name' + i, 'avatar' + i);
         }
         let users = LocalData.getNewUserAddresses();
         
@@ -31,6 +31,7 @@ describe('Test local storage', function() {
             let address = users[i];
             assert.equal(address, 'address' + i);
             let user = LocalData.getObjectItem(address);
+            assert.equal(user[Static.KEY.USER_UNAME], 'username' + i);
             assert.equal(user[Static.KEY.USER_NAME], 'name' + i);
             assert.equal(user[Static.KEY.USER_AVARTAR_URL], 'avatar' + i);
         }
@@ -39,18 +40,35 @@ describe('Test local storage', function() {
     it('can update user profile', () => {
         for (var i=0;i<10;i++) {
             LocalData.addUser('address' + i, 'pubkeyleft' + i,
-                'pubkeyright' + i, 'name' + i, 'avatar' + i);
+                'pubkeyright' + i, 'username' + i, 'name' + i, 'avatar' + i);
         }
-        LocalData.updateUserProfile('address2', 'name2 updated', 'avatar2 updated');
+        LocalData.updateUserProfile('address2', 'username2 updated', 'name2 updated', 'avatar2 updated');
         let user = LocalData.getUser('address2');
+        assert.equal(user[Static.KEY.USER_UNAME], 'username2 updated');
         assert.equal(user[Static.KEY.USER_NAME], 'name2 updated');
         assert.equal(user[Static.KEY.USER_AVARTAR_URL], 'avatar2 updated');
+    })
+
+    it('can update availability', () => {
+        for (var i=0;i<10;i++) {
+            LocalData.addUser('address' + i, 'pubkeyleft' + i,
+                'pubkeyright' + i, 'username' + i, 'name' + i, 'avatar' + i);
+        }
+        LocalData.updateUserAvailability('address2', null);
+        LocalData.updateUserAvailability('address3', false);
+
+        let users = LocalData.getNewUserAddresses();
+        assert.equal(users.length, 8);
+
+        LocalData.updateUserAvailability('address2', true);
+        users = LocalData.getNewUserAddresses();
+        assert.equal(users.length, 9);
     })
 
     it('can add my bids', () => {
         for (var i=0;i<10;i++) {
             LocalData.addUser('address' + i, 'pubkeyleft' + i,
-                'pubkeyright' + i, 'name' + i, 'avatar' + i);
+                'pubkeyright' + i, 'username' +i, 'name' + i, 'avatar' + i);
         }
         LocalData.addBid('address0', 1000, Static.BidType.TO);
         LocalData.addBid('address1', 1000, Static.BidType.TO);
@@ -68,7 +86,7 @@ describe('Test local storage', function() {
     it('can cancel my bids', () => {
         for (var i=0;i<10;i++) {
             LocalData.addUser('address' + i, 'pubkeyleft' + i,
-                'pubkeyright' + i, 'name' + i, 'avatar' + i);
+                'pubkeyright' + i, 'username' +i, 'name' + i, 'avatar' + i);
         }
         LocalData.addBid('address0', 1000, Static.BidType.TO);
         LocalData.addBid('address1', 1000, Static.BidType.TO);
@@ -91,7 +109,7 @@ describe('Test local storage', function() {
     it('my bids get blocked', () => {
         for (var i=0;i<10;i++) {
             LocalData.addUser('address' + i, 'pubkeyleft' + i,
-                'pubkeyright' + i, 'name' + i, 'avatar' + i);
+                'pubkeyright' + i, 'username' +i, 'name' + i, 'avatar' + i);
         }
         LocalData.addBid('address0', 1000, Static.BidType.TO);
         LocalData.addBid('address1', 1000, Static.BidType.TO);
@@ -113,7 +131,7 @@ describe('Test local storage', function() {
     it('can add bids from others', () => {
         for (var i=0;i<10;i++) {
             LocalData.addUser('address' + i, 'pubkeyleft' + i,
-                'pubkeyright' + i, 'name' + i, 'avatar' + i);
+                'pubkeyright' + i, 'username' +i, 'name' + i, 'avatar' + i);
         }
         LocalData.addBid('address0', 1000, Static.BidType.TO);
         LocalData.addBid('address1', 1000, Static.BidType.FROM);
@@ -130,7 +148,7 @@ describe('Test local storage', function() {
     it('can block bids from others', () => {
         for (var i=0;i<10;i++) {
             LocalData.addUser('address' + i, 'pubkeyleft' + i,
-                'pubkeyright' + i, 'name' + i, 'avatar' + i);
+                'pubkeyright' + i, 'username' +i, 'name' + i, 'avatar' + i);
         }
         LocalData.addBid('address0', 1000, Static.BidType.FROM);
         LocalData.addBid('address1', 1000, Static.BidType.FROM);
@@ -147,7 +165,7 @@ describe('Test local storage', function() {
     it('bids get cancelled', () => {
         for (var i=0;i<10;i++) {
             LocalData.addUser('address' + i, 'pubkeyleft' + i,
-                'pubkeyright' + i, 'name' + i, 'avatar' + i);
+                'pubkeyright' + i, 'username' +i, 'name' + i, 'avatar' + i);
         }
         LocalData.addBid('address0', 1000, Static.BidType.FROM);
         LocalData.addBid('address1', 1000, Static.BidType.FROM);
@@ -166,7 +184,7 @@ describe('Test local storage', function() {
     it('can accept bids', () => {
         for (var i=0;i<10;i++) {
             LocalData.addUser('address' + i, 'pubkeyleft' + i,
-                'pubkeyright' + i, 'name' + i, 'avatar' + i);
+                'pubkeyright' + i, 'username' +i, 'name' + i, 'avatar' + i);
         }
         LocalData.addBid('address0', 1000, Static.BidType.FROM);
         LocalData.addBid('address1', 1000, Static.BidType.FROM);
@@ -194,7 +212,7 @@ describe('Test local storage', function() {
     it('can add messages', () => {
         for (var i=0;i<10;i++) {
             LocalData.addUser('address' + i, 'pubkeyleft' + i,
-                'pubkeyright' + i, 'name' + i, 'avatar' + i);
+                'pubkeyright' + i, 'username' +i, 'name' + i, 'avatar' + i);
         }
 
         LocalData.addMessage('address2', Utils.makeid(20), Static.MsgType.TO);

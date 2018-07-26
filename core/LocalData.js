@@ -50,7 +50,7 @@ class LocalData {
     }
 
     /// Add a new user who has registered with PolyAlpha to local storage
-    static addUser(address, publicKeyLeft, publicKeyRight, name, avatarUrl) {
+    static addUser(address, publicKeyLeft, publicKeyRight, username, name, avatarUrl) {
         address = address.toLowerCase();
 
         if (this.hasLocalStorage()) {
@@ -58,11 +58,13 @@ class LocalData {
             if (address == this.getAddress()) return;
 
             let user = this.getObjectItem(address);
-            user[Static.KEY.USER_ADDRESS] = address;
+            // user[Static.KEY.USER_ADDRESS] = address;
+            user[Static.KEY.USER_UNAME] = username;
             user[Static.KEY.USER_NAME] = name;
             user[Static.KEY.USER_AVARTAR_URL] = avatarUrl;
             user[Static.KEY.USER_PUBKEY_LEFT] = publicKeyLeft;
             user[Static.KEY.USER_PUBKEY_RIGHT] = publicKeyRight;
+            user[Static.KEY.BID_STATUS] = Static.BidStatus.NOBID;
 
             this.setObjectItem(address, user);
             
@@ -72,15 +74,29 @@ class LocalData {
         }
     }
 
-    static updateUserProfile(address, name, avatarUrl) {
+    static updateUserProfile(address, username, name, avatarUrl) {
         address = address.toLowerCase();
 
         if (this.hasLocalStorage()) {
             let user = this.getObjectItem(address);
+            user[Static.KEY.USER_UNAME] = username;
             user[Static.KEY.USER_NAME] = name;
             user[Static.KEY.USER_AVARTAR_URL] = avatarUrl;
             this.setObjectItem(address, user);
         }
+    }
+
+    static updateUserAvailability(address, available) {
+        let user = this.getObjectItem(address);
+        let users = this.getArrayItem(Static.KEY.USER_LIST);
+        if (available) {
+            if (user[Static.KEY.BID_STATUS] == Static.BidStatus.NOBID) {
+                users.push(address);
+            }
+        } else {
+            users.remove(address);
+        }
+        this.setObjectItem(Static.KEY.USER_LIST, users);
     }
 
     /// Cancel a bid that you have sent
