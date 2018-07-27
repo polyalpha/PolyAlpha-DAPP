@@ -28,6 +28,8 @@ class BlockReader {
             messagingContractAddress);
 
         this.myAddress = LocalData.getAddress();
+        this.myAddressTopic = this.myAddress.slice(0, 2) + '000000000000000000000000' + this.myAddress.slice(2, this.myAddress.length);
+        console.log('my address:' + this.myAddress);
     }
 
     async startRunLoop() {
@@ -45,25 +47,44 @@ class BlockReader {
             fromBlock: storedBlockNumber,
             toBlock: currentBlockNumber
         });
-        let bidEvents = await this.bidContract.getPastEvents('allEvents', {
-            filter: {},
+        let bidEvents_to = await this.bidContract.getPastEvents('allEvents', {
+            // filter: {sender: this.myAddress},
+            topics: [null, this.myAddressTopic],
             fromBlock: storedBlockNumber,
             toBlock: currentBlockNumber
         });
-        let messageEvents = await this.messagingContract.getPastEvents('allEvents', {
-            filter: {},
+        let bidEvents_from = await this.bidContract.getPastEvents('allEvents', {
+            // filter: {receiver: this.myAddress},
+            topics: [null, null, this.myAddressTopic],
             fromBlock: storedBlockNumber,
             toBlock: currentBlockNumber
         });
+        let bidEvents = this.mergeEvents(bidEvents_to, bidEvents_from);
+
+        let messageEvents_to = await this.messagingContract.getPastEvents('MessageSent', {
+            // filter: {sender: this.myAddress},
+            topics: [null, this.myAddressTopic],
+            fromBlock: storedBlockNumber,
+            toBlock: currentBlockNumber
+        });
+        let messageEvents_from = await this.messagingContract.getPastEvents('MessageSent', {
+            // filter: {receiver: this.myAddress},
+            topics: [null, null, this.myAddressTopic],
+            fromBlock: storedBlockNumber,
+            toBlock: currentBlockNumber
+        });
+
+        // Messages need to be orderred by blockNumber
+        let messageEvents = this.mergeEvents(messageEvents_to, messageEvents_from);
 
         for (var i=0;i<userEvents.length;i++) {
             let name = userEvents[i].event;
             let values = userEvents[i].returnValues;
             if (name == 'UserJoined') {
-                LocalData.addUser(values.owner, values.publicKeyLeft, values.publicKeyRight,
+                LocalData.addUser(values.sender, values.publicKeyLeft, values.publicKeyRight,
                     values.name, values.avatarUrl);
             } else if (name == 'UserProfileUpdated') {
-                LocalData.addUser(values.owner, values.name, values.avatarUrl);
+                LocalData.addUser(values.sender, values.name, values.avatarUrl);
             }
         }
 
@@ -71,40 +92,65 @@ class BlockReader {
             let name = bidEvents[i].event;
             let values = bidEvents[i].returnValues;
             if (name == 'BidCreated') {
-                if (values.owner == this.myAddress) {
-                    LocalData.addBid(values.toUser, values.tokenAmount, Static.BidType.TO);
+                if (values.sender == this.myAddress) {
+                    LocalData.addBid(values.receiver, values.tokenAmount, Static.BidType.TO);
                 } else {
-                    LocalData.addBid(values.owner, values.tokenAmount, Static.BidType.FROM);
+                    LocalData.addBid(values.sender, values.tokenAmount, Static.BidType.FROM);
                 }
             } else if (name == 'BidCancelled') {
-                if (values.owner == this.myAddress) {
-                    LocalData.cancelMyBid(values.toUser);
+                if (values.sender == this.myAddress) {
+                    LocalData.cancelMyBid(values.receiver);
                 } else {
-                    LocalData.bidGetCancelled(values.owner);
+                    LocalData.bidGetCancelled(values.sender);
                 }
             } else if (name == 'BidAccepted') {
-                if (values.owner == this.myAddress) {
-                    LocalData.acceptBid(values.fromUser, Static.BidType.TO);
+                if (values.sender == this.myAddress) {
+                    LocalData.acceptBid(values.receiver, Static.BidType.TO);
                 } else {
-                    LocalData.acceptBid(values.owner, Static.BidType.FROM);
+                    LocalData.acceptBid(values.sender, Static.BidType.FROM);
                 }
             } else if (name == 'BidBlocked') {
-                if (values.owner == this.myAddress) {
-                    LocalData.blockBid(values.fromUser);
+                if (values.sender == this.myAddress) {
+                    LocalData.blockBid(values.receiver);
                 } else {
-                    LocalData.myBidGetBlocked(values.owner);
+                    LocalData.myBidGetBlocked(values.sender);
                 }
             }
         }
 
         for (var i=0;i<messageEvents.length;i++) {
             let values = messageEvents[i].returnValues;
-            if (values.owner == this.myAddress) {
-                LocalData.addMessage(values.toUser, values.message, Static.MsgType.TO);
+            if (values.sender == this.myAddress) {
+                LocalData.addMessage(values.receiver, values.message, Static.MsgType.TO);
             } else {
-                LocalData.addMessage(values.owner, values.message, Static.MsgType.FROM);
+                LocalData.addMessage(values.sender, values.message, Static.MsgType.FROM);
             }
         }
+    }
+
+    /// Merge 2 list of events and order by blockNumber
+    mergeEvents(to_list, from_list) {
+        var result = [];
+        var i=0;
+        var j=0;
+        while (i < to_list.length && j < from_list.length) {
+            if (from_list[j].blockNumber < to_list[i].blockNumber) {
+                result.push(from_list[j]);
+                j++;
+            } else {
+                result.push(to_list[i]);
+                i++;
+            }
+        }
+        while (i < to_list.length) {
+            result.push(to_list[i]);
+            i++;
+        }
+        while (j < from_list.length) {
+            result.push(from_list[j]);
+            j++;
+        }
+        return result;
     }
 }
 

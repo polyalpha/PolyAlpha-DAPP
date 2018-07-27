@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "fulltest": "mocha ./test/PACore.test.js && mocha ./test/LocalData.test.js && mocha ./test/Utils.test.js && mocha ./test/BlockReader.test.js",
-    "test": "mocha ./test/LocalData.test.js",
+    "test": "mocha ./test/BlockReader.test.js",
     "compile": "node ethereum/compile.js",
     "dev": "next dev",
     "build": "next build",
