@@ -29,7 +29,7 @@ contract PAAttentionBidding is PAAttentionBiddingI, Ownable {
         return (b.value, b.status);
     }
 
-    function createBid(address sender, address toUser, uint256 tokenAmount) public onlyOwner {
+    function createBid(address sender, address toUser, uint256 tokenAmount, bytes message) external onlyOwner {
         require(userContract.isRegistered(sender) == true);
         require(userContract.isRegistered(toUser) == true);
         require(userContract.isUserAvailable(toUser) == true);
@@ -40,7 +40,7 @@ contract PAAttentionBidding is PAAttentionBiddingI, Ownable {
         bids[sender][toUser] = Bid(tokenAmount, Static.BidStatus.CREATED);
         tokenContract.ownerApprove(sender, tokenAmount);
 
-        emit BidCreated(sender, toUser, tokenAmount);
+        emit BidCreated(sender, toUser, tokenAmount, message);
     }
 
     function cancelBid(address sender, address toUser) public onlyOwner {
@@ -55,7 +55,7 @@ contract PAAttentionBidding is PAAttentionBiddingI, Ownable {
         emit BidCancelled(sender, toUser);
     }
 
-    function acceptBid(address sender, address fromUser) public onlyOwner {
+    function acceptBid(address sender, address fromUser, bytes message) external onlyOwner {
         require(userContract.isRegistered(sender) == true);
         require(userContract.isRegistered(fromUser) == true);
 
@@ -68,7 +68,7 @@ contract PAAttentionBidding is PAAttentionBiddingI, Ownable {
         bids[fromUser][sender] = b;
         bids[sender][fromUser] = b;
 
-        emit BidAccepted(sender, fromUser);
+        emit BidAccepted(sender, fromUser, message);
     }
 
     function blockBid(address sender, address fromUser) public onlyOwner {

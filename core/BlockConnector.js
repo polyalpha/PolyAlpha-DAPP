@@ -84,13 +84,13 @@ class BlockConnector {
         return await this.contract.methods.getUser(this.accounts[accountId]).call();
     }
     
-    async register(accountId, username, name, avatarUrl) {
+    async register(accountId, username, name, avatarUrl, extra = "") {
         let publicKey = Utils.privateToPublic(testAccounts[accountId].secretKey);
         var publicKeyLeft = '0x' + publicKey.toString('hex', 0, 32);
         var publicKeyRight = '0x' + publicKey.toString('hex', 32, 64);
 
-        await this.contract.methods.register(publicKeyLeft, publicKeyRight, 
-            Utils.stringToHex(username), Utils.stringToHex(name), Utils.stringToHex(avatarUrl))
+        await this.contract.methods.register(publicKeyLeft, publicKeyRight, Utils.stringToHex(username), 
+            Utils.stringToHex(name), Utils.stringToHex(avatarUrl), Utils.stringToHex(extra))
             .send({from: this.accounts[accountId], gas: this.defaultGas});
     }
 
@@ -99,8 +99,9 @@ class BlockConnector {
             .send({from: this.accounts[accountId], gas: this.defaultGas});
     }
 
-    async updateProfile(accountId, username, name, avatarUrl) {
-        await this.contract.methods.updateProfile(Utils.stringToHex(username), Utils.stringToHex(name), Utils.stringToHex(avatarUrl))
+    async updateProfile(accountId, username, name, avatarUrl, extra = "") {
+        await this.contract.methods.updateProfile(Utils.stringToHex(username), Utils.stringToHex(name), 
+            Utils.stringToHex(avatarUrl), Utils.stringToHex(extra))
             .send({from: this.accounts[accountId], gas: this.defaultGas});
     }
 
@@ -108,8 +109,8 @@ class BlockConnector {
         return await this.contract.methods.getBid(this.accounts[accountId], this.accounts[toId]).call();
     }
 
-    async createBid(accountId, toId, tokenAmount) {
-        await this.contract.methods.createBid(this.accounts[toId], tokenAmount)
+    async createBid(accountId, toId, tokenAmount, message = "") {
+        await this.contract.methods.createBid(this.accounts[toId], tokenAmount, Utils.stringToHex(message))
             .send({from: this.accounts[accountId], gas: this.defaultGas});
     }
 
@@ -118,8 +119,8 @@ class BlockConnector {
             .send({from: this.accounts[accountId], gas: this.defaultGas});
     }
 
-    async acceptBid(accountId, fromId) {
-        await this.contract.methods.acceptBid(this.accounts[fromId])
+    async acceptBid(accountId, fromId, message = "") {
+        await this.contract.methods.acceptBid(this.accounts[fromId], Utils.stringToHex(message))
             .send({from: this.accounts[accountId], gas: this.defaultGas});
     }
 

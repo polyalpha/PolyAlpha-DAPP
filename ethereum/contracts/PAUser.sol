@@ -10,6 +10,7 @@ contract PAUser is PAUserI, Ownable {
         bytes32 username; // Username is unique
         bytes32 name;
         bytes32 avatarUrl;
+        bytes extra;
         bool available;
         bool isRegistered;
     }
@@ -29,23 +30,23 @@ contract PAUser is PAUserI, Ownable {
         return !usernameUseds[lowerCase(username)];
     }
 
-    function getUser(address addr) public view returns(bytes32, bytes32, bytes32, bytes32, bytes32, bool) {
+    function getUser(address addr) public view returns(bytes32, bytes32, bytes32, bytes32, bytes32, bytes, bool) {
         User storage u = users[addr];
-        return (u.publicKeyLeft, u.publicKeyRight, u.username, u.name, u.avatarUrl, u.available);
+        return (u.publicKeyLeft, u.publicKeyRight, u.username, u.name, u.avatarUrl, u.extra, u.available);
     }
 
-    function register(address sender, bytes32 publicKeyLeft, bytes32 publicKeyRight, bytes32 username, bytes32 name, bytes32 avatarUrl) public onlyOwner {
+    function register(address sender, bytes32 publicKeyLeft, bytes32 publicKeyRight, bytes32 username, bytes32 name, bytes32 avatarUrl, bytes extra) external onlyOwner {
         require(users[sender].isRegistered == false);
         require(usernameUseds[username] == false);
 
-        User memory u = User(publicKeyLeft, publicKeyRight, username, name, avatarUrl, true, true);
+        User memory u = User(publicKeyLeft, publicKeyRight, username, name, avatarUrl, extra, true, true);
         users[sender] = u;
         usernameUseds[lowerCase(username)] = true;
 
-        emit UserJoined(sender, publicKeyLeft, publicKeyRight, username, name, avatarUrl);
+        emit UserJoined(sender, publicKeyLeft, publicKeyRight, username, name, avatarUrl, extra);
     }
 
-    function updateProfile(address sender, bytes32 username, bytes32 name, bytes32 avatarUrl) public onlyOwner {
+    function updateProfile(address sender, bytes32 username, bytes32 name, bytes32 avatarUrl, bytes extra) external onlyOwner {
         require(users[sender].isRegistered == true);
         
         User storage u = users[sender];
@@ -56,8 +57,9 @@ contract PAUser is PAUserI, Ownable {
         }
         u.name = name;
         u.avatarUrl = avatarUrl;
+        u.extra = extra;
 
-        emit UserProfileUpdated(sender, username, name, avatarUrl);
+        emit UserProfileUpdated(sender, username, name, avatarUrl, extra);
     }
 
     function updateAvailability(address sender, bool availability) external onlyOwner{

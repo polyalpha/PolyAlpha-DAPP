@@ -18,13 +18,11 @@ describe('PolyAlpha core contract testing', function() {
     });
 
     it('can register new account', async () => {
-        await connector.register(0, 'testusername', 'test', 'https://avatarUrl');
+        await connector.register(0, 'testusername', 'test', 'https://avatarUrl', 'extra');
         let user = await connector.getAccount(0);
         let isReg = await connector.isRegistered(0);
         let isUsernameAvailable = await connector.isUsernameAvailable('testusername');
         let isUserAvailable = await connector.isUserAvailable(0);
-
-        console.log(isReg + '::' + isUserAvailable + "::" + isUsernameAvailable);
 
         assert(!isUsernameAvailable);
         assert(isUserAvailable);
@@ -32,30 +30,33 @@ describe('PolyAlpha core contract testing', function() {
         assert.equal('testusername', Utils.hexToString(user[2]));
         assert.equal('test', Utils.hexToString(user[3]));
         assert.equal('https://avatarUrl', Utils.hexToString(user[4]));
+        assert.equal('extra', Utils.hexToString(user[5]));
     });
 
     it('cannot register a username that is already exists', async() => {
-        await connector.register(0, 'testusername', 'test', 'https://avatarUrl');
-        assert(await connector.isFailed([1, 'testusername', 'test', 'https://avatarUrl'], 
+        await connector.register(0, 'testusername', 'test', 'https://avatarUrl', 'extra');
+        assert(await connector.isFailed([1, 'testusername', 'test', 'https://avatarUrl', 'extra'], 
             connector.register.name));
     })
 
     it('cannot register twice', async() => {
-        await connector.register(0, 'x', 'x', 'x');
-        assert(await connector.isFailed([0, 'x', 'x', 'x'], connector.register.name));
+        await connector.register(0, 'x', 'x', 'x', 'x');
+        assert(await connector.isFailed([0, 'x', 'x', 'x', 'x'], connector.register.name));
     });
 
     it('can update profile', async() => {
         let username = "Updated username";
         let name = "Updated test";
         let avatarUrl = "https://updatedavatar/";
-        await connector.register(0, "sample", "sample", "sample");
-        await connector.updateProfile(0, username, name, avatarUrl);
+        let extra = "Updated extra";
+        await connector.register(0, "sample", "sample", "sample", "sample");
+        await connector.updateProfile(0, username, name, avatarUrl, extra);
 
         let user = await connector.getAccount(0);
         assert.equal(username, Utils.hexToString(user[2]));
         assert.equal(name, Utils.hexToString(user[3]));
         assert.equal(avatarUrl, Utils.hexToString(user[4]));
+        assert.equal(extra, Utils.hexToString(user[5]));
 
         assert.equal(await connector.isUsernameAvailable('sample'), true);
         assert.equal(await connector.isUsernameAvailable('UpdAtEd username'), false);

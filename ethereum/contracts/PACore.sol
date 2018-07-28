@@ -32,16 +32,16 @@ contract PACore is Ownable {
         return userContract.isUsernameAvailable(username);
     }
 
-    function getUser(address addr) public view returns(bytes32, bytes32, bytes32, bytes32, bytes32, bool) {
+    function getUser(address addr) public view returns(bytes32, bytes32, bytes32, bytes32, bytes32, bytes, bool) {
         return userContract.getUser(addr);
     }
 
-    function register(bytes32 publicKeyLeft, bytes32 publicKeyRight, bytes32 username, bytes32 name, bytes32 avatarUrl) public {
-        userContract.register(msg.sender, publicKeyLeft, publicKeyRight, username, name, avatarUrl);
+    function register(bytes32 publicKeyLeft, bytes32 publicKeyRight, bytes32 username, bytes32 name, bytes32 avatarUrl, bytes extra) public {
+        userContract.register(msg.sender, publicKeyLeft, publicKeyRight, username, name, avatarUrl, extra);
     }
 
-    function updateProfile(bytes32 username, bytes32 name, bytes32 avatarUrl) public {
-        userContract.updateProfile(msg.sender, username, name, avatarUrl);
+    function updateProfile(bytes32 username, bytes32 name, bytes32 avatarUrl, bytes extra) public {
+        userContract.updateProfile(msg.sender, username, name, avatarUrl, extra);
     }
 
     function updateAvailability(bool availability) public {
@@ -52,16 +52,16 @@ contract PACore is Ownable {
         return bidContract.getBid(fromUser, toUser);
     }
 
-    function createBid(address toUser, uint256 tokenAmount) public {
-        bidContract.createBid(msg.sender, toUser, tokenAmount);
+    function createBid(address toUser, uint256 tokenAmount, bytes message) public {
+        bidContract.createBid(msg.sender, toUser, tokenAmount, message);
     }
 
     function cancelBid(address toUser) public {
         bidContract.cancelBid(msg.sender, toUser);
     }
 
-    function acceptBid(address fromUser) public {
-        bidContract.acceptBid(msg.sender, fromUser);
+    function acceptBid(address fromUser, bytes message) public {
+        bidContract.acceptBid(msg.sender, fromUser, message);
     }
 
     function blockBid(address fromUser) public {
