@@ -50,7 +50,7 @@ class LocalData {
     }
 
     /// Add a new user who has registered with PolyAlpha to local storage
-    static addUser(address, publicKeyLeft, publicKeyRight, username, name, avatarUrl) {
+    static addUser(address, publicKeyLeft, publicKeyRight, username, name, avatarUrl, timestamp) {
         address = address.toLowerCase();
 
         if (this.hasLocalStorage()) {
@@ -65,6 +65,7 @@ class LocalData {
             user[Static.KEY.USER_PUBKEY_LEFT] = publicKeyLeft;
             user[Static.KEY.USER_PUBKEY_RIGHT] = publicKeyRight;
             user[Static.KEY.BID_STATUS] = Static.BidStatus.NOBID;
+            user[Static.KEY.USER_TIMESTAMP] = timestamp;
 
             this.setObjectItem(address, user);
             
@@ -74,7 +75,7 @@ class LocalData {
         }
     }
 
-    static updateUserProfile(address, username, name, avatarUrl) {
+    static updateUserProfile(address, username, name, avatarUrl, timestamp) {
         address = address.toLowerCase();
 
         if (this.hasLocalStorage()) {
@@ -82,6 +83,7 @@ class LocalData {
             user[Static.KEY.USER_UNAME] = username;
             user[Static.KEY.USER_NAME] = name;
             user[Static.KEY.USER_AVARTAR_URL] = avatarUrl;
+            user[Static.KEY.USER_TIMESTAMP] = timestamp;
             this.setObjectItem(address, user);
         }
     }
@@ -173,7 +175,7 @@ class LocalData {
         }
     }
 
-    static addBid(userAddress, tokenAmount, bidType) {
+    static addBid(userAddress, tokenAmount, bidType, timestamp) {
         userAddress = userAddress.toLowerCase();
 
         let arrayKey = Static.KEY.BIDS;
@@ -195,12 +197,13 @@ class LocalData {
             user[Static.KEY.BID_TYPE] = bidType;
             user[Static.KEY.BID_STATUS] = Static.BidStatus.CREATED;
             user[Static.KEY.BID_AMOUNT] = tokenAmount;
+            user[Static.KEY.USER_TIMESTAMP] = timestamp;
             
             this.setObjectItem(userAddress, user);
         }
     }
 
-    static addMessage(userAddress, message, type) {
+    static addMessage(userAddress, message, type, timestamp) {
         userAddress = userAddress.toLowerCase();
 
         let user = this.getObjectItem(userAddress);
@@ -210,8 +213,10 @@ class LocalData {
         let msg = {};
         msg[Static.KEY.MESSAGE_CONTENT] = message;
         msg[Static.KEY.MESSAGE_TYPE] = type;
+        msg[Static.KEY.MESSAGE_TIMESTAMP] = timestamp;
 
         user[Static.KEY.MESSAGES].push(msg);
+        user[Static.KEY.USER_TIMESTAMP] = timestamp;
         this.setObjectItem(userAddress, user);
     }
 
