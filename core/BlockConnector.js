@@ -1,11 +1,9 @@
-const ganache = require('ganache-cli');
-const Web3 = require('web3');
-const testAccounts = require('../utils/testAccounts');
 const Utils = require('../utils/Utils');
 
 class BlockConnector {
-    constructor() {
-        this.web3 = new Web3(ganache.provider({accounts: testAccounts}));
+    constructor(web3, accountObjects) {
+        this.web3 = web3;
+        this.accountObjects = accountObjects;
         this.contract;
         this.tokenContract;
         this.userContract;
@@ -68,70 +66,70 @@ class BlockConnector {
             .send({from: this.accounts[0], gas: this.defaultGas});
     }
 
-    async isRegistered(accountId) {
-        return await this.contract.methods.isRegistered(this.accounts[accountId]).call();
+    async isRegistered(fromAccountId = 0) {
+        return await this.contract.methods.isRegistered(this.accounts[fromAccountId]).call();
     }
 
-    async isUserAvailable(accountId) {
-        return await this.contract.methods.isUserAvailable(this.accounts[accountId]).call();
+    async isUserAvailable(fromAccountId = 0) {
+        return await this.contract.methods.isUserAvailable(this.accounts[fromAccountId]).call();
     }
 
     async isUsernameAvailable(username) {
         return await this.contract.methods.isUsernameAvailable(Utils.stringToHex(username)).call();
     }
 
-    async getAccount(accountId) {
-        return await this.contract.methods.getUser(this.accounts[accountId]).call();
+    async getAccount(fromAccountId = 0) {
+        return await this.contract.methods.getUser(this.accounts[fromAccountId]).call();
     }
     
-    async register(accountId, username, name, avatarUrl, extra = "") {
-        let publicKey = Utils.privateToPublic(testAccounts[accountId].secretKey);
+    async register(username, name, avatarUrl, extra = "", fromAccountId = 0) {
+        let publicKey = Utils.privateToPublic(this.accountObjects[fromAccountId].secretKey);
         var publicKeyLeft = '0x' + publicKey.toString('hex', 0, 32);
         var publicKeyRight = '0x' + publicKey.toString('hex', 32, 64);
 
         await this.contract.methods.register(publicKeyLeft, publicKeyRight, Utils.stringToHex(username), 
             Utils.stringToHex(name), Utils.stringToHex(avatarUrl), Utils.stringToHex(extra))
-            .send({from: this.accounts[accountId], gas: this.defaultGas});
+            .send({from: this.accounts[fromAccountId], gas: this.defaultGas});
     }
 
-    async updateAvailability(accountId, availability) {
+    async updateAvailability(availability, fromAccountId = 0) {
         await this.contract.methods.updateAvailability(availability)
-            .send({from: this.accounts[accountId], gas: this.defaultGas});
+            .send({from: this.accounts[fromAccountId], gas: this.defaultGas});
     }
 
-    async updateProfile(accountId, username, name, avatarUrl, extra = "") {
+    async updateProfile(username, name, avatarUrl, extra = "", fromAccountId = 0) {
         await this.contract.methods.updateProfile(Utils.stringToHex(username), Utils.stringToHex(name), 
             Utils.stringToHex(avatarUrl), Utils.stringToHex(extra))
-            .send({from: this.accounts[accountId], gas: this.defaultGas});
+            .send({from: this.accounts[fromAccountId], gas: this.defaultGas});
     }
 
-    async getBid(accountId, toId) {
-        return await this.contract.methods.getBid(this.accounts[accountId], this.accounts[toId]).call();
+    async getBid(toId, fromAccountId = 0) {
+        return await this.contract.methods.getBid(this.accounts[fromAccountId], this.accounts[toId]).call();
     }
 
-    async createBid(accountId, toId, tokenAmount, message = "") {
+    async createBid(toId, tokenAmount, message = "", fromAccountId = 0) {
         await this.contract.methods.createBid(this.accounts[toId], tokenAmount, Utils.stringToHex(message))
-            .send({from: this.accounts[accountId], gas: this.defaultGas});
+            .send({from: this.accounts[fromAccountId], gas: this.defaultGas});
     }
 
-    async cancelBid(accountId, toId) {
+    async cancelBid(toId, fromAccountId = 0) {
         await this.contract.methods.cancelBid(this.accounts[toId])
-            .send({from: this.accounts[accountId], gas: this.defaultGas});
+            .send({from: this.accounts[fromAccountId], gas: this.defaultGas});
     }
 
-    async acceptBid(accountId, fromId, message = "") {
+    async acceptBid(fromId, message = "", fromAccountId = 0) {
         await this.contract.methods.acceptBid(this.accounts[fromId], Utils.stringToHex(message))
-            .send({from: this.accounts[accountId], gas: this.defaultGas});
+            .send({from: this.accounts[fromAccountId], gas: this.defaultGas});
     }
 
-    async blockBid(accountId, fromId) {
+    async blockBid(fromId, fromAccountId = 0) {
         await this.contract.methods.blockBid(this.accounts[fromId])
-            .send({from: this.accounts[accountId], gas: this.defaultGas});
+            .send({from: this.accounts[fromAccountId], gas: this.defaultGas});
     }
 
-    async sendMessage(accountId, toId, message) {
+    async sendMessage(toId, message, fromAccountId = 0) {
         await this.contract.methods.sendMessage(this.accounts[toId], Utils.stringToHex(message))
-            .send({from: this.accounts[accountId], gas: this.defaultGas});
+            .send({from: this.accounts[fromAccountId], gas: this.defaultGas});
     }
 
     async isFailed(params, methodName) {

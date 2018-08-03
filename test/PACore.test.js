@@ -3,8 +3,13 @@ const Utils = require('../utils/Utils');
 const Static = require('../utils/Static');
 const BigNumber = require('big-number');
 const BlockConnector = require('../core/BlockConnector');
+const ganache = require('ganache-cli');
+const Web3 = require('web3');
+const testAccounts = require('../utils/testAccounts');
 
-const connector = new BlockConnector();
+let web3 = new Web3(ganache.provider({accounts: testAccounts}));
+
+const connector = new BlockConnector(web3, testAccounts);
 
 describe('PolyAlpha core contract testing', function() {
     this.timeout(90000);
@@ -18,7 +23,7 @@ describe('PolyAlpha core contract testing', function() {
     });
 
     it('can register new account', async () => {
-        await connector.register(0, 'testusername', 'test', 'https://avatarUrl', 'extra');
+        await connector.register('testusername', 'test', 'https://avatarUrl', 'extra', 0);
         let user = await connector.getAccount(0);
         let isReg = await connector.isRegistered(0);
         let isUsernameAvailable = await connector.isUsernameAvailable('testusername');
@@ -34,14 +39,14 @@ describe('PolyAlpha core contract testing', function() {
     });
 
     it('cannot register a username that is already exists', async() => {
-        await connector.register(0, 'testusername', 'test', 'https://avatarUrl', 'extra');
+        await connector.register('testusername', 'test', 'https://avatarUrl', 'extra', 0);
         assert(await connector.isFailed([1, 'testusername', 'test', 'https://avatarUrl', 'extra'], 
             connector.register.name));
     })
 
     it('cannot register twice', async() => {
-        await connector.register(0, 'x', 'x', 'x', 'x');
-        assert(await connector.isFailed([0, 'x', 'x', 'x', 'x'], connector.register.name));
+        await connector.register('x', 'x', 'x', 'x', 0);
+        assert(await connector.isFailed(['x', 'x', 'x', 'x', 0], connector.register.name));
     });
 
     it('can update profile', async() => {
@@ -49,8 +54,8 @@ describe('PolyAlpha core contract testing', function() {
         let name = "Updated test";
         let avatarUrl = "https://updatedavatar/";
         let extra = "Updated extra";
-        await connector.register(0, "sample", "sample", "sample", "sample");
-        await connector.updateProfile(0, username, name, avatarUrl, extra);
+        await connector.register("sample", "sample", "sample", "sample", 0);
+        await connector.updateProfile(username, name, avatarUrl, extra, 0);
 
         let user = await connector.getAccount(0);
         assert.equal(username, Utils.hexToString(user[2]));
@@ -63,8 +68,8 @@ describe('PolyAlpha core contract testing', function() {
     })
 
     it ('can update availability', async() => {
-        await connector.register(0, "sample", "sample", "sample");
-        await connector.updateAvailability(0, false);
+        await connector.register("sample0", "sample", "sample", "sample", 0);
+        await connector.updateAvailability(false, 0);
 
         let isAvailable = await connector.isUserAvailable(0);
         assert(!isAvailable);
@@ -75,169 +80,169 @@ describe('PolyAlpha core contract testing', function() {
     });
 
     it('can create bid', async() => {
-        await connector.register(0, "sample0", "sample", "sample");
-        await connector.register(1, "sample1", "sample", "sample");
-        await connector.createBid(0, 1, 1000);
+        await connector.register("sample0", "sample", "sample", "sample", 0);
+        await connector.register("sample1", "sample", "sample", "sample", 1);
+        await connector.createBid(1, 1000, "message", 0);
         
-        let bid = await connector.getBid(0, 1);
+        let bid = await connector.getBid(1, 0);
         assert.equal(1000, bid[0]);
         assert.equal(Static.BidStatus.CREATED, bid[1]);
     })
 
     it('cannot create bid if not registered', async() => {
-        await connector.register(1, "sample1", "sample", "sample");
-        assert(await connector.isFailed([0, 1, 1000], connector.createBid.name));
+        await connector.register("sample1", "sample", "sample", "sample", 1);
+        assert(await connector.isFailed([1, 1000, "message", 0], connector.createBid.name));
     })
 
     it('cannot create bid to an unavailable user', async() => {
-        await connector.register(0, "sample0", "sample", "sample");
-        await connector.register(1, "sample1", "sample", "sample");
-        await connector.updateAvailability(1, false);
+        await connector.register("sample0", "sample", "sample", "sample", 0);
+        await connector.register("sample1", "sample", "sample", "sample", 1);
+        await connector.updateAvailability(false, 1);
 
-        assert(await connector.isFailed([0, 1, 1000], connector.createBid.name));
+        assert(await connector.isFailed([1, 1000, "message", 0], connector.createBid.name));
     })
 
     it('can enable availability', async() => {
-        await connector.register(0, "sample0", "sample", "sample");
-        await connector.register(1, "sample1", "sample", "sample");
-        await connector.updateAvailability(1, false);
-        await connector.updateAvailability(1, true);
-        await connector.createBid(0, 1, 1000);
+        await connector.register("sample0", "sample", "sample", "sample", 0);
+        await connector.register("sample1", "sample", "sample", "sample", 1);
+        await connector.updateAvailability(false, 1);
+        await connector.updateAvailability(true, 1);
+        await connector.createBid(1, 1000, "message", 0);
 
-        let bid = await connector.getBid(0, 1);
+        let bid = await connector.getBid(1, 0);
         assert.equal(1000, bid[0]);
         assert.equal(Static.BidStatus.CREATED, bid[1]);
     })
 
     it('cannot create bid if other have not registered', async() => {
-        await connector.register(0, "sample0", "sample", "sample");
-        assert(await connector.isFailed([0, 1, 1000], connector.createBid.name));
+        await connector.register("sample0", "sample", "sample", "sample", 0);
+        assert(await connector.isFailed([1, 1000, "message", 0], connector.createBid.name));
     })
 
     it('cannot create a bid twice', async() => {
-        await connector.register(0, "sample0", "sample", "sample");
-        await connector.register(1, "sample1", "sample", "sample");
-        await connector.createBid(0, 1, 1000);
-        assert(await connector.isFailed([0, 1, 1000], connector.createBid.name));
+        await connector.register("sample0", "sample", "sample", "sample", 0);
+        await connector.register("sample1", "sample", "sample", "sample", 1);
+        await connector.createBid(1, 1000, "message", 0);
+        assert(await connector.isFailed([1, 1000, "message", 0], connector.createBid.name));
     })
 
     it('cannot create bid if a bid has been sent from the other side', async() => {
-        await connector.register(0, "sample0", "sample", "sample");
-        await connector.register(1, "sample1", "sample", "sample");
-        await connector.createBid(0, 1, 1000);
-        assert(await connector.isFailed([1, 0, 1000], connector.createBid.name));
+        await connector.register("sample0", "sample", "sample", "sample", 0);
+        await connector.register("sample1", "sample", "sample", "sample", 1);
+        await connector.createBid(1, 1000, "message", 0);
+        assert(await connector.isFailed([0, 1000, "message", 1], connector.createBid.name));
     })
 
     it('can cancel bid', async() => {
-        await connector.register(0, "sample0", "sample", "sample");
-        await connector.register(1, "sample1", "sample", "sample");
-        await connector.createBid(0, 1, 1000);
-        await connector.cancelBid(0, 1);
+        await connector.register("sample0", "sample", "sample", "sample", 0);
+        await connector.register("sample1", "sample", "sample", "sample", 1);
+        await connector.createBid(1, 1000, "message", 0);
+        await connector.cancelBid(1, 0);
 
-        let bid = await connector.getBid(0, 1);
+        let bid = await connector.getBid(1, 0);
         assert.equal(0, bid[0]);
         assert.equal(Static.BidStatus.NOBID, bid[1]);
     })
 
     it('cannot accept a canncelled bid', async() => {
-        await connector.register(0, "sample0", "sample", "sample");
-        await connector.register(1, "sample1", "sample", "sample");
-        await connector.createBid(0, 1, 1000);
-        await connector.cancelBid(0, 1);
-        assert(await connector.isFailed([1, 0], connector.acceptBid.name));
+        await connector.register("sample0", "sample", "sample", "sample", 0);
+        await connector.register("sample1", "sample", "sample", "sample", 1);
+        await connector.createBid(1, 1000, "message", 0);
+        await connector.cancelBid(1, 0);
+        assert(await connector.isFailed([0, "message", 1], connector.acceptBid.name));
     })
 
     it('can create bid again after cancelled', async() => {
-        await connector.register(0, "sample0", "sample", "sample");
-        await connector.register(1, "sample1", "sample", "sample");
-        await connector.createBid(0, 1, 1000);
-        await connector.cancelBid(0, 1);
-        await connector.createBid(0, 1, 10000);
+        await connector.register("sample0", "sample", "sample", "sample", 0);
+        await connector.register("sample1", "sample", "sample", "sample", 1);
+        await connector.createBid(1, 1000, "message", 0);
+        await connector.cancelBid(1, 0);
+        await connector.createBid(1, 10000, "message", 0);
         
-        let bid = await connector.getBid(0, 1);
+        let bid = await connector.getBid(1, 0);
         assert.equal(10000, bid[0]);
         assert.equal(Static.BidStatus.CREATED, bid[1]);
     })
 
     it('can accept bid', async() => {
-        await connector.register(0, "sample0", "sample", "sample");
-        await connector.register(1, "sample1", "sample", "sample");
-        await connector.createBid(0, 1, 1000);
-        await connector.acceptBid(1, 0);
+        await connector.register("sample0", "sample", "sample", "sample", 0);
+        await connector.register("sample1", "sample", "sample", "sample", 1);
+        await connector.createBid(1, 1000, "message", 0);
+        await connector.acceptBid(0, "message", 1);
 
-        let bid = await connector.getBid(0, 1);
+        let bid = await connector.getBid(1, 0);
         assert.equal(Static.BidStatus.ACCEPTED, bid[1]);
     })
 
     it('cannot accept your own bid', async() => {
-        await connector.register(0, "sample0", "sample", "sample");
-        await connector.register(1, "sample1", "sample", "sample");
-        await connector.createBid(0, 1, 1000);
-        assert(await connector.isFailed([0,1], connector.acceptBid.name));
+        await connector.register("sample0", "sample", "sample", "sample", 0);
+        await connector.register("sample1", "sample", "sample", "sample", 1);
+        await connector.createBid(1, 1000, "message", 0);
+        assert(await connector.isFailed([1, "message", 0], connector.acceptBid.name));
     })
 
     it('cannot accept bid twice', async() => {
-        await connector.register(0, "sample0", "sample", "sample");
-        await connector.register(1, "sample1", "sample", "sample");
-        await connector.createBid(0, 1, 1000);
-        await connector.acceptBid(1, 0);
-        assert(await connector.isFailed([1, 0], connector.acceptBid.name));
+        await connector.register("sample0", "sample", "sample", "sample", 0);
+        await connector.register("sample1", "sample", "sample", "sample", 1);
+        await connector.createBid(1, 1000, "message", 0);
+        await connector.acceptBid(0, "message", 1);
+        assert(await connector.isFailed([0, "message", 1], connector.acceptBid.name));
     });
 
     it('cannot accept a bid that is not exists', async() => {
-        await connector.register(0, "sample0", "sample", "sample");
-        await connector.register(1, "sample1", "sample", "sample");
-        assert(await connector.isFailed([1, 0], connector.acceptBid.name));
+        await connector.register("sample0", "sample", "sample", "sample", 0);
+        await connector.register("sample1", "sample", "sample", "sample", 1);
+        assert(await connector.isFailed([0, "message", 1], connector.acceptBid.name));
     })
 
     it('can block bid', async() => {
-        await connector.register(0, "sample0", "sample", "sample");
-        await connector.register(1, "sample1", "sample", "sample");
-        await connector.createBid(0, 1, 1000);
-        await connector.blockBid(1, 0);
+        await connector.register("sample0", "sample", "sample", "sample", 0);
+        await connector.register("sample1", "sample", "sample", "sample", 1);
+        await connector.createBid(1, 1000, "message", 0);
+        await connector.blockBid(0, 1);
 
-        let bid = await connector.getBid(0, 1);
+        let bid = await connector.getBid(1, 0);
         assert.equal(Static.BidStatus.BLOCKED, bid[1]);
     })
 
     it('cannot block bid twice', async() => {
-        await connector.register(0, "sample0", "sample", "sample");
-        await connector.register(1, "sample1", "sample", "sample");
-        await connector.createBid(0, 1, 1000);
-        await connector.blockBid(1, 0);
-        assert(await connector.isFailed([1, 0], connector.blockBid.name));
+        await connector.register("sample0", "sample", "sample", "sample", 0);
+        await connector.register("sample1", "sample", "sample", "sample", 1);
+        await connector.createBid(1, 1000, "message", 0);
+        await connector.blockBid(0, 1);
+        assert(await connector.isFailed([0, 1], connector.blockBid.name));
     });
 
     it('cannot block a bid that is not exists', async() => {
-        await connector.register(0, "sample0", "sample", "sample");
-        await connector.register(1, "sample1", "sample", "sample");
-        assert(await connector.isFailed([1, 0], connector.blockBid.name));
+        await connector.register("sample0", "sample", "sample", "sample", 0);
+        await connector.register("sample1", "sample", "sample", "sample", 1);
+        assert(await connector.isFailed([0, 1], connector.blockBid.name));
     })
 
     it('cannot cancel a blocked bid', async() => {
-        await connector.register(0, "sample0", "sample", "sample");
-        await connector.register(1, "sample1", "sample", "sample");
-        await connector.createBid(0, 1, 1000);
-        await connector.blockBid(1, 0);
-        assert(await connector.isFailed([0, 1], connector.cancelBid.name));
+        await connector.register("sample0", "sample", "sample", "sample", 0);
+        await connector.register("sample1", "sample", "sample", "sample", 1);
+        await connector.createBid(1, 1000, "message", 0);
+        await connector.blockBid(0, 1);
+        assert(await connector.isFailed([1, 0], connector.cancelBid.name));
     })
 
     it('cannot cancel an accepted bid', async() => {
-        await connector.register(0, "sample0", "sample", "sample");
-        await connector.register(1, "sample1", "sample", "sample");
-        await connector.createBid(0, 1, 1000);
-        await connector.acceptBid(1, 0);
-        assert(await connector.isFailed([0, 1], connector.cancelBid.name));
+        await connector.register("sample0", "sample", "sample", "sample", 0);
+        await connector.register("sample1", "sample", "sample", "sample", 1);
+        await connector.createBid(1, 1000, "message", 0);
+        await connector.acceptBid(0, "message", 1);
+        assert(await connector.isFailed([1, 0], connector.cancelBid.name));
     })
 
     it('can send message', async() => {
-        await connector.register(0, "sample0", "sample", "sample");
-        await connector.register(1, "sample1", "sample", "sample");
-        await connector.createBid(0, 1, 1000);
-        await connector.acceptBid(1, 0);
+        await connector.register("sample0", "sample", "sample", "sample", 0);
+        await connector.register("sample1", "sample", "sample", "sample", 1);
+        await connector.createBid(1, 1000, "message", 0);
+        await connector.acceptBid(0, "message", 1);
 
         let msg = "how are you?"
-        await connector.sendMessage(0, 1, msg);
+        await connector.sendMessage(1, msg, 0);
         let msgEvents = await connector.messagingContract.getPastEvents('MessageSent', {
             filter: {}, fromBlock: 0
         });
@@ -247,41 +252,41 @@ describe('PolyAlpha core contract testing', function() {
     })
 
     it('cannot send message to an unregistered user', async() => {
-        await connector.register(0, "sample0", "sample", "sample");
-        await connector.isFailed([0, 1, "how are you?"], connector.sendMessage.name);
+        await connector.register("sample0", "sample", "sample", "sample", 0);
+        await connector.isFailed([1, "how are you?", 0], connector.sendMessage.name);
     })
 
     it('cannot send message if have not registered', async() => {
-        await connector.register(1, "sample1", "sample", "sample");
-        assert(await connector.isFailed([0, 1, "how are you?"], connector.sendMessage.name));
+        await connector.register("sample1", "sample", "sample", "sample", 1);
+        assert(await connector.isFailed([1, "how are you?", 0], connector.sendMessage.name));
     })
 
     it('cannot send message before bid get accepted', async() => {
-        await connector.register(0, "sample0", "sample", "sample");
-        await connector.register(1, "sample1", "sample", "sample");
-        await connector.createBid(0, 1, 1000);
+        await connector.register("sample0", "sample", "sample", "sample", 0);
+        await connector.register("sample1", "sample", "sample", "sample", 1);
+        await connector.createBid(1, 1000, "message", 0);
 
         let msg = "how are you?";
-        assert(await connector.isFailed([0, 1, msg], connector.sendMessage.name));
+        assert(await connector.isFailed([1, msg, 0], connector.sendMessage.name));
 
-        await connector.acceptBid(1, 0);
-        await connector.sendMessage(0, 1, msg);
+        await connector.acceptBid(0, "message", 1);
+        await connector.sendMessage(1, msg, 0);
         assert(true);
     })
 
     it('cannot send message if bid get blocked', async() => {
-        await connector.register(0, "sample0", "sample", "sample");
-        await connector.register(1, "sample1", "sample", "sample");
-        await connector.createBid(0, 1, 1000);
-        await connector.blockBid(1, 0);
+        await connector.register("sample0", "sample", "sample", "sample", 0);
+        await connector.register("sample1", "sample", "sample", "sample", 1);
+        await connector.createBid(1, 1000, "message", 0);
+        await connector.blockBid(0, 1);
 
         let msg = "how are you?";
-        assert(await connector.isFailed([0, 1, msg], connector.sendMessage.name));
+        assert(await connector.isFailed([1, msg, 0], connector.sendMessage.name));
     })
 
     it('has UserJoined events', async() => {
-        await connector.register(0, "username1", "user 1", "user 1 avatar");
-        await connector.register(1, "username2", "user 2", "user 2 avatar");
+        await connector.register("username1", "user 1", "user 1 avatar", "", 0);
+        await connector.register("username2", "user 2", "user 2 avatar", "", 1);
 
         let joinEvents = await connector.userContract.getPastEvents('UserJoined', {filter: {}, fromBlock: 0});
         assert.equal(2, joinEvents.length);
@@ -297,10 +302,10 @@ describe('PolyAlpha core contract testing', function() {
     })
 
     it('has UserProfileUpdated events', async() => {
-        await connector.register(0, "username1", "user 1", "user 1 avatar");
-        await connector.register(1, "username2", "user 2", "user 2 avatar");
-        await connector.updateProfile(1, "updatedusername2", "updated user 2", "updated user 2 avatar");
-        await connector.updateProfile(0, "updatedusername1", "updated user 1", "updated user 1 avatar");
+        await connector.register("username1", "user 1", "user 1 avatar", "", 0);
+        await connector.register("username2", "user 2", "user 2 avatar", "", 1);
+        await connector.updateProfile("updatedusername2", "updated user 2", "updated user 2 avatar", "", 1);
+        await connector.updateProfile("updatedusername1", "updated user 1", "updated user 1 avatar", "", 0);
         let profileUpdateEvents = await connector.userContract.getPastEvents('UserProfileUpdated', {filter: {}, fromBlock: 0});
         assert.equal(2, profileUpdateEvents.length);
 
@@ -315,9 +320,9 @@ describe('PolyAlpha core contract testing', function() {
     })
 
     it('has UserAvailabilityUpdated events', async() => {
-        await connector.register(0, "username1", "user 1", "user 1 avatar");
-        await connector.updateAvailability(0, false);
-        await connector.updateAvailability(0, true);
+        await connector.register("username1", "user 1", "user 1 avatar", "", 0);
+        await connector.updateAvailability(false, 0);
+        await connector.updateAvailability(true, 0);
 
         let events = await connector.userContract.getPastEvents('UserAvailabilityUpdated', {filter: {}, fromBlock: 0});
         assert.equal(2, events.length);
@@ -326,9 +331,9 @@ describe('PolyAlpha core contract testing', function() {
     })
 
     it('has BidCreated event', async() => {
-        await connector.register(0, "username1", "user 1", "user 1 avatar");
-        await connector.register(1, "username2", "user 2", "user 2 avatar");
-        await connector.createBid(0,1,1000);
+        await connector.register("username1", "user 1", "user 1 avatar", "", 0);
+        await connector.register("username2", "user 2", "user 2 avatar", "", 1);
+        await connector.createBid(1,1000, "message",0);
 
         let events = await connector.bidContract.getPastEvents('BidCreated', {filter: {}, fromBlock: 0});
         let event0 = events[0].returnValues;
@@ -338,10 +343,10 @@ describe('PolyAlpha core contract testing', function() {
     })
 
     it('has BidCancelled event', async() => {
-        await connector.register(0, "username1", "user 1", "user 1 avatar");
-        await connector.register(1, "username2", "user 2", "user 2 avatar");
-        await connector.createBid(0,1,1000);
-        await connector.cancelBid(0,1);
+        await connector.register("username1", "user 1", "user 1 avatar", "", 0);
+        await connector.register("username2", "user 2", "user 2 avatar", "", 1);
+        await connector.createBid(1,1000, "message",0);
+        await connector.cancelBid(1,0);
 
         let events = await connector.bidContract.getPastEvents('BidCancelled', {filter: {}, fromBlock: 0});
         let event0 = events[0].returnValues;
@@ -350,10 +355,10 @@ describe('PolyAlpha core contract testing', function() {
     })
 
     it('has BidAccepted event', async() => {
-        await connector.register(0, "username1", "user 1", "user 1 avatar");
-        await connector.register(1, "username2", "user 2", "user 2 avatar");
-        await connector.createBid(0, 1, 1000);
-        await connector.acceptBid(1, 0);
+        await connector.register("username1", "user 1", "user 1 avatar", "", 0);
+        await connector.register("username2", "user 2", "user 2 avatar", "", 1);
+        await connector.createBid(1, 1000, "message", 0);
+        await connector.acceptBid(0, "message", 1);
 
         let events = await connector.bidContract.getPastEvents('BidAccepted', {filter: {}, fromBlock: 0});
         let event0 = events[0].returnValues;
@@ -362,10 +367,10 @@ describe('PolyAlpha core contract testing', function() {
     })
 
     it('has BidBlocked event', async() => {
-        await connector.register(0, "username1", "user 1", "user 1 avatar");
-        await connector.register(1, "username2", "user 2", "user 2 avatar");
-        await connector.createBid(0, 1, 1000);
-        await connector.blockBid(1, 0);
+        await connector.register("username1", "user 1", "user 1 avatar", "", 0);
+        await connector.register("username2", "user 2", "user 2 avatar", "", 1);
+        await connector.createBid(1, 1000, "message", 0);
+        await connector.blockBid(0, 1);
 
         let events = await connector.bidContract.getPastEvents('BidBlocked', {filter: {}, fromBlock: 0});
         let event0 = events[0].returnValues;
@@ -374,12 +379,12 @@ describe('PolyAlpha core contract testing', function() {
     })
 
     it('has MessageSent event', async() => {
-        await connector.register(0, "username1", "user 1", "user 1 avatar");
-        await connector.register(1, "username2", "user 2", "user 2 avatar");
-        await connector.createBid(0, 1, 1000);
-        await connector.acceptBid(1, 0);
-        await connector.sendMessage(0, 1, "hello 1");
-        await connector.sendMessage(1, 0, "hello 0");
+        await connector.register("username1", "user 1", "user 1 avatar", "", 0);
+        await connector.register("username2", "user 2", "user 2 avatar", "", 1);
+        await connector.createBid(1, 1000, "message", 0);
+        await connector.acceptBid(0, "message", 1);
+        await connector.sendMessage(1, "hello 1", 0);
+        await connector.sendMessage(0, "hello 0", 1);
 
         let events = await connector.messagingContract.getPastEvents('MessageSent', {filter: {}, fromBlock: 0});
         let event0 = events[0].returnValues;
@@ -398,10 +403,10 @@ describe('PolyAlpha core contract testing', function() {
         let initialBalance0 = BigNumber(await connector.tokenContract.methods.balanceOf(connector.accounts[0]).call());
         let initialBalance1 = BigNumber(await connector.tokenContract.methods.balanceOf(connector.accounts[1]).call());
 
-        await connector.register(0, "username1", "user 1", "user 1 avatar");
-        await connector.register(1, "username2", "user 2", "user 2 avatar");
-        await connector.createBid(0, 1, 1000);
-        await connector.acceptBid(1, 0);
+        await connector.register("username1", "user 1", "user 1 avatar", "", 0);
+        await connector.register("username2", "user 2", "user 2 avatar", "", 1);
+        await connector.createBid(1, 1000, "message", 0);
+        await connector.acceptBid(0, "message", 1);
 
         let balance0 = BigNumber(await connector.tokenContract.methods.balanceOf(connector.accounts[0]).call());
         let balance1 = BigNumber(await connector.tokenContract.methods.balanceOf(connector.accounts[1]).call());
