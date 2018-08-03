@@ -37,6 +37,16 @@ class BlockReader {
         setTimeout(this.runLoop, 5000);
     }
 
+    async getBlockTime(blockNumber) {
+        var timestamp = LocalData.getBlockTime(blockNumber);
+        if (timestamp == 0) {
+            let blk = await this.web3.eth.getBlock(blockNumber);
+            timestamp = Utils.parseIntSafe(blk.timestamp);
+            LocalData.setBlockTime(blockNumber, timestamp);
+        }
+        return timestamp;
+    }
+
     async readEvents() {
         let storedBlockNumber = Utils.parseIntSafe(LocalData.getLastBlockNumber());
         let currentBlockNumber = Utils.parseIntSafe(await this.web3.eth.getBlockNumber()) - 1;

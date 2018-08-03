@@ -50,7 +50,7 @@ class LocalData {
     }
 
     /// Add a new user who has registered with PolyAlpha to local storage
-    static addUser(address, publicKeyLeft, publicKeyRight, username, name, avatarUrl, timestamp) {
+    static addUser(address, publicKeyLeft, publicKeyRight, username, name, avatarUrl, blockNumber) {
         address = address.toLowerCase();
 
         if (this.hasLocalStorage()) {
@@ -65,7 +65,7 @@ class LocalData {
             user[Static.KEY.USER_PUBKEY_LEFT] = publicKeyLeft;
             user[Static.KEY.USER_PUBKEY_RIGHT] = publicKeyRight;
             user[Static.KEY.BID_STATUS] = Static.BidStatus.NOBID;
-            user[Static.KEY.USER_TIMESTAMP] = timestamp;
+            user[Static.KEY.USER_BLOCKNUMBER] = blockNumber;
 
             this.setObjectItem(address, user);
             
@@ -75,7 +75,7 @@ class LocalData {
         }
     }
 
-    static updateUserProfile(address, username, name, avatarUrl, timestamp) {
+    static updateUserProfile(address, username, name, avatarUrl, blockNumber) {
         address = address.toLowerCase();
 
         if (this.hasLocalStorage()) {
@@ -83,7 +83,7 @@ class LocalData {
             user[Static.KEY.USER_UNAME] = username;
             user[Static.KEY.USER_NAME] = name;
             user[Static.KEY.USER_AVARTAR_URL] = avatarUrl;
-            user[Static.KEY.USER_TIMESTAMP] = timestamp;
+            user[Static.KEY.USER_BLOCKNUMBER] = blockNumber;
             this.setObjectItem(address, user);
         }
     }
@@ -175,7 +175,7 @@ class LocalData {
         }
     }
 
-    static addBid(userAddress, tokenAmount, bidType, timestamp) {
+    static addBid(userAddress, tokenAmount, bidType, blockNumber) {
         userAddress = userAddress.toLowerCase();
 
         let arrayKey = Static.KEY.BIDS;
@@ -197,13 +197,13 @@ class LocalData {
             user[Static.KEY.BID_TYPE] = bidType;
             user[Static.KEY.BID_STATUS] = Static.BidStatus.CREATED;
             user[Static.KEY.BID_AMOUNT] = tokenAmount;
-            user[Static.KEY.USER_TIMESTAMP] = timestamp;
+            user[Static.KEY.USER_BLOCKNUMBER] = blockNumber;
             
             this.setObjectItem(userAddress, user);
         }
     }
 
-    static addMessage(userAddress, message, type, timestamp) {
+    static addMessage(userAddress, message, type, blockNumber) {
         userAddress = userAddress.toLowerCase();
 
         let user = this.getObjectItem(userAddress);
@@ -213,10 +213,10 @@ class LocalData {
         let msg = {};
         msg[Static.KEY.MESSAGE_CONTENT] = message;
         msg[Static.KEY.MESSAGE_TYPE] = type;
-        msg[Static.KEY.MESSAGE_TIMESTAMP] = timestamp;
+        msg[Static.KEY.MESSAGE_BLOCKNUMBER] = blockNumber;
 
         user[Static.KEY.MESSAGES].push(msg);
-        user[Static.KEY.USER_TIMESTAMP] = timestamp;
+        user[Static.KEY.USER_BLOCKNUMBER] = blockNumber;
         this.setObjectItem(userAddress, user);
     }
 
@@ -240,6 +240,14 @@ class LocalData {
 
     static getAddress() {
         return this.getItem(Static.KEY.ADDRESS);
+    }
+
+    static getBlockTime(blockNumber) {
+        return Utils.parseIntSafe(this.getItem('blk_' + blockNumber));
+    }
+
+    static setBlockTime(blockNumber, time) {
+        return this.setItem('blk_' + blockNumber, time);
     }
 
     
