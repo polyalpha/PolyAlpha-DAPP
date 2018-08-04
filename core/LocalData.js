@@ -13,7 +13,13 @@ Array.prototype.remove = function() {
 };
 
 class LocalData {
-    /// Get a list of all users who has registered with PolyAlpha
+
+    /**
+     * Get a list of all eth addresses of those who have registered with PolyAlpha. To be shown in the "Discover-New Users" tab. This list excludes:
+     * - Users you have sent bids to (Will appear in "Bid-Your Bids" tab)
+     * - Users that you have connected (Will appear in the Chats tab)
+     * - Users that have sent bids to you (Will appear in "Bids-Bid For You" tab)
+     */
     static getNewUserAddresses() {
         if (this.hasLocalStorage()) {
             return this.getArrayItem(Static.KEY.USER_LIST);
@@ -21,6 +27,9 @@ class LocalData {
         return [];
     }
 
+    /**
+     * A list of eth addresses of those who have connected with you. To be shown in the Chats tab
+     */
     static getConenctedAddresses() {
         if (this.hasLocalStorage()) {
             return this.getArrayItem(Static.KEY.ACCEPTED_BIDS);
@@ -28,6 +37,9 @@ class LocalData {
         return [];
     }
 
+    /**
+     * A list of eth addresses of those who you have sent bids to. To be shown in the "Bid-Your Bids" tab.
+     */
     static getMyBidAddresses() {
         if (this.hasLocalStorage()) {
             return this.getArrayItem(Static.KEY.MY_BIDS);
@@ -35,6 +47,9 @@ class LocalData {
         return [];
     }
 
+    /**
+     * A list of eth addresses of those who have sent bids to. To be shown in the "Bid-Bids For You" tab.
+     */
     static getBidAddresses() {
         if (this.hasLocalStorage()) {
             return this.getArrayItem(Static.KEY.BIDS);
@@ -42,6 +57,10 @@ class LocalData {
         return [];
     }
 
+    /**
+     * Get user details
+     * @param {string} address The eth address of the user
+     */
     static getUser(address) {
         if (this.hasLocalStorage()) {
             return this.getObjectItem(address);
