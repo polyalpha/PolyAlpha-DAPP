@@ -47,6 +47,7 @@ export class MessagesBlock extends Component {
 					<div className="block">
 						<div className="textarea">
 					<Textarea
+						autoFocus
 						placeholder="Type a message..."
 						name="message"
 						onChange={this.onChangeMessage}
@@ -121,7 +122,7 @@ export const SideBar = ({name, children}) => (
 );
 
 
-const TobBar = ({back, title, more}) => (
+const TopBar = ({back, title, more}) => (
 	<div className="top-bar">
 		{back && <Link to={back} className="back"><Svg id="svg-back" className="icon"/>Back</Link>}
 		<div className="title">{title}</div>
@@ -132,12 +133,43 @@ const TobBar = ({back, title, more}) => (
 
 export const MainBar = ({children}) => (
 	<div className="main">
-		<TobBar title="Info" back="/chat" more={true} />
+		<TopBar title="Info" back="/chat" more={true} />
 		<div className="scroll">
 			{children}
 		</div>
 	</div>
 );
+
+
+
+export const ChatLayout = ({children, match, sidebar}) => {
+	let {tabs, tab, name} =  sidebar;
+	return (
+		<Fragment>
+			<SideBar name={name} >
+				<div className="top-bar">
+					<div className="tabs">
+						{tabs.map(
+							t => {
+								return !t.name && t || <Link
+									className={classNames(["tab", {selected: t.name === tab }])}
+									key={t.name}
+									to={`/chat/${name}/${t.name}`}
+								>{t.title}</Link>
+							}
+						)}
+					</div>
+				</div>
+				<UserList {...sidebar}/>
+			</SideBar>
+			{children && (
+				<MainBar>
+					{children}
+				</MainBar>
+			)}
+		</Fragment>
+	)
+};
 
 
 
@@ -162,6 +194,19 @@ const defaultUsers = [
 	{id: 3, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", date:"Yesterday"},
 	{id: 4, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", date:"Yesterday"},
 	{id: 5, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", date:"Yesterday"},
+];
+
+const defaultNewUsers = [
+	{id: 2, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", date:"Yesterday"},
+	{id: 3, name: "John Copley", avatar: "/i/avatars/adam.png", date:"Yesterday"},
+	{id: 4, name: "MargotRobbie", avatar: "/i/avatars/adam.png", date:"Yesterday"},
+	{id: 5, name: "Vincent van Gogh", avatar: "/i/avatars/adam.png", date:"Yesterday"},
+];
+
+const defaultTopUsers = [
+	{id: 2, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 100, abt:"2.33"},
+	{id: 3, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 60, abt:"0.02"},
+	{id: 4, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 80, abt:"3.01"},
 ];
 
 

@@ -52,6 +52,12 @@ const routes = [
 						exact: true,
 						component: Bids,
 					}
+					,
+					{
+						path: '/chat/chats/:type?/:id?',
+						exact: true,
+						component: Chats,
+					}
 				]
 			}
 		]

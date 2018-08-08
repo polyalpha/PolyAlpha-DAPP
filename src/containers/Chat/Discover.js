@@ -35,13 +35,11 @@ const required = (value) => {
 
 export class CreateNewBid extends Component {
 
-	static defaultState = {
+	state = {
 		isSubmitted: false,
 		bid: 0,
 		message: "",
 	};
-
-	state = {...CreateNewBid.defaultState}
 
 	constructor(props) {
 		super(props)
@@ -55,14 +53,13 @@ export class CreateNewBid extends Component {
 	};
 
 	createHandler = (e) => {
-		console.log(this.state.message)
 		let message = this.state.message;
 		this.setState({isSubmitted: true, message});
 		e.preventDefault();
 	};
 
 	cancelHandler = (e) => {
-		this.setState(CreateNewBid.defaultState);
+		this.setState({isSubmitted: false});
 		e.preventDefault();
 	};
 

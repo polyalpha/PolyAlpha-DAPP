@@ -63,6 +63,7 @@ const Auth = (props) => {
 
 
 const signinHandler = (e) => {
+	window.WWW = e;
 	e.preventDefault();
 	history.push("/chat/discover")
 
