@@ -1,6 +1,6 @@
 import React, {Fragment, Component} from "react";
 import { connect } from 'react-redux';
-import {Chat, SideBar, UserList, MainBar, MessagesBlock, ChatLayout} from "./Chat"
+import {Chat, SideBar, UserList, Message, MessagesBlock, ChatLayout} from "./Chat"
 import Form from 'react-validation/build/form';
 import Button from 'react-validation/build/button';
 import Input from 'react-validation/build/input';
@@ -20,10 +20,14 @@ const Chats = ({users, match, ...props}) => {
 	users = users || defaultUsers[0];
 	let sidebar = {
 		name: "chats",
-		tabs, users
+		tabs, users,
+		userId: match.params.id
 	};
 
-	let messages = [];
+	let messages = [
+		<Message my={true} key={1}>Hey John, great to meet at TechCrunch. It is great to be able to have private conversations here.</Message>,
+		<Message key={2}>Yea I like this project because I can use it for business development as well as partnerships.</Message>
+	];
 
 	return (
 		<ChatLayout {...props} sidebar={sidebar}>

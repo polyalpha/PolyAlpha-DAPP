@@ -167,7 +167,8 @@ const Discover = ({users, match, ...props}) => {
 		name: "discover",
 		tab: match.params.tab,
 		tabs: sideBarTabs,
-		users
+		users,
+		userId: match.params.id,
 	};
 
 	let messages = [<CreateNewBid />];

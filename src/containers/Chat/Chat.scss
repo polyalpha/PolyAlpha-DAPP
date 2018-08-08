@@ -287,5 +287,31 @@ $messages-block-radius: 15px;
 }
 
 
+.messages {
+	.chat-message {
+		text-align: left;
+		margin: 0 32px 10px 32px;
+		&-block {
+			width: 50%;
+			background: #C981A2;
+			color: #303030;
+			border-radius: 4px;
+			padding: 16px;
+			font-size: 15px;
+			line-height: 17px;
+			display: inline-block;
+		}
+		&-my {
+			text-align: right;
+			.chat-message-block {
+				text-align: left;
+				color: #9371B0;
+				background: #F3F3F3;
+			}
+		}
+
+	}
+}
+
 
 

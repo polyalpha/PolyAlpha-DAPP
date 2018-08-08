@@ -164,12 +164,15 @@ export const ChatLayout = ({children, match, sidebar}) => {
 						)}
 					</div>
 				</div>
-				<UserList {...sidebar}/>
+				<UserList {...sidebar} />
 			</SideBar>
 			{children && (
-				<MainBar>
-					{children}
-				</MainBar>
+				<div className="main">
+					<TopBar title="Info" back="/chat" more={true} />
+					<div className="scroll">
+						{children}
+					</div>
+				</div>
 			)}
 		</Fragment>
 	)
@@ -191,6 +194,15 @@ const Chat = ({auth, title, route}) => {
 
 	)
 };
+
+
+export const Message = ({children, my}) => (
+	<div className={classNames(["chat-message", {"chat-message-my": my}])}>
+		<div className="chat-message-block">
+			{children}
+		</div>
+	</div>
+);
 
 
 const defaultUsers = [
