@@ -10,62 +10,60 @@ module.exports.NETWORK_LIST = [
     {
         id: 4,
         name: 'Rinkeby Test Net',
-        contractAddress: '0xa8d27Eda6518Ac6CcF3eb7Ec100B1fc8ef850e80',
         explorerUrl: 'https://rinkeby.etherscan.io/',
-        providerUrl: 'https://rinkeby.infura.io/Q2aBIgYNhIB60VsqyrN1'
+        providerUrl: 'https://rinkeby.infura.io/Q2aBIgYNhIB60VsqyrN1',
+        contractAddress: '0x70d36a1383d69EF65be55ff439d3c90AC2f13e27',
+        tokenContractAddress: '0xEFd3F89c5B88583a3AE87e5b0012BfE2BAEAD29E',
+        userContractAddress: '0x3941de3060196e9cdD01f5e29741fFb01b316305',
+        bidContractAddress: '0x928CC3393AaD7B0aCC6232Be0Ed386FD69498751',
+        messagingContractAddress: '0x16999f0cc661A5e6C23702076A9fD462186e5640'
     }
 ]
 
 module.exports.ENV = {
     get ContractAddress() {
-        if (typeof(Storage) !== 'undefined' && localStorage.ethNetwork != undefined) {
-            var network = parseInt(localStorage.ethNetwork);
-            for (var i=0;i<module.exports.NETWORK_LIST.length;i++) {
-                if (network == module.exports.NETWORK_LIST[i].id) {
-                    return module.exports.NETWORK_LIST[i].contractAddress;
-                }
-            }
-        } else {
-            return "";
-        }
+        return this.getProperty('contractAddress');
+    },
+
+    get TokenContractAddress() {
+        return this.getProperty('tokenContractAddress');
+    },
+
+    get UserContractAddress() {
+        return this.getProperty('userContractAddress');
+    },
+
+    get BidContractAddress() {
+        return this.getProperty('bidContractAddress');
+    },
+
+    get MessagingContractAddress() {
+        return this.getProperty('messagingContractAddress');
     },
 
     get NetworkName() {
+        return this.getProperty('name');
+    },
+
+    get ProviderUrl() {
+        return this.getProperty('providerUrl');
+    },
+
+    get ExplorerUrl() {
+        return this.getProperty('explorerUrl');
+    },
+
+    getProperty(propertyName) {
         if (typeof(Storage) !== 'undefined' && localStorage.ethNetwork != undefined) {
             var network = parseInt(localStorage.ethNetwork);
             for (var i=0;i<module.exports.NETWORK_LIST.length;i++) {
                 if (network == module.exports.NETWORK_LIST[i].id) {
-                    return module.exports.NETWORK_LIST[i].name;
+                    return module.exports.NETWORK_LIST[i][propertyName];
                 }
             }
         } else {
             return "";
-        }
-    },
-
-    get ProviderUrl() {
-        if (typeof(Storage) !== 'undefined' && localStorage.ethNetwork != undefined) {
-            var network = parseInt(localStorage.ethNetwork);
-            for (var i=0;i<module.exports.NETWORK_LIST.length;i++) {
-                if (network == module.exports.NETWORK_LIST[i].id) {
-                    return module.exports.NETWORK_LIST[i].providerUrl;
-                }
-            }
-        } else {
-            return module.exports.NETWORK_LIST[0].providerUrl;
-        }
-    },
-
-    get ExplorerUrl() {
-        if (typeof(Storage) !== 'undefined' && localStorage.ethNetwork != undefined) {
-            var network = parseInt(localStorage.ethNetwork);
-            for (var i=0;i<module.exports.NETWORK_LIST.length;i++) {
-                if (network == module.exports.NETWORK_LIST[i].id) {
-                    return module.exports.NETWORK_LIST[i].explorerUrl;
-                }
-            }
-        } else {
-            return module.exports.NETWORK_LIST[0].explorerUrl;
+            //return module.exports.NETWORK_LIST[0][propertyName];
         }
     },
 
