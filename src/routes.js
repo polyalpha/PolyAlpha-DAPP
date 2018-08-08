@@ -43,18 +43,18 @@ const routes = [
 				component: Chat,
 				routes: [
 					{
-						path: '/chat/discover/:type?/:id?',
+						path: '/chat/discover/:tab?/:id?',
 						exact: true,
 						component: Discover,
 					},
 					{
-						path: '/chat/bids/:type?/:id?',
+						path: '/chat/bids/:tab?/:id?',
 						exact: true,
 						component: Bids,
 					}
 					,
 					{
-						path: '/chat/chats/:type?/:id?',
+						path: '/chat/chats/:tab?/:id?',
 						exact: true,
 						component: Chats,
 					}

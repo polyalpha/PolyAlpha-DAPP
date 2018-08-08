@@ -1,6 +1,6 @@
 import React, {Fragment, Component} from "react";
 import { connect } from 'react-redux';
-import {Chat, SideBar, UserList, MainBar, MessagesBlock, MessageContext} from "./Chat"
+import {Chat, SideBar, UserList, MainBar, MessagesBlock, MessageContext, ChatLayout} from "./Chat"
 import Form from 'react-validation/build/form';
 import Button from 'react-validation/build/button';
 import Input from 'react-validation/build/input';
@@ -65,7 +65,7 @@ export class CreateNewBid extends Component {
 
 	messageValidator = () => {
 		console.log("textValidator");
-		if (!this.props.parent.state.message.length) {
+		if (!this.state.message.length) {
 			return <div>Bad text</div>;
 		}
 	};
@@ -122,31 +122,14 @@ const BidMessage = ({bid, children, cancelHandler}) => (
 
 const sideBarTabs = [
 	{
-		type: "new",
+		name: "new",
 		title: "New Users"
 	},
 	{
-		type: "top",
+		name: "top",
 		title: "Top Users"
 	}
 ];
-
-const DiscoverSideBar = ({userId, type, users}) => (
-	<SideBar name="discover">
-		<div className="top-bar">
-			<div className="tabs">
-				{sideBarTabs.map(
-					tab=><Link
-						className={classnames(["tab", {selected: tab.type === type }])}
-						key={tab.type}
-						to={`/chat/discover/${tab.type}`}
-					>{tab.title}</Link>
-				)}
-			</div>
-		</div>
-		<UserList userId={userId} type={type} users={users}/>
-	</SideBar>
-);
 
 
 const DiscoverInfo = (props) => (
@@ -176,35 +159,40 @@ const DiscoverInfo = (props) => (
 
 
 
-const Discover = ({auth, users, match}) => {
-	match.params.type = match.params.type || "new";
-	users = match.params.type === "new" ? defaultNewUsers : defaultTopUsers;
-	console.log(match);
+const Discover = ({users, match, ...props}) => {
+	match.params.tab = match.params.tab || sideBarTabs[0].name;
+	users = users && users || defaultUsers[sideBarTabs.findIndex(x=>x.name === match.params.tab )];
+
+	let sidebar = {
+		name: "discover",
+		tab: match.params.tab,
+		tabs: sideBarTabs,
+		users
+	};
+
+	let messages = [<CreateNewBid />];
+
 	return (
-		<Fragment>
-			<DiscoverSideBar type={match.params.type} userId={match.params.id} users={users} />
-			<MainBar>
-				{match.params.id && (
-					<MessagesBlock>
-						<CreateNewBid />
-					</MessagesBlock>
-				) || <DiscoverInfo />}
-			</MainBar>
-		</Fragment>
+		<ChatLayout {...props} sidebar={sidebar}>
+			{match.params.id && (
+				<MessagesBlock messages={messages}/>
+			) || <DiscoverInfo />}
+		</ChatLayout>
 	)
 };
 
-const defaultNewUsers = [
-	{id: 2, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-	{id: 3, name: "John Copley", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-	{id: 4, name: "MargotRobbie", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-	{id: 5, name: "Vincent van Gogh", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-];
-
-const defaultTopUsers = [
-	{id: 2, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 100, abt:"2.33"},
-	{id: 3, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 60, abt:"0.02"},
-	{id: 4, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 80, abt:"3.01"},
+const defaultUsers = [
+	[
+		{id: 2, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", date:"Yesterday"},
+		{id: 3, name: "John Copley", avatar: "/i/avatars/adam.png", date:"Yesterday"},
+		{id: 4, name: "MargotRobbie", avatar: "/i/avatars/adam.png", date:"Yesterday"},
+		{id: 5, name: "Vincent van Gogh", avatar: "/i/avatars/adam.png", date:"Yesterday"},
+	],
+	[
+		{id: 2, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 100, abt:"2.33"},
+		{id: 3, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 60, abt:"0.02"},
+		{id: 4, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 80, abt:"3.01"},
+	]
 ];
 
 

@@ -35,11 +35,15 @@ export class MessagesBlock extends Component {
 
 	render() {
 
+		let i = 0;
+
 		return (
 			<div className="messages-block">
 				<div className="messages">
 					<MessageContext.Provider value={this.state.message}>
-						{this.children}
+						{this.props.messages.map(
+							msg => React.cloneElement(msg, {key:i++})
+						)}
 					</MessageContext.Provider>
 
 				</div>
@@ -67,11 +71,11 @@ export class MessagesBlock extends Component {
 
 
 
-export const UserList = ({userId, type, users}) => (
+export const UserList = ({userId, name, tab, users}) => (
 	<div className="users">
 		<div className="scroll">
 			{users.map(user=>(
-				<Link className={classNames(["user", {selected: String(user.id) === userId}])} key={user.id} to={`/chat/discover/${type}/${user.id}`}>
+				<Link className={classNames(["user", {selected: String(user.id) === userId}])} key={user.id} to={`/chat/${name}/${tab}/${user.id}`}>
 					<i className="img" style={{backgroundImage: `url(${user.avatar})`}} />
 					<div className="name">{user.name}</div>
 					{user.bid && (
