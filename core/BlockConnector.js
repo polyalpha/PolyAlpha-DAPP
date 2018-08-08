@@ -16,6 +16,9 @@ class BlockConnector {
     }
 
     async load() {
+        //temporarily set network
+        Config.ENV.EthNetworkId = 4;
+
         this.accounts = await this.web3.eth.getAccounts();
 
         const compiledContract = require('../ethereum/build/PACore.json');

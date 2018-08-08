@@ -62,8 +62,8 @@ module.exports.ENV = {
                 }
             }
         } else {
-            return "";
-            //return module.exports.NETWORK_LIST[0][propertyName];
+            // return "";
+            return module.exports.NETWORK_LIST[0][propertyName];
         }
     },
 

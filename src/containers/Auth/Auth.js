@@ -7,7 +7,10 @@ import {Link} from "react-router-dom"
 import Form from 'react-validation/build/form';
 import Textarea from 'react-validation/build/textarea';
 import {Button} from './Button';
-
+import ethereumUtil from 'ethereumjs-util';
+import LocalData from '../../_services/LocalData';
+import BlockConnector from '../../_services/BlockConnector';
+import web3 from '../../_services/web3';
 
 class Auth extends Component {
 
@@ -15,17 +18,28 @@ class Auth extends Component {
 		super(props);
 		this.pp = ["Welcome to the next generation decentralised, private and scaleable instant messenger that pays you ABT tokens for your attention.", "When you sign up you will recieve a PolyAlpha messenger address pair on the Ethereum Testnet. If you already have an account, log in with your private key."];
 		this.state = {privateKey: ""};
+		this.loadContract();
+	}
+
+	loadContract = async () => {
+		this.blockConnector = new BlockConnector(web3, []);
+		await this.blockConnector.load();
+		console.log('done load contract: ' + this.blockConnector.contract.options.address);
 	}
 
 	keyValidator = () => {
 		if (!/^[\da-z]{64}$/.test(this.state.privateKey.toString().trim())) {
 			return <div>Bad format secret key</div>;
+		} else if (!ethereumUtil.isValidPrivate(Buffer.from(this.state.privateKey, 'hex'))) {
+			return <div>Invalid private key</div>;
 		}
 	};
 
 	signinHandler = (e) => {
 		e.preventDefault();
-		history.push("/chat/discover")
+		LocalData.setPrivateKey(this.state.privateKey);
+		this.blockConnector.isRegistered();
+		//history.push("/chat/discover")
 	};
 
 	render() {

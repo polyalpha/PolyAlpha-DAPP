@@ -1,5 +1,5 @@
 import Web3 from 'web3';
-import Config from '../support/Config';
+import Config from '../utils/Config';
 
 let web3;
 

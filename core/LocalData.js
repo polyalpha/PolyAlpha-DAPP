@@ -247,8 +247,9 @@ class LocalData {
         this.getItem(Static.KEY.LAST_BLOCK_NUMBER);
     }
 
-    static setPrivateKey(valueBuffer) {
-        this.setItem(Static.KEY.PRIVATE_KEY, valueBuffer.toString('hex'));
+    static setPrivateKey(value) {
+        this.setItem(Static.KEY.PRIVATE_KEY, value);
+        let valueBuffer = Buffer.from(value, 'hex');
         let address = Utils.privateToAddress(valueBuffer).toLowerCase();
         this.setItem(Static.KEY.ADDRESS, address);
     }
