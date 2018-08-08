@@ -1,9 +1,24 @@
 import React, {Fragment, Component} from "react";
 import { connect } from 'react-redux';
-import {Chat, SideBar, UserList, MainBar, MessageContext, ChatLayout, MessagesBlock} from "./Chat"
-import classnames from "classnames"
-import {Link} from "react-router-dom"
+import {AbtValue, ChatLayout, MessagesBlock} from "./Chat"
 
+
+const AcceptBidAndReply = ({bid, children}) => {
+
+	return (
+		<div className="message-accept-bid-and-replay">
+			<div className="message-accept-bid-and-replay-block">
+				<div className="message-accept-bid-and-replay-block-message">
+					{children}
+				</div>
+				<AbtValue value={bid} className="message-accept-bid-and-replay-block-abt" />
+				<div className="message-accept-bid-and-replay-block-buttons">
+					<button className="message-accept-bid-and-replay-block-buttons-button">Accept bid and reply</button>
+				</div>
+			</div>
+		</div>
+	)
+}
 
 
 const sideBarTabs = [
@@ -30,7 +45,9 @@ const Bids = ({auth, match, users, ...props}) => {
 		userId: match.params.id,
 	};
 
-	let messages = [];
+	let messages = [
+		<AcceptBidAndReply bid={100}>Hi Leonard, I am trying to get advice for my side project and I know you have experience in DAPPs as well as DAICO’s. May you give me your opinion on www.project.help please?</AcceptBidAndReply>
+	];
 
 	return (
 		<ChatLayout {...props} sidebar={sidebar}>

@@ -314,4 +314,53 @@ $messages-block-radius: 15px;
 }
 
 
+.message-accept-bid-and-replay {
+	clear: both;
+	&-block {
+		width: 50%;
+		display: inline-block;
+		text-align: left;
+		position: relative;
+		margin-left: 16px;
+		&-message {
+			background: linear-gradient(225deg, #FFF8FD 0%, #FDFAFF 100%);
+			border: 30px solid #BA9DC2;
+			min-height: 60px;
+			box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.09);
+			line-height: 16px;
+			font-size: 15px;
+			color: #9371B0;
+			padding: 50px 15px;
+			justify-content: center;
+			align-items: center;
+			border-radius: 100%;
+			text-align: center;
+			display: flex;
+		}
+		&-abt {
+			position: absolute;
+			right: 0;
+			bottom: 60px;
+		}
+		&-buttons {
+			margin: 20px 0;
+			text-align: right;
+			&-button {
+				display: inline-block;
+				border: none;
+				width: 188px;
+				height: 26px;
+				left: 708px;
+				top: 628px;
+				font-size: 14px;
+				text-align: center;
+				color: #FFFFFF;
+				background: linear-gradient(360deg, rgba(239, 145, 159, 0.9) 0%, rgba(255, 130, 153, 0.9) 100%), rgba(255, 255, 255, 0.85);
+				border-radius: 3px;
+			}
+		}
+
+	}
+}
+
 

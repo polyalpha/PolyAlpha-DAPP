@@ -1,6 +1,6 @@
 import React, {Fragment, Component} from "react";
 import { connect } from 'react-redux';
-import {Chat, SideBar, UserList, MainBar, MessagesBlock, MessageContext, ChatLayout} from "./Chat"
+import {Chat, SideBar, UserList, MainBar, MessagesBlock, MessageContext, ChatLayout, AbtValue} from "./Chat"
 import Form from 'react-validation/build/form';
 import Button from 'react-validation/build/button';
 import Input from 'react-validation/build/input';
@@ -8,14 +8,6 @@ import classnames from "classnames"
 import {Link} from "react-router-dom"
 
 
-const AbtValue = ({value, className}) => (
-	<div className={classnames(["abt-value", className])}>
-		<div className="value">
-			<div className="numbers">{value}</div>
-			<div className="label">ABT</div>
-		</div>
-	</div>
-);
 
 
 const abcValidator = (value) => {

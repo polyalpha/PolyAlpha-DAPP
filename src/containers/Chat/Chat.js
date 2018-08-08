@@ -146,6 +146,16 @@ export const MainBar = ({children}) => (
 
 
 
+export const AbtValue = ({value, className}) => (
+	<div className={classNames(["abt-value", className])}>
+		<div className="value">
+			<div className="numbers">{value}</div>
+			<div className="label">ABT</div>
+		</div>
+	</div>
+);
+
+
 export const ChatLayout = ({children, match, sidebar}) => {
 	let {tabs, tab, name} =  sidebar;
 	return (
