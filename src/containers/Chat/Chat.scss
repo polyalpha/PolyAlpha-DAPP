@@ -162,29 +162,43 @@ $messages-block-radius: 15px;
 	border-radius: 50%;
 	border: 8px solid #BA9DC2;
 	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.09);
-	.value {
+	&-block {
 		position: absolute;
-		top: 14px;
+		top: 0;
 		left: 0;
+		display: flex;
+		align-items: center;
 		width: 100%;
+		height: 100%;
 		text-align: center;
-		.numbers {
-			font-size: 24px;
-			line-height: 24px;
-			height: 24px;
-			text-align: center;
-			color: #9371B0;
-			font-weight: 300;
+		color: #9371B0;
+		&-middle {
+			width: 100%;
 		}
-		.label {
-			margin-top: 2px;
-			font-size: 14px;
-			line-height: 14px;
-			height: 14px;
-			text-align: center;
-			color: #9371B0;
-			font-weight: 200;
-		}
+
+	}
+	&-is-earned {
+		font-size: 10px;
+		line-height: 10px;
+		height: 10px;
+		text-align: center;
+		font-weight: 200;
+		font-style: italic;
+	}
+	&-numbers {
+		font-size: 24px;
+		line-height: 24px;
+		height: 24px;
+		text-align: center;
+		font-weight: 300;
+	}
+	&-label {
+		margin-top: 2px;
+		font-size: 14px;
+		line-height: 14px;
+		height: 14px;
+		text-align: center;
+		font-weight: 200;
 	}
 }
 
@@ -290,26 +304,68 @@ $messages-block-radius: 15px;
 .messages {
 	.chat-message {
 		text-align: left;
-		margin: 0 32px 10px 32px;
+		padding: 0 32px 20px 32px;
+		&-bid {
+			padding-right: 72px;
+			padding-left: 72px;
+			.chat-message-block {
+				width: 60%;
+				padding-right: 35px;
+			}
+		}
 		&-block {
+			position: relative;
 			width: 50%;
-			background: #C981A2;
-			color: #303030;
-			border-radius: 4px;
-			padding: 16px;
-			font-size: 15px;
-			line-height: 17px;
+
 			display: inline-block;
+			&-message {
+				background: #C981A2;
+				color: #303030;
+				border-radius: 4px;
+				padding: 16px;
+				font-size: 15px;
+				line-height: 17px;
+				position: relative;
+			}
+			&-abt {
+				position: absolute;
+				right: -40px;
+				bottom: -40px;
+			}
 		}
 		&-my {
 			text-align: right;
-			.chat-message-block {
+			.chat-message-block-message {
 				text-align: left;
 				color: #9371B0;
 				background: #F3F3F3;
 			}
 		}
+		&-buttons {
+			margin-top: 10px;
+			text-align: right;
+			&-button {
+				width: 188px;
+				height: 26px;
+				background: linear-gradient(360deg, rgba(239, 145, 159, 0.9) 0%, rgba(255, 130, 153, 0.9) 100%), rgba(255, 255, 255, 0.85);
+				border-radius: 3px;
+				font-size: 14px;
+				line-height: 26px;
+				text-align: center;
+				color: #FFFFFF;
+				border: none;
+				font-weight: 200;
+			}
+		}
 
+	}
+	.message-button {
+		background: linear-gradient(360deg, rgba(239, 145, 159, 0.9) 0%, rgba(255, 130, 153, 0.9) 100%), rgba(255, 255, 255, 0.85);
+		border-radius: 3px;
+		width: 188px;
+		height: 26px;
+		left: 690px;
+		top: 585px;
 	}
 }
 

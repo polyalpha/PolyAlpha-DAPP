@@ -178,11 +178,14 @@ export const MainBar = ({children}) => (
 
 
 
-export const AbtValue = ({value, className}) => (
+export const AbtValue = ({value, isEarned, className}) => (
 	<div className={classNames(["abt-value", className])}>
-		<div className="value">
-			<div className="numbers">{value}</div>
-			<div className="label">ABT</div>
+		<div className="abt-value-block">
+			<div className="abt-value-block-middle">
+				{isEarned && <div className="abt-value-is-earned">Earned</div>}
+				<div className="abt-value-numbers">{value}</div>
+				<div className="abt-value-label">ABT</div>
+			</div>
 		</div>
 	</div>
 );
@@ -238,11 +241,20 @@ const Chat = ({auth, title, route}) => {
 };
 
 
-export const Message = ({children, my}) => (
-	<div className={classNames(["chat-message", {"chat-message-my": my}])}>
+export const Message = ({children, my, bid, isEarned, button}) => (
+	<div className={classNames(["chat-message", {"chat-message-my": my, "chat-message-bid": !!bid}])}>
 		<div className="chat-message-block">
-			{children}
+			<div className="chat-message-block-message">
+				{children}
+				{bid && <AbtValue value={bid} isEarned={isEarned} className="chat-message-block-abt"/>}
+			</div>
+			{button &&  (
+				<div className="chat-message-buttons">
+					<button className="chat-message-buttons-button" onClick={button.handler}>{button.title}</button>
+				</div>
+			)}
 		</div>
+
 	</div>
 );
 

@@ -8,6 +8,12 @@ import classnames from "classnames"
 import {Link} from "react-router-dom"
 
 
+
+const onClickHandler = (e) => {
+	console.log(e.target)
+};
+
+
 const SearchInput = (props) => (
 	<input placeholder="Search" className="tabs-search" type="text" name="search" onChange={
 		e => console.log(e.target.value)
@@ -25,8 +31,8 @@ const Chats = ({users, match, ...props}) => {
 	};
 
 	let messages = [
-		<Message my={true} key={1}>Hey John, great to meet at TechCrunch. It is great to be able to have private conversations here.</Message>,
-		<Message key={2}>Yea I like this project because I can use it for business development as well as partnerships.</Message>
+		<Message my={true} bid={98} isEarned={false} key={1}>Hey John, great to meet at TechCrunch. It is great to be able to have private conversations here.</Message>,
+		<Message key={2} button={{title:"Add to whitelist", handler: onClickHandler}}>Yea I like this project because I can use it for business development as well as partnerships.</Message>,
 	];
 
 	return (
