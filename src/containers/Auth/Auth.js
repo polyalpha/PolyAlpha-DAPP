@@ -35,12 +35,18 @@ class Auth extends Component {
 		}
 	};
 
-	signinHandler = (e) => {
+	signinHandler = async (e) => {
 		window.WWW = e;
 		e.preventDefault();
 		LocalData.setPrivateKey(this.state.privateKey);
-		this.blockConnector.isRegistered();
-		//history.push("/chat/discover")
+
+		// Need to show LOADING
+		let isRegistered = await this.blockConnector.isRegistered();
+		if (isRegistered) {
+			history.push("/chat/discover");
+		} else {
+			history.push("/auth/signup");
+		}
 	};
 
 	render() {

@@ -1,5 +1,5 @@
 
-module.exports.NETWORK_LIST = [
+export const NETWORK_LIST = [
     {
         id: 1,
         name: 'Main Network',
@@ -20,7 +20,7 @@ module.exports.NETWORK_LIST = [
     }
 ]
 
-module.exports.ENV = {
+export const ENV = {
     get ContractAddress() {
         return this.getProperty('contractAddress');
     },
@@ -56,14 +56,14 @@ module.exports.ENV = {
     getProperty(propertyName) {
         if (typeof(Storage) !== 'undefined' && localStorage.ethNetwork != undefined) {
             var network = parseInt(localStorage.ethNetwork);
-            for (var i=0;i<module.exports.NETWORK_LIST.length;i++) {
-                if (network == module.exports.NETWORK_LIST[i].id) {
-                    return module.exports.NETWORK_LIST[i][propertyName];
+            for (var i=0;i<NETWORK_LIST.length;i++) {
+                if (network == NETWORK_LIST[i].id) {
+                    return NETWORK_LIST[i][propertyName];
                 }
             }
         } else {
             // return "";
-            return module.exports.NETWORK_LIST[0][propertyName];
+            return NETWORK_LIST[0][propertyName];
         }
     },
 

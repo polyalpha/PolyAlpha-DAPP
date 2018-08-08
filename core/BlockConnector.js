@@ -1,5 +1,5 @@
 const Utils = require('../utils/Utils');
-const Config = require('../utils/Config')
+const {ENV} = require('../src/_configs');
 
 class BlockConnector {
     constructor(web3, accountObjects) {
@@ -16,13 +16,10 @@ class BlockConnector {
     }
 
     async load() {
-        //temporarily set network
-        Config.ENV.EthNetworkId = 4;
-
         this.accounts = await this.web3.eth.getAccounts();
 
         const compiledContract = require('../ethereum/build/PACore.json');
-        this.contract = await new this.web3.eth.Contract(JSON.parse(compiledContract.interface), Config.ENV.ContractAddress);
+        this.contract = await new this.web3.eth.Contract(JSON.parse(compiledContract.interface), ENV.ContractAddress);
     }
 
     async deploy(isTesting = true) {
