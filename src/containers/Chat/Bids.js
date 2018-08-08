@@ -1,64 +1,74 @@
 import React, {Fragment, Component} from "react";
 import { connect } from 'react-redux';
-import {Chat, SideBar, UserList, MainBar, MessageContext} from "./Chat"
-import classnames from "classnames"
-import {Link} from "react-router-dom"
+import {AbtValue, ChatLayout, MessagesBlock} from "./Chat"
 
+
+const AcceptBidAndReply = ({bid, children}) => {
+
+	return (
+		<div className="message-accept-bid-and-replay">
+			<div className="message-accept-bid-and-replay-block">
+				<div className="message-accept-bid-and-replay-block-message">
+					{children}
+				</div>
+				<AbtValue value={bid} className="message-accept-bid-and-replay-block-abt" />
+				<div className="message-accept-bid-and-replay-block-buttons">
+					<button className="message-accept-bid-and-replay-block-buttons-button">Accept bid and reply</button>
+				</div>
+			</div>
+		</div>
+	)
+}
 
 
 const sideBarTabs = [
 	{
-		type: "my",
+		name: "my",
 		title: "Your bids"
 	},
 	{
-		type: "me",
+		name: "me",
 		title: "Bids for you"
 	}
 ];
 
-const BidsSideBar = ({userId, type, users}) => (
-	<SideBar name="bids">
-		<div className="top-bar">
-			<div className="tabs">
-				{sideBarTabs.map(
-					tab=><Link
-						className={classnames(["tab", {selected: tab.type === type }])}
-						key={tab.type}
-						to={`/chat/bids/${tab.type}`}
-					>{tab.title}</Link>
-				)}
-			</div>
-		</div>
-		{users && <UserList userId={userId} type={type} users={users}/>}
-	</SideBar>
-);
 
+const Bids = ({auth, match, users, ...props}) => {
+	match.params.tab = match.params.tab || sideBarTabs[0].name;
+	users = users && users || defaultUsers[sideBarTabs.findIndex(x=>x.name === match.params.tab )];
 
-const Bids = ({auth, match, users, route}) => {
-	match.params.type = match.params.type || "my";
-	users = match.params.type === "my" ? defaultMyUsers : defaultMeUsers;
+	let sidebar = {
+		name: "bids",
+		tab: match.params.tab,
+		tabs: sideBarTabs,
+		users,
+		userId: match.params.id,
+	};
+
+	let messages = [
+		<AcceptBidAndReply bid={100}>Hi Leonard, I am trying to get advice for my side project and I know you have experience in DAPPs as well as DAICO’s. May you give me your opinion on www.project.help please?</AcceptBidAndReply>
+	];
+
 	return (
-		<Fragment>
-			<BidsSideBar type={match.params.type} userId={match.params.id} users={users} />
-			<MainBar>
-			</MainBar>
-		</Fragment>
+		<ChatLayout {...props} sidebar={sidebar}>
+			{match.params.id && <MessagesBlock messages={messages}/>}
+		</ChatLayout>
 	)
 };
 
 
-const defaultMyUsers = [
-	{id: 2, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-	{id: 3, name: "John Copley", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-	{id: 4, name: "MargotRobbie", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-	{id: 5, name: "Vincent van Gogh", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-];
-
-const defaultMeUsers = [
-	{id: 2, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 100, abt:"2.33"},
-	{id: 3, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 60, abt:"0.02"},
-	{id: 4, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 80, abt:"3.01"},
+const defaultUsers = [
+	[
+		{id: 2, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", date:"Yesterday"},
+		{id: 3, name: "John Copley", avatar: "/i/avatars/adam.png", date:"Yesterday"},
+		{id: 4, name: "MargotRobbie", avatar: "/i/avatars/adam.png", date:"Yesterday"},
+		{id: 5, name: "Vincent van Gogh", avatar: "/i/avatars/adam.png", date:"Yesterday"},
+	],
+	[
+		{id: 2, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 100, abt:"2.33"},
+		{id: 3, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 60, abt:"0.02"},
+		{id: 4, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 80, abt:"3.01"},
+	]
 ];
 
 function mapStateToProps(state) {

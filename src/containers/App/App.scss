@@ -507,9 +507,7 @@ a {
 	backdrop-filter: blur(81.4488px);
 	/* Note: backdrop-filter has minimal browser support */
 	box-sizing: border-box;
-	-moz-box-sizing: border-box;
 	-webkit-box-sizing: border-box;
-	overflow: hidden;
 	border-radius: 6px;
 
 }
@@ -526,6 +524,7 @@ a {
 
 #body-chat .top-bar {
 	height: 54px;
+	border-top-right-radius: 6px;
 }
 
 #body-chat .side-bar .top-bar {

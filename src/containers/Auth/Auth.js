@@ -36,6 +36,7 @@ class Auth extends Component {
 	};
 
 	signinHandler = (e) => {
+		window.WWW = e;
 		e.preventDefault();
 		LocalData.setPrivateKey(this.state.privateKey);
 		this.blockConnector.isRegistered();
