@@ -8,9 +8,9 @@ import classnames from "classnames"
 import {Link} from "react-router-dom"
 
 
-const Bids = ({auth}) => (
+const Chats = ({auth}) => (
 	<Chat title={`Hello ${auth.user.name}`}>
-		<DiscoverSideBar type={match.params.type} userId={match.params.id} users={users} />
+		<DiscoverSideBar type={match.params.type} userId={match.params.id} users={[]} />
 		<MainBar>
 
 		</MainBar>
@@ -22,5 +22,5 @@ function mapStateToProps(state) {
 	return { auth };
 }
 
-const connectedBids = connect(mapStateToProps)(Bids);
-export { connectedBids as Bids };
+const connectedChats = connect(mapStateToProps)(Chats);
+export { connectedChats as Chats };

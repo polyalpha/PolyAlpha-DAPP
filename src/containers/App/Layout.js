@@ -4,14 +4,15 @@ import {Header} from "./Header"
 import Footer from "./Footer"
 import {SvgIcons} from "./Svg"
 import {Alert} from "./Alert";
+import {MainTitle} from "./MainTitle"
 
 //
-const Layout =  ({children}) => {
+const Layout =  ({children, root}) => {
 	return (
 		<Fragment>
 			<SvgIcons />
 			<Alert />
-			<Header />
+			<Header root={root}/>
 			<div id="main">
 				<div id="main-block">
 					{children}
@@ -24,8 +25,8 @@ const Layout =  ({children}) => {
 
 
 function mapStateToProps(state) {
-	const { alert, routing } = state;
-	return { alert, routing };
+	const { alert, routing, auth } = state;
+	return { alert, routing, auth };
 }
 
 const connectedLayout = connect(mapStateToProps)(Layout);

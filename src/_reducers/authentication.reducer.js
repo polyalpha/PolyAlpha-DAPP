@@ -1,7 +1,13 @@
 import { userConstants } from '../_constants';
 
 let user = JSON.parse(localStorage.getItem('user'));
-const initialState = user ? { loggedIn: true, user } : {};
+const initialState = user ? { loggedIn: true, user } : {
+	loggedIn: true,
+	user: {
+		name: "User Name",
+		avatar: "/i/avatars/adam.png"
+	}
+};
 
 export function authentication(state = initialState, action) {
   switch (action.type) {

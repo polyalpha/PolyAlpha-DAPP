@@ -2,7 +2,11 @@ import {
 	Root,
 	Home,
 	Signup,
-	Auth
+	Auth,
+	Chat,
+	Discover,
+	Bids,
+	Chats
 } from "./containers"
 
 import {withAuth} from "./_components/withAuth"
@@ -34,6 +38,21 @@ const routes = [
 				exact: true,
 				component: Auth,
 				title: "Login",
+			},
+			{
+				component: Chat,
+				routes: [
+					{
+						path: '/chat/discover/:type?/:id?',
+						exact: true,
+						component: Discover,
+					},
+					{
+						path: '/chat/bids/:type?/:id?',
+						exact: true,
+						component: Bids,
+					}
+				]
 			}
 		]
 	}

@@ -10,8 +10,9 @@ export class Root extends Component {
 	}
 
 	render() {
+		const root=this;
 		return (
-			<Layout>
+			<Layout root={root}>
 				{renderRoutes(this.props.route.routes)}
 			</Layout>
 		)

@@ -43,6 +43,7 @@ const Auth = (props) => {
 									className="private-key catamaran"
 									validations={[keyValidator]}
 									value="9792f5415b9848c500548328bfef34e0ca6f3604e67eaf33f3295f0465221ee7"
+									rows={1}
 								/>
 								{signin}
 							</Fragment>
@@ -62,8 +63,8 @@ const Auth = (props) => {
 
 
 const signinHandler = (e) => {
-	e.preventDefault()
-	window.fform = e.target
+	e.preventDefault();
+	history.push("/chat/discover")
 
 };
 
