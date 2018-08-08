@@ -8,6 +8,8 @@ import Textarea from 'react-validation/build/textarea';
 import "./Chat.scss"
 import classNames from "classnames"
 import {renderRoutes} from "react-router-config";
+import {history} from "../../_helpers/history";
+import {alertActions} from "../../_actions";
 
 
 export const MessageContext = React.createContext("");
@@ -126,13 +128,43 @@ export const SideBar = ({name, children}) => (
 );
 
 
-const TopBar = ({back, title, more}) => (
-	<div className="top-bar">
-		{back && <Link to={back} className="back"><Svg id="svg-back" className="icon"/>Back</Link>}
-		<div className="title">{title}</div>
-		{more && <div className="more">More</div>}
-	</div>
-);
+class TopBar extends Component {
+
+	state = {
+		isOpenMore: false
+	};
+
+	constructor(props){
+		super(props);
+		history.listen(() => {
+			this.setState({isOpenMore: false})
+		});
+	}
+
+	toggleMore = () => {
+		this.setState({isOpenMore: !this.state.isOpenMore})
+	};
+
+	render(){
+		return (
+			<div className="top-bar">
+				{this.props.back && <Link to={this.props.back} className="back"><Svg id="svg-back" className="icon"/>Back</Link>}
+				<div className="title">{this.props.title}</div>
+				{this.props.more && (
+					<div className="more">
+						<div className="more-label" onClick={this.toggleMore}>More</div>
+						{this.state.isOpenMore && (
+							<div className="more-select">
+								<div className="more-select-item">Block user</div>
+								<div className="more-select-item">Send ABT</div>
+							</div>
+						)}
+					</div>
+				)}
+			</div>
+		);
+	}
+}
 
 
 export const MainBar = ({children}) => (
@@ -156,7 +188,7 @@ export const AbtValue = ({value, className}) => (
 );
 
 
-export const ChatLayout = ({children, match, sidebar}) => {
+export const ChatLayout = ({children, match, sidebar, back}) => {
 	let {tabs, tab, name} =  sidebar;
 	return (
 		<Fragment>
@@ -178,7 +210,7 @@ export const ChatLayout = ({children, match, sidebar}) => {
 			</SideBar>
 			{children && (
 				<div className="main">
-					<TopBar title="Info" back="/chat" more={true} />
+					<TopBar title="Info" back={back} more={true} />
 					<div className="scroll">
 						{children}
 					</div>

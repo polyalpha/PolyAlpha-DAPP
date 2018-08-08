@@ -43,3 +43,27 @@ $height: 73px;
 		background: rgba(0,0,0,0.5);
 	}
 }
+
+
+.top-bar {
+	.more {
+		position: relative;
+		cursor: pointer;
+		&-select {
+			position: absolute;
+			z-index: 10;
+			top: 30px;
+			right: -30px;
+			background: #555555;
+			box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
+			border-radius: 4px;
+			padding: 14px 28px;
+			&-item {
+				white-space: nowrap;
+				font-size: 14px;
+				text-align: left;
+				color: #FFFFFF;
+			}
+		}
+	}
+}

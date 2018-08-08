@@ -166,7 +166,7 @@ const Discover = ({users, match, ...props}) => {
 	let messages = [<CreateNewBid />];
 
 	return (
-		<ChatLayout {...props} sidebar={sidebar}>
+		<ChatLayout {...props} sidebar={sidebar} back="/chat/discover">
 			{match.params.id && (
 				<MessagesBlock messages={messages}/>
 			) || <DiscoverInfo />}
