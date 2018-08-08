@@ -20,7 +20,6 @@ $messages-block-radius: 15px;
 		border-top-left-radius: $messages-block-radius;
 		border-top-right-radius: $messages-block-radius;
 		height: 380px;
-		padding-top: 25px;
 		overflow-x: hidden;
 		overflow-x: auto;
 	}
@@ -304,13 +303,16 @@ $messages-block-radius: 15px;
 .messages {
 	.chat-message {
 		text-align: left;
-		padding: 0 32px 20px 32px;
+		padding: 20px 32px 20px 32px;
 		&-bid {
 			padding-right: 72px;
 			padding-left: 72px;
 			.chat-message-block {
 				width: 60%;
-				padding-right: 35px;
+			}
+			.chat-message-buttons {
+				margin-top: 40px;
+				margin-right: -36px;
 			}
 		}
 		&-block {
@@ -330,7 +332,7 @@ $messages-block-radius: 15px;
 			&-abt {
 				position: absolute;
 				right: -40px;
-				bottom: -40px;
+				bottom: -30px;
 			}
 		}
 		&-my {
@@ -370,9 +372,11 @@ $messages-block-radius: 15px;
 }
 
 
-.message-accept-bid-and-replay {
+.chat-message-big-circle {
 	clear: both;
-	&-block {
+	margin: 0;
+	padding: 10px 0 !important;
+	.chat-message-block {
 		width: 50%;
 		display: inline-block;
 		text-align: left;
@@ -390,16 +394,18 @@ $messages-block-radius: 15px;
 			justify-content: center;
 			align-items: center;
 			border-radius: 100%;
-			text-align: center;
+			text-align: center !important;
 			display: flex;
+			width: 307px - 60px - 30px;
+			height: 307px - 60px - 100px;
 		}
 		&-abt {
 			position: absolute;
-			right: 0;
-			bottom: 60px;
+			right: -40px;
+			bottom: -5px;
 		}
-		&-buttons {
-			margin: 20px 0;
+		.chat-message-buttons {
+			margin: 10px 13px 0 0;
 			text-align: right;
 			&-button {
 				display: inline-block;

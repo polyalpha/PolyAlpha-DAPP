@@ -1,6 +1,6 @@
 import React, {Fragment, Component} from "react";
 import { connect } from 'react-redux';
-import {Chat, SideBar, UserList, MainBar, MessagesBlock, MessageContext, ChatLayout, AbtValue} from "./Chat"
+import {Chat, SideBar, UserList, MainBar, MessagesBlock, MessageContext, ChatLayout, AbtValue, Message} from "./Chat"
 import Form from 'react-validation/build/form';
 import Button from 'react-validation/build/button';
 import Input from 'react-validation/build/input';
@@ -28,9 +28,9 @@ const required = (value) => {
 export class CreateNewBid extends Component {
 
 	state = {
-		isSubmitted: false,
-		bid: 0,
-		message: "",
+		isSubmitted: true,
+		bid: 10,
+		message: "Hello",
 	};
 
 	constructor(props) {
@@ -66,7 +66,7 @@ export class CreateNewBid extends Component {
 		return (
 			<Fragment>
 				{this.state.isSubmitted && (
-					<BidMessage bid={this.state.bid} cancelHandler={this.cancelHandler}>{this.state.message}</BidMessage>
+					<Message my={true} bid={this.state.bid} button={{title: "Cancel bid", onClick:this.cancelHandler}}>{this.state.message}</Message>
 				) || (
 					<div className="create-new-bid">
 						<h2 className="raleway">Create New Bid</h2>
@@ -97,20 +97,6 @@ export class CreateNewBid extends Component {
 		)
 	}
 }
-
-
-const BidMessage = ({bid, children, cancelHandler}) => (
-	<div className="bid-message">
-		<div className="bid-message-message">
-			<div className="bid-message-message-block">{children}</div>
-			<AbtValue value={bid} className="bid-message-message-bid"/>
-		</div>
-		<div className="bid-message-buttons">
-			<button className="cancel" onClick={cancelHandler}>Cancel bid</button>
-		</div>
-	</div>
-);
-
 
 const sideBarTabs = [
 	{

@@ -1,24 +1,6 @@
 import React, {Fragment, Component} from "react";
 import { connect } from 'react-redux';
-import {AbtValue, ChatLayout, MessagesBlock} from "./Chat"
-
-
-const AcceptBidAndReply = ({bid, children}) => {
-
-	return (
-		<div className="message-accept-bid-and-replay">
-			<div className="message-accept-bid-and-replay-block">
-				<div className="message-accept-bid-and-replay-block-message">
-					{children}
-				</div>
-				<AbtValue value={bid} className="message-accept-bid-and-replay-block-abt" />
-				<div className="message-accept-bid-and-replay-block-buttons">
-					<button className="message-accept-bid-and-replay-block-buttons-button">Accept bid and reply</button>
-				</div>
-			</div>
-		</div>
-	)
-}
+import {AbtValue, ChatLayout, MessagesBlock, Message} from "./Chat"
 
 
 const sideBarTabs = [
@@ -31,6 +13,11 @@ const sideBarTabs = [
 		title: "Bids for you"
 	}
 ];
+
+
+const onClickHandler = (e) => {
+	console.log(e.target)
+};
 
 
 const Bids = ({auth, match, users, ...props}) => {
@@ -46,7 +33,7 @@ const Bids = ({auth, match, users, ...props}) => {
 	};
 
 	let messages = [
-		<AcceptBidAndReply bid={100}>Hi Leonard, I am trying to get advice for my side project and I know you have experience in DAPPs as well as DAICO’s. May you give me your opinion on www.project.help please?</AcceptBidAndReply>
+		<Message my={true} className="chat-message-big-circle" bid={100} button={{title: "Accept bid and reply", handler:onClickHandler}}>Hi Leonard, I am trying to get advice for my side project and I know you have experience in DAPPs as well as DAICO’s. May you give me your opinion on www.project.help please?</Message>
 	];
 
 	return (

@@ -241,8 +241,8 @@ const Chat = ({auth, title, route}) => {
 };
 
 
-export const Message = ({children, my, bid, isEarned, button}) => (
-	<div className={classNames(["chat-message", {"chat-message-my": my, "chat-message-bid": !!bid}])}>
+export const Message = ({children, my, bid, isEarned, button, className}) => (
+	<div className={classNames([className, "chat-message", {"chat-message-my": my, "chat-message-bid": !!bid}])}>
 		<div className="chat-message-block">
 			<div className="chat-message-block-message">
 				{children}
@@ -250,7 +250,7 @@ export const Message = ({children, my, bid, isEarned, button}) => (
 			</div>
 			{button &&  (
 				<div className="chat-message-buttons">
-					<button className="chat-message-buttons-button" onClick={button.handler}>{button.title}</button>
+					<button {...button} className="chat-message-buttons-button" >{button.title}</button>
 				</div>
 			)}
 		</div>
