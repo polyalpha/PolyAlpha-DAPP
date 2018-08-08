@@ -1,4 +1,5 @@
 const Utils = require('../utils/Utils');
+const Config = require('../utils/Config')
 
 class BlockConnector {
     constructor(web3, accountObjects) {
@@ -14,28 +15,39 @@ class BlockConnector {
         this.defaultGas = 5000000;
     }
 
-    async deploy() {
+    async load() {
+        this.accounts = await this.web3.eth.getAccounts();
+
+        const compiledContract = require('../ethereum/build/PACore.json');
+        this.contract = await new this.web3.eth.Contract(JSON.parse(compiledContract.interface), Config.ENV.ContractAddress);
+    }
+
+    async deploy(isTesting = true) {
         this.accounts = await this.web3.eth.getAccounts();
     
         const compiledTokenContract = require('../ethereum/build/PAToken.json');
         this.tokenContract = await new this.web3.eth.Contract(JSON.parse(compiledTokenContract.interface))
             .deploy({data: compiledTokenContract.bytecode, arguments: [1000000000 * this.decimals, 'PolyAlpha Demo Token', 8, 'PATD']})
             .send({from: this.accounts[0], gas: this.defaultGas});
+        if (!isTesting) console.log('Deployed PAToken contract at: ' + this.tokenContract.options.address);
     
         const compiledUserContract = require('../ethereum/build/PAUser.json');
         this.userContract = await new this.web3.eth.Contract(JSON.parse(compiledUserContract.interface))
             .deploy({data: compiledUserContract.bytecode, arguments: []})
             .send({from: this.accounts[0], gas: this.defaultGas});
+        if (!isTesting) console.log('Deployed PAUser contract at: ' + this.userContract.options.address);
     
         const compiledBidContract = require('../ethereum/build/PAAttentionBidding.json');
         this.bidContract = await new this.web3.eth.Contract(JSON.parse(compiledBidContract.interface))
             .deploy({data: compiledBidContract.bytecode, arguments: [this.userContract.options.address, this.tokenContract.options.address]})
             .send({from: this.accounts[0], gas: this.defaultGas});
+        if (!isTesting) console.log('Deployed PAAttentionBidding contract at: ' + this.bidContract.options.address);
         
         const compiledMessagingContract = require('../ethereum/build/PAMessaging.json');
         this.messagingContract = await new this.web3.eth.Contract(JSON.parse(compiledMessagingContract.interface))
             .deploy({data: compiledMessagingContract.bytecode, arguments: [this.bidContract.options.address]})
             .send({from: this.accounts[0], gas: this.defaultGas});
+        if (!isTesting) console.log('Deployed PAMessaging contract at: ' + this.messagingContract.options.address);
 
         const compiledContract = require('../ethereum/build/PACore.json');
         this.contract = await new this.web3.eth.Contract(JSON.parse(compiledContract.interface))
@@ -48,22 +60,29 @@ class BlockConnector {
                             ]
                         })
                         .send({from: this.accounts[0], gas: this.defaultGas});
+        if (!isTesting) console.log('Deployed PACore contract at: ' + this.contract.options.address);
 
         await this.tokenContract.methods.transferOwnership(this.bidContract.options.address)
             .send({from: this.accounts[0], gas: this.defaultGas});
+        if (!isTesting) console.log('Tranferred token contract to core contract');
         await this.userContract.methods.transferOwnership(this.contract.options.address)
             .send({from: this.accounts[0], gas: this.defaultGas});
+        if (!isTesting) console.log('Tranferred user contract to core contract');
         await this.bidContract.methods.transferOwnership(this.contract.options.address)
             .send({from: this.accounts[0], gas: this.defaultGas});
+        if (!isTesting) console.log('Tranferred bid contract to core contract');
         await this.messagingContract.methods.transferOwnership(this.contract.options.address)
             .send({from: this.accounts[0], gas: this.defaultGas});
+        if (!isTesting) console.log('Tranferred messaging contract to core contract');
 
-        await this.tokenContract.methods.transfer(this.accounts[1], 1000*this.decimals)
-            .send({from: this.accounts[0], gas: this.defaultGas});
-        await this.tokenContract.methods.transfer(this.accounts[2], 1000*this.decimals)
-            .send({from: this.accounts[0], gas: this.defaultGas});
-        await this.tokenContract.methods.transfer(this.accounts[3], 1000*this.decimals)
-            .send({from: this.accounts[0], gas: this.defaultGas});
+        if (isTesting) {
+            await this.tokenContract.methods.transfer(this.accounts[1], 1000*this.decimals)
+                .send({from: this.accounts[0], gas: this.defaultGas});
+            await this.tokenContract.methods.transfer(this.accounts[2], 1000*this.decimals)
+                .send({from: this.accounts[0], gas: this.defaultGas});
+            await this.tokenContract.methods.transfer(this.accounts[3], 1000*this.decimals)
+                .send({from: this.accounts[0], gas: this.defaultGas});
+        }
     }
 
     async isRegistered(fromAccountId = 0) {
