@@ -10,6 +10,7 @@ import classNames from "classnames"
 import {renderRoutes} from "react-router-config";
 import {history} from "../../_helpers/history";
 import {alertActions} from "../../_actions";
+import {MainBlock} from "../App/App";
 
 
 export const MessageContext = React.createContext("");
@@ -236,7 +237,6 @@ const Chat = ({auth, title, route}) => {
 				</div>
 			</div>
 		</Fragment>
-
 	)
 };
 

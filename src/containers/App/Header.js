@@ -9,14 +9,14 @@ import {history} from "../../_helpers/history";
 import {alertActions} from "../../_actions";
 
 
-const SelectProfileMenu = (props) => (
+const SelectProfileMenu = ({config}) => (
 	<div className="user-bar-select">
 		<div className="user-bar-select-bg" />
 		<div className="user-bar-select-menu">
-			<Link to="/profile/balance" className="user-bar-select-menu-li">Eth balance: 150.5 ETH</Link>
-			<Link to="/profile/network" className="user-bar-select-menu-li">Change network</Link>
-			<Link to="/profile/public" className="user-bar-select-menu-li">View Public address</Link>
-			<Link to="/profile/gas" className="user-bar-select-menu-li">Set gas limit</Link>
+			<Link to="/settings/balance" className="user-bar-select-menu-li">{`Eth balance: ${config.ethBalance} ETH`}</Link>
+			<Link to="/settings/network" className="user-bar-select-menu-li">Change network</Link>
+			<Link to="/settings/public" className="user-bar-select-menu-li">View Public address</Link>
+			<Link to="/settings/gas" className="user-bar-select-menu-li">Set gas limit</Link>
 			<Link to="/auth/logout" className="user-bar-select-menu-li">Log out</Link>
 		</div>
 	</div>
@@ -24,6 +24,25 @@ const SelectProfileMenu = (props) => (
 
 
 class UserBar extends Component {
+
+	render() {
+
+		return (
+			<Fragment>
+				<div id="user-bar">
+					<div className="name catamaran animate" onClick={this.props.onClick}>
+						{this.props.user.name} <Svg id="svg-select" className="icon" />
+					</div>
+					<Link className="avatar" to="/profile"><img src={this.props.user.avatar} /></Link>
+				</div>
+
+			</Fragment>
+		)
+	}
+};
+
+
+class Header extends Component {
 
 	state = {
 		isOpenMenu: false
@@ -37,46 +56,33 @@ class UserBar extends Component {
 		});
 	}
 
-	toggleMenu() {
+	toggleMenu = () => {
 		this.setState({isOpenMenu: !this.state.isOpenMenu})
-	}
+	};
 
-	render() {
-
+	render(){
+		const root = this;
 		return (
 			<Fragment>
-				<div id="user-bar">
-					<div className="name catamaran animate" onClick={this.toggleMenu}>
-						{this.props.user.name} <Svg id="svg-select" className="icon" />
+				<div id="top">
+					<Link to="/"><div id="logo" className="catamaran">PolyAlpha</div></Link>
+					<div id="menu" className="catamaran">
+						<a className="selected animate" href="#">Messenger POC</a>
+						<a className="animate" href="#">The DAICO</a>
+						<a className="animate" href="#">Give Feedback</a>
 					</div>
-					<Link className="avatar" to="/profile"><img src={this.props.user.avatar} /></Link>
+					{this.props.auth.loggedIn && <UserBar root={root} user={this.props.auth.user} onClick={this.toggleMenu}/>}
 				</div>
-				{this.state.isOpenMenu && <SelectProfileMenu />}
+				{this.state.isOpenMenu && <SelectProfileMenu config={this.props.config} />}
 			</Fragment>
 		)
 	}
-};
+}
 
 
-const Header = ({auth, root}) => {
-	console.log({root})
-	return (
-		<div id="top">
-			<Link to="/"><div id="logo" className="catamaran">PolyAlpha</div></Link>
-			<div id="menu" className="catamaran">
-				<a className="selected animate" href="#">Messenger POC</a>
-				<a className="animate" href="#">The DAICO</a>
-				<a className="animate" href="#">Give Feedback</a>
-			</div>
-			{auth.loggedIn && <UserBar root={root} user={auth.user} />}
-		</div>
-	)
-};
-
-
-function mapStateToProps(state) {
-	const { auth, alert } = state;
-	return { auth, alert };
+function mapStateToProps({ auth, alert, config }) {
+	console.log({ auth, alert, config })
+	return { auth, alert, config };
 }
 
 const connectedHeader = connect(mapStateToProps)(Header);

@@ -13,19 +13,14 @@ const Layout =  ({children, root}) => {
 			<SvgIcons />
 			<Alert />
 			<Header root={root}/>
-			<div id="main">
-				<div id="main-block">
-					{children}
-				</div>
-			</div>
+			{children}
 			<Footer />
 		</Fragment>
 	)
 };
 
 
-function mapStateToProps(state) {
-	const { alert, routing, auth } = state;
+function mapStateToProps({ alert, routing, auth }) {
 	return { alert, routing, auth };
 }
 

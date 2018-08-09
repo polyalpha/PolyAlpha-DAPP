@@ -8,12 +8,14 @@ $height: 73px;
 	width: 100%;
 	height: $height;
 	background: #FEFAFE;
+	position: relative;
+	z-index: 10;
 }
 
 .user-bar-select {
 	&-menu {
 		background: #FEFAFE;
-		z-index: 9999;
+		z-index: 99999;
 		position: absolute;
 		top: $height;
 		right: 83px;

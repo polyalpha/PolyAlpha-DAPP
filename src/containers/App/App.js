@@ -29,6 +29,17 @@ class App extends Component {
 	}
 }
 
+
+export const MainBlock = ({route, children}) => (
+	<div id="main">
+		<div id="main-block">
+			{route && renderRoutes(route.routes)}
+			{children}
+		</div>
+	</div>
+
+);
+
 export const Context = React.createContext({
 	app: null,
 	title:"Default",
@@ -47,12 +58,8 @@ export const withContext = (WrapperComponent, app) => (
 
 
 
-function mapStateToProps(state) {
-	const { alert, auth, registration } = state;
-	return {
-		alert,
-		auth
-	};
+function mapStateToProps({ alert, auth }) {
+	return { alert, auth };
 }
 
 const connectedApp = connect(mapStateToProps)(App);

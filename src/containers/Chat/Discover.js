@@ -28,9 +28,9 @@ const required = (value) => {
 export class CreateNewBid extends Component {
 
 	state = {
-		isSubmitted: true,
-		bid: 10,
-		message: "Hello",
+		isSubmitted: false,
+		bid: 0,
+		message: "",
 	};
 
 	constructor(props) {

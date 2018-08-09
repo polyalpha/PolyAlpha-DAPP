@@ -9,6 +9,9 @@ import {
 	Chats
 } from "./containers"
 
+import {SettingsGas, SettingsNetwork, Settings} from './containers/Settings/Settings'
+import {MainBlock} from './containers/App/App'
+
 import {withAuth} from "./_components/withAuth"
 
 
@@ -17,51 +20,79 @@ const routes = [
 		component: Root,
 		routes: [
 			{
-				path: '/',
-				exact: true,
-				component: withAuth(Home),
-			},
-			{
-				path: '/auth',
-				exact: true,
-				component: Auth,
-				title: "Auth"
-			},
-			{
-				path: '/auth/signup',
-				exact: true,
-				component: Signup,
-				title: "Signup",
-			},
-			{
-				path: '/auth/signin',
-				exact: true,
-				component: Auth,
-				title: "Login",
-			},
-			{
-				component: Chat,
+				component: Settings,
+				path: '/settings',
 				routes: [
 					{
-						path: '/chat/discover/:tab?/:id?',
+						path: '/settings/network',
 						exact: true,
-						component: Discover,
+						component: SettingsNetwork,
 					},
 					{
-						path: '/chat/bids/:tab?/:id?',
+						path: '/settings/public',
 						exact: true,
-						component: Bids,
-					}
-					,
+						component: SettingsGas,
+					},
 					{
-						path: '/chat/chats/:tab?/:id?',
+						path: '/settings/gas',
 						exact: true,
-						component: Chats,
+						component: SettingsGas,
+					},
+				]
+			},
+			{
+				component: MainBlock,
+				routes: [
+					{
+						path: '/',
+						exact: true,
+						component: withAuth(Home),
+					},
+					{
+						path: '/auth',
+						exact: true,
+						component: Auth,
+						title: "Auth"
+					},
+					{
+						path: '/auth/signup',
+						exact: true,
+						component: Signup,
+						title: "Signup",
+					},
+					{
+						path: '/auth/signin',
+						exact: true,
+						component: Auth,
+						title: "Login",
+					},
+					{
+						component: Chat,
+						routes: [
+							{
+								path: '/chat/discover/:tab?/:id?',
+								exact: true,
+								component: Discover,
+							},
+							{
+								path: '/chat/bids/:tab?/:id?',
+								exact: true,
+								component: Bids,
+							}
+							,
+							{
+								path: '/chat/chats/:tab?/:id?',
+								exact: true,
+								component: Chats,
+							}
+						]
 					}
 				]
-			}
+			},
+
 		]
-	}
+	},
+
 ];
 
 

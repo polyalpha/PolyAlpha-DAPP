@@ -33,7 +33,7 @@ const Bids = ({auth, match, users, ...props}) => {
 	};
 
 	let messages = [
-		<Message my={true} className="chat-message-big-circle" bid={100} button={{title: "Accept bid and reply", handler:onClickHandler}}>Hi Leonard, I am trying to get advice for my side project and I know you have experience in DAPPs as well as DAICO’s. May you give me your opinion on www.project.help please?</Message>
+		<Message my={true} className="chat-message-big-circle" bid={100} button={{title: "Accept bid and reply", onClick:onClickHandler}}>Hi Leonard, I am trying to get advice for my side project and I know you have experience in DAPPs as well as DAICO’s. May you give me your opinion on www.project.help please?</Message>
 	];
 
 	return (

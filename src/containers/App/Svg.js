@@ -32,6 +32,13 @@ export const SvgIcons = () => (
 				<path d="M0 0V7H1V0H0Z" transform="translate(9 7)" stroke="transparent"/>
 				<path d="M0 6L5 0L10 6L5 2L0 6Z" transform="translate(4.5 5)" stroke="transparent"/>
 			</g>
+			<g id="svg-close">
+				<line x1="1" y1="-1" x2="27.2843" y2="-1" transform="translate(0 1.21313) rotate(45)" fill="transparent" strokeWidth="2" strokeLinecap="round"/>
+				<line x1="1" y1="-1" x2="27.2843" y2="-1" transform="translate(20) rotate(135)" fill="transparent" strokeWidth="2" strokeLinecap="round"/>
+			</g>
+			<rect id="svg-li-1" width="6" height="6" transform="translate(5 0.757324) rotate(45)" stroke="transparent"/>
+			<rect id="svg-li-2" width="6" height="6" stroke="transparent"/>
+			<rect id="svg-li-3" width="6" height="6" rx="3" stroke="transparent"/>
 		</defs>
 	</svg>
 )
