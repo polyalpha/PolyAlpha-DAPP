@@ -22,7 +22,7 @@ class Auth extends Component {
 	}
 
 	loadContract = async () => {
-		this.blockConnector = new BlockConnector(web3, []);
+		this.blockConnector = new BlockConnector(web3, [{secretKey: Buffer.from(LocalData.getPrivateKey(), 'hex'), address: LocalData.getAddress()}]);
 		await this.blockConnector.load();
 		console.log('Connected to smart contracts');
 	}
@@ -42,6 +42,7 @@ class Auth extends Component {
 
 		// Need to show LOADING
 		let isRegistered = await this.blockConnector.isRegistered();
+		console.log(isRegistered);
 		if (isRegistered) {
 			history.push("/chat/discover");
 		} else {

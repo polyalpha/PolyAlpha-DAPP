@@ -9,7 +9,7 @@ const testAccounts = require('../utils/testAccounts');
 
 let web3 = new Web3(ganache.provider({accounts: testAccounts}));
 
-const connector = new BlockConnector(web3, testAccounts);
+const connector = new BlockConnector(web3, testAccounts, true);
 
 describe('PolyAlpha core contract testing', function() {
     this.timeout(90000);

@@ -3,11 +3,11 @@
 
 const EventEmitter = require('events');
 // import Constant from '../support/Constant';
-const {ENV} = require('../src/_configs');
+const {ENV} = require('../src/_configs/Config');
 // import {Dispatcher} from 'flux';
 const web3 = require('../ethereum/web3');
 const Tx = require('ethereumjs-tx');
-const {txConstants} = require('../src/_constants');
+const {txConstants} = require('../src/_constants/tx.constants');
 
 class TransactionsManager {
     constructor(account, askForTransactionApproval) {

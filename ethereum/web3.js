@@ -1,5 +1,5 @@
 const Web3 = require('web3');
-const {ENV} = require('../src/_configs');
+const {ENV} = require('../src/_configs/Config');
 
 let web3;
 

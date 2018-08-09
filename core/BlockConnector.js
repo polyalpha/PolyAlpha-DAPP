@@ -1,5 +1,5 @@
 const Utils = require('../utils/Utils');
-const {ENV} = require('../src/_configs');
+const {ENV} = require('../src/_configs/Config');
 const TransactionManager = require('./TransactionManager');
 
 class BlockConnector {
@@ -10,28 +10,27 @@ class BlockConnector {
         if (isTesting == false && accountObjects.length > 0) {
             this.transactionManager = new TransactionManager(accountObjects[0], false);
         }
+
+        this.accounts = [];
+        for (var i=0;i<this.accountObjects.length;i++) {
+            this.accounts.push(this.accountObjects[i].address);
+        }
+
         this.contract;
         this.tokenContract;
         this.userContract;
         this.messagingContract;
         this.bidContract;
-        this.accounts;
         this.decimals = 100000000;
         this.defaultGas = 5000000;
     }
 
     async load() {
-        this.accounts = await this.web3.eth.getAccounts();
-
-        console.log(this.accounts);
-
         const compiledContract = require('../ethereum/build/PACore.json');
         this.contract = await new this.web3.eth.Contract(JSON.parse(compiledContract.interface), ENV.ContractAddress);
     }
 
-    async deploy() {
-        this.accounts = await this.web3.eth.getAccounts();
-    
+    async deploy() {    
         const compiledTokenContract = require('../ethereum/build/PAToken.json');
         this.tokenContract = await new this.web3.eth.Contract(JSON.parse(compiledTokenContract.interface))
             .deploy({data: compiledTokenContract.bytecode, arguments: [1000000000 * this.decimals, 'PolyAlpha Demo Token', 8, 'PATD']})
@@ -108,6 +107,10 @@ class BlockConnector {
         return await this.contract.methods.getUser(this.accounts[fromAccountId]).call();
     }
 
+    async getBid(toId, fromAccountId = 0) {
+        return await this.contract.methods.getBid(this.accounts[fromAccountId], this.accounts[toId]).call();
+    }
+
     async sendTransaction(method, fromAccountId) {
         if (this.isTesting) {
             await method.send({from: this.accounts[fromAccountId], gas: this.defaultGas});
@@ -132,10 +135,6 @@ class BlockConnector {
     async updateProfile(username, name, avatarUrl, extra = "", fromAccountId = 0) {
         await this.sendTransaction(this.contract.methods.updateProfile(Utils.stringToHex(username), Utils.stringToHex(name), 
             Utils.stringToHex(avatarUrl), Utils.stringToHex(extra)), fromAccountId);
-    }
-
-    async getBid(toId, fromAccountId = 0) {
-        return await this.contract.methods.getBid(this.accounts[fromAccountId], this.accounts[toId]).call();
     }
 
     async createBid(toId, tokenAmount, message = "", fromAccountId = 0) {
