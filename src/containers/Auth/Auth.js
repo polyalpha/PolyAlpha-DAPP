@@ -24,7 +24,7 @@ class Auth extends Component {
 	loadContract = async () => {
 		this.blockConnector = new BlockConnector(web3, []);
 		await this.blockConnector.load();
-		console.log('done load contract: ' + this.blockConnector.contract.options.address);
+		console.log('Connected to smart contracts');
 	}
 
 	keyValidator = () => {
