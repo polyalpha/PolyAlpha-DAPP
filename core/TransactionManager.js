@@ -1,82 +1,85 @@
 // Copyright (c) 2018 Nguyen Vu Nhat Minh
 // Distributed under the MIT software license, see the accompanying file LICENSE
 
-import EventEmitter from 'events';
-import Constant from '../support/Constant';
-import Config from '../support/Config';
-import {Dispatcher} from 'flux';
-import web3 from '../ethereum/web3';
-import Tx from 'ethereumjs-tx';
+const EventEmitter = require('events');
+// import Constant from '../support/Constant';
+const {ENV} = require('../src/_configs/Config');
+// import {Dispatcher} from 'flux';
+const web3 = require('../ethereum/web3');
+const Tx = require('ethereumjs-tx');
+const {txConstants} = require('../src/_constants/tx.constants');
 
 class TransactionsManager {
-    constructor(account) {
+    constructor(account, askForTransactionApproval) {
         this.account = account;
+        this.askForTransactionApproval = askForTransactionApproval;
         this.numPendingTx = 0;      // Number of pending Ethereum transactions
         this.emitterMapping = {};   // A mapping of an increamental id with an event emitter in order
                                     // to emit user approval and transaction results.
 
         this.emitterIncrementalId = 0; // will be increased everytime executeMethod get called
-        this.dispatcher = new Dispatcher();
+        // this.dispatcher = new Dispatcher();
 
-        this.dispatcher.register((payload) => {
-            if (payload.action == Constant.ACTION.APPROVE_TRANSACTION) {
-                this.approveTransaction(payload.transactionId, payload.gasPrice, payload.gasAmount, payload.method);
-            } else if (payload.action == Constant.ACTION.REJECT_TRANSACTION) {
-                this.rejectTransaction(payload.transactionId);
-            }
-        })
+        // this.dispatcher.register((payload) => {
+        //     if (payload.action == Constant.ACTION.APPROVE_TRANSACTION) {
+        //         this.approveTransaction(payload.transactionId, payload.gasPrice, payload.gasAmount, payload.method);
+        //     } else if (payload.action == Constant.ACTION.REJECT_TRANSACTION) {
+        //         this.rejectTransaction(payload.transactionId);
+        //     }
+        // })
     }
 
-    /**
-     * @description Get called when user click on Approve button from a TransactionModal
-     */
-    approveTransaction = async (transactionId, gasPrice, gasAmount, method) => {
+    // /**
+    //  * @description Get called when user click on Approve button from a TransactionModal
+    //  */
+    async approveTransaction(transactionId, gasPrice, gasAmount, method) {
         var emitter = this.emitterMapping[transactionId];
 
         var data = method.encodeABI();
-        var transactionCount = await web3.eth.getTransactionCount(this.account.getAddress());
+        var transactionCount = await web3.eth.getTransactionCount(this.account.address);
 
         var rawTx = {
             nonce: parseInt(transactionCount + this.numPendingTx),
             gasPrice: parseInt(gasPrice),
             gasLimit: parseInt(gasAmount),
-            to: Config.ENV.ContractAddress,
+            to: ENV.ContractAddress,
             value: 0,
             data: data
         }
         var tx = new Tx(rawTx);
-        tx.sign(this.account.getPrivateKeyBuffer());
+        tx.sign(this.account.secretKey);
         var serializedTx = tx.serialize();
         var txHash =  '0x' + tx.hash().toString('hex');
 
         this.updatePendingTx(this.numPendingTx+1);
+        console.log(serializedTx.toString('hex'));
         web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
                 .on('receipt', (receipt) => {
                     this.updatePendingTx(this.numPendingTx-1);
-                    emitter.emit(Constant.EVENT.ON_RECEIPT, receipt);
+                    emitter.emit(txConstants.ON_RECEIPT, receipt);
                 }).on('error', (err, data) => {
                     this.updatePendingTx(this.numPendingTx-1);
-                    emitter.emit(Constant.EVENT.ON_ERROR, err, txHash);
+                    emitter.emit(txConstants.ON_ERROR, err, txHash);
                 });
-        emitter.emit(Constant.EVENT.ON_APPROVED, txHash);
+        emitter.emit(txConstants.ON_APPROVED, txHash);
     }
 
     /**
      * @description Get called when user click on Approve button from a TransactionModal
      */
-    rejectTransaction = (transactionId) => {
+    rejectTransaction(transactionId) {
         var emitter = this.emitterMapping[transactionId];
-        emitter.emit(Constant.EVENT.ON_REJECTED);
+        emitter.emit(txConstants.ON_REJECTED);
 
         delete this.emitterMapping[transactionId];
     }
 
     updatePendingTx(numPendingTx) {
         this.numPendingTx = numPendingTx;
-        this.dispatcher.dispatch({
-            action: Constant.EVENT.PENDING_TRANSACTION_UPDATED,
-            numPendingTx: this.numPendingTx
-        });
+        // this.dispatcher.dispatch({
+        //     action: txConstants.PENDING_TRANSACTION_UPDATED,
+        //     numPendingTx: this.numPendingTx
+        // });
     }
 
     /**
@@ -88,12 +91,12 @@ class TransactionsManager {
         var emitter = new EventEmitter();
         this.emitterMapping[this.emitterIncrementalId] = emitter;
 
-        if (this.account.askForTransactionApproval) {
-            this.dispatcher.dispatch({
-                action: Constant.ACTION.OPEN_TRANSACTION_MODAL,
-                method: method,
-                transactionId: this.emitterIncrementalId
-            });
+        if (this.askForTransactionApproval) {
+            // this.dispatcher.dispatch({
+            //     action: Constant.ACTION.OPEN_TRANSACTION_MODAL,
+            //     method: method,
+            //     transactionId: this.emitterIncrementalId
+            // });
         } else {
             this.automaticallyApproveTransaction(this.emitterIncrementalId, method);
         }
@@ -105,7 +108,7 @@ class TransactionsManager {
      * @description Approve a transaction without asking for user permission. Gas price will be
      * calculated automatically
      */
-    automaticallyApproveTransaction = async (transactionId, method) => {
+    async automaticallyApproveTransaction(transactionId, method) {
         var estimatedGas;
         try {
             estimatedGas = await method.estimateGas({
@@ -114,6 +117,7 @@ class TransactionsManager {
         } catch(err) {
             estimatedGas = 3000000;
         }
+        console.log(web3);
         var gasPrice = await web3.eth.getGasPrice();
         this.approveTransaction(transactionId, gasPrice, estimatedGas, method);
     }

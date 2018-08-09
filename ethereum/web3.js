@@ -1,5 +1,5 @@
-import Web3 from 'web3';
-import {ENV} from '../src/_configs';
+const Web3 = require('web3');
+const {ENV} = require('../src/_configs/Config');
 
 let web3;
 
@@ -9,4 +9,4 @@ ENV.EthNetworkId = 4;
 const provider = new Web3.providers.HttpProvider(ENV.ProviderUrl);
 web3 = new Web3(provider);
 
-export default web3;
+module.exports = web3;

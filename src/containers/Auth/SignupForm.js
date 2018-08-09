@@ -1,48 +1,59 @@
-import React, {Fragment, Component} from "react";
+import React, {Component} from "react";
 import Form from 'react-validation/build/form';
 import Input from 'react-validation/build/input';
 import {Button} from './Button';
-import $ from "jquery"
-import {userActions} from "../../_actions";
 import { connect } from 'react-redux';
-
-
-
-const avatarsPath = "/i/avatars";
-const defaultAvatars = ["sandy.png","sandy.png","sandy.png","sandy.png","sandy.png","sandy.png","sandy.png",
-	"sandy.png","sandy.png"];
+import {history} from "../../_helpers";
+import BlockConnector from '../../_services/BlockConnector';
+import LocalData from '../../_services/LocalData';
+import web3 from '../../_services/web3';
+import {txConstants} from '../../_constants';
 
 
 class SignupForm extends Component {
 
 	state = {
 		username: "",
-		selectAvatar: "",
-		fileAvatar: ""
+		displayName: "",
+		avatarUrl: ""
 	};
 
 	constructor(props) {
 		super(props);
-		this.selectAvatar = this.selectAvatar.bind(this);
-		this.handleSubmit = this.handleSubmit.bind(this);
-		this.saveValue = this.saveValue.bind(this)
+		this.loadContract();
 	}
 
-	selectAvatar(e) {
-		const $el = $(e.target);
-		$(".select-avatar .selected").removeClass("selected");
-		$el.addClass("selected");
-		this.setState({selectAvatar: $el.attr("data-value")})
+	loadContract = async () => {
+		this.blockConnector = new BlockConnector(web3, [{secretKey: Buffer.from(LocalData.getPrivateKey(), 'hex'), address: LocalData.getAddress()}]);
+		await this.blockConnector.load();
+		console.log('Connected to smart contracts');
 	}
 
-	handleSubmit(e) {
+	handleSubmit = async(e) => {
 		console.log(this.state);
 		e.preventDefault();
-		this.props.dispatch(userActions.register(this.state))
-	}
+		
+		// Check if username is exists
+		let available = await this.blockConnector.isUsernameAvailable(this.state.username);
+		if (available) {
+			console.log('send form');
+			let result = await this.blockConnector.register(this.state.username, this.state.displayName, this.state.avatarUrl);
+			result.on(txConstants.ON_RECEIPT, (receipt) => {
+				// console.log('Transaction success');
+				// console.log(receipt);
+				history.push("/chat/discover");
+			}).on (txConstants.ON_ERROR, (err, txHash) => {
+				// console.log('transaction error: ' + txHash);
+			}).on(txConstants.ON_APPROVE, (txHash) => {
+				// console.log('transaction approved: ' + txHash);
+			})
+			
+		} else {
+			console.log('Username is already exists');
+			// Show error: Username is already exists
+		}
 
-	saveValue(e) {
-		this.setState({[e.target.name]:e.target.value})
+		// this.props.dispatch(userActions.register(this.state))
 	}
 
 	render() {
@@ -51,44 +62,51 @@ class SignupForm extends Component {
 				<div className="row">
 					<div className="form-row">
 						<label>Username</label>
-						{/*<input name="username" className="input" type="text" placeholder="Type in a username you want to create"  />*/}
 						<Input
 							autoFocus
 							placeholder="Type in a username you want to create"
 							type="text"
 							name="username"
 							className="input"
-							validations={[required, isName]}
-							onChange={this.saveValue}
+							validations={[required, isName, lengthCheck]}
+							value={this.state.username}
+							onChange={(e) => this.setState({username: e.target.value})}
 						/>
 					</div>
 				</div>
+
 				<div className="row">
-					<Input
-						type="hidden"
-						name="selectAvatar"
-						className="input"
-						value={this.state.selectAvatar}
-					/>
-					<label>Avatar</label>
-					<div className="placeholder">Select an avatar</div>
-					<div className="select-avatar">
-						{defaultAvatars.map((x, i)=>{
-							return (
-								<div key={i} className="avatar" data-value={x} onClick={this.selectAvatar}
-								style={{backgroundImage: `url(${avatarsPath+"/"+x})`}}>
-								</div>
-							)
-						})}
-						<div className="avatar animate upload">
-							<input name="fileAvatar" type="file" onChange={this.saveValue}/>
-							<div className="text animate">Upload your own</div>
-						</div>
+					<div className="form-row">
+						<label>Display name</label>
+						<Input
+							autoFocus
+							placeholder="Type in your name"
+							type="text"
+							name="displayName"
+							className="input"
+							validations={[required, lengthCheck]}
+							value={this.state.displayName}
+							onChange={(e) => this.setState({displayName: e.target.value})}
+						/>
 					</div>
+				</div>
+
+
+				<div className="row">
+					<label>Avatar URL</label>
+					<Input
+							placeholder="Enter your avatar URL"
+							type="text"
+							name="avatarUrl"
+							className="input"
+							validations={[required, lengthCheck]}
+							value={this.state.avatarUrl}
+							onChange={(e) => this.setState({avatarUrl: e.target.value})}
+						/>
 				</div>
 				<div className="row">
 					<Button icon="svg-lightning" className="button catamaran">
-						I'm new, create an address pair for me
+						Sign up
 					</Button>
 				</div>
 			</Form>
@@ -114,6 +132,12 @@ const isName = (value) => {
 		return <FormError>Bad name</FormError>
 	}
 };
+
+const lengthCheck = (value) => {
+	if (value.length > 32) {
+		return <FormError>Value is too long</FormError>
+	}
+}
 
 
 function mapStateToProps(state) {
