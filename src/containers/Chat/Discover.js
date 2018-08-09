@@ -128,7 +128,7 @@ const DiscoverInfo = (props) => (
 				<p>Chatting to people not in your contacts requires a bid but this is free for this proof of concept
 					DAPP.</p>
 				<p>Friends in your contacts are free to communicate with.</p>
-				<p>This DAPP runs on Ethereum test next so messages are not fast or private.</p>
+				<p>This DAPP runs on Ethereum testnet so messages are not fast or private.</p>
 				<p>Enjoy PolyAlpha and please send us your thoughts.</p>
 			</div>
 		</div>
