@@ -33,7 +33,7 @@ class UserBar extends Component {
 					<div className="name catamaran animate" onClick={this.props.onClick}>
 						{this.props.user.name} <Svg id="svg-select" className="icon" />
 					</div>
-					<Link className="avatar" to="/profile"><img src={this.props.user.avatar} /></Link>
+					<Link className="avatar" to="/settings"><img src={this.props.user.avatar} /></Link>
 				</div>
 
 			</Fragment>

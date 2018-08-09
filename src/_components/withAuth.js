@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 
 export const withAuth = (WrapperComponent) => {
-	const c = (props) => props.auth.isAuth
+	const c = (props) => props.auth.loggedIn
 		? (
 			<WrapperComponent {...props} />
 		) : (

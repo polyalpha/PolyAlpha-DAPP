@@ -10,26 +10,43 @@ import {Link} from "react-router-dom"
 import Form from 'react-validation/build/form';
 import Input from 'react-validation/build/input';
 import Button from 'react-validation/build/button';
+import {MainBlock} from "../App/App";
+import {MainTitle} from "../App/MainTitle";
 
 
 export const Settings = ({route, className}) => {
-		console.log("render Settings", route);
-		return (
-				<div className={classnames(["config-window", className])}>
-					<div className="config-window-bg" />
-					<div className="config-window-window">
-						<div className="config-window-window-block">
-							<div className="config-window-window-close">
-								<Svg id="svg-close" />
-							</div>
-							<div className="config-window-window-block-content">
-								{route && renderRoutes(route.routes)}
-							</div>
-						</div>
+	console.log("render Settings", route);
+	return (
+		<div className={classnames(["config-window", className])}>
+			<div className="config-window-bg" />
+			<div className="config-window-window">
+				<div className="config-window-window-block">
+					<div className="config-window-window-close">
+						<Svg id="svg-close" />
+					</div>
+					<div className="config-window-window-block-content">
+						{route && renderRoutes(route.routes)}
 					</div>
 				</div>
-		)
+			</div>
+		</div>
+	)
 };
+
+const SettingsMain = ({config, route}) => (
+	<MainBlock>
+		<MainTitle>{route.title}</MainTitle>
+		<div className="settings-main">
+			<h2>Leonard, here are the configurations for your messenger.</h2>
+			<div>
+				<div>Your Ethereum balance is: {config.ethBalance} ETH</div>
+				<div>You are on the <b>{config.network}</b></div>
+				<div>Your public address is <b>{config.publicAddress}</b></div>
+				<div>Your gas limit is <b>{config.gasLimit}</b>.</div>
+			</div>
+		</div>
+	</MainBlock>
+);
 
 
 
@@ -47,7 +64,7 @@ const SettingsNetwork = ({config, dispatch}) => {
 			<div className="settings-network-list">
 				{nn.map(x=>{
 					return (
-						<div className="settings-network-list-item">
+						<div key={x[1]} className="settings-network-list-item">
 							<Svg id={x[0]} className="icon"/>
 							{x[1]}
 						</div>
@@ -108,3 +125,6 @@ export {connectedSettingsGas as SettingsGas}
 
 const connectedSettingsNetwork = connect(mapStateToProps)(SettingsNetwork);
 export {connectedSettingsNetwork as SettingsNetwork}
+
+const connectedSettingsMain = connect(mapStateToProps)(SettingsMain);
+export {connectedSettingsMain as SettingsMain}

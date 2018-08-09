@@ -9,7 +9,7 @@ import {
 	Chats
 } from "./containers"
 
-import {SettingsGas, SettingsNetwork, Settings} from './containers/Settings/Settings'
+import {SettingsGas, SettingsNetwork, Settings, SettingsMain} from './containers/Settings/Settings'
 import {MainBlock} from './containers/App/App'
 
 import {withAuth} from "./_components/withAuth"
@@ -21,7 +21,7 @@ const routes = [
 		routes: [
 			{
 				component: Settings,
-				path: '/settings',
+				path: '/settings/:name',
 				routes: [
 					{
 						path: '/settings/network',
@@ -65,6 +65,12 @@ const routes = [
 						exact: true,
 						component: Auth,
 						title: "Login",
+					},
+					{
+						path: '/settings',
+						exact: true,
+						component: SettingsMain,
+						title: "Settings",
 					},
 					{
 						component: Chat,
