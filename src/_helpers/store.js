@@ -10,5 +10,5 @@ export const store = createStore(
     applyMiddleware(
         thunkMiddleware,
         loggerMiddleware
-    )
+    ), window.devToolsExtension && window.devToolsExtension()
 );
