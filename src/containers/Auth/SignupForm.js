@@ -4,9 +4,7 @@ import Input from 'react-validation/build/input';
 import {Button} from './Button';
 import { connect } from 'react-redux';
 import {history} from "../../_helpers";
-import BlockConnector from '../../_services/BlockConnector';
 import LocalData from '../../_services/LocalData';
-import web3 from '../../_services/web3';
 import {txConstants} from '../../_constants';
 
 
@@ -20,13 +18,6 @@ class SignupForm extends Component {
 
 	constructor(props) {
 		super(props);
-		this.loadContract();
-	}
-
-	loadContract = async () => {
-		this.blockConnector = new BlockConnector(web3, [{secretKey: Buffer.from(LocalData.getPrivateKey(), 'hex'), address: LocalData.getAddress()}]);
-		await this.blockConnector.load();
-		console.log('Connected to smart contracts');
 	}
 
 	handleSubmit = async(e) => {
@@ -34,10 +25,10 @@ class SignupForm extends Component {
 		e.preventDefault();
 		
 		// Check if username is exists
-		let available = await this.blockConnector.isUsernameAvailable(this.state.username);
+		let available = await this.props.contract.isUsernameAvailable(this.state.username);
 		if (available) {
 			console.log('send form');
-			let result = await this.blockConnector.register(this.state.username, this.state.displayName, this.state.avatarUrl);
+			let result = await this.props.contract.register(this.state.username, this.state.displayName, this.state.avatarUrl);
 			result.on(txConstants.ON_RECEIPT, (receipt) => {
 				// console.log('Transaction success');
 				// console.log(receipt);
@@ -142,8 +133,8 @@ const lengthCheck = (value) => {
 
 
 function mapStateToProps(state) {
-	const { auth } = state;
-	return { auth };
+	const { auth, contract } = state;
+	return { auth, contract };
 }
 
 const connectedSignupForm = connect(mapStateToProps)(SignupForm);

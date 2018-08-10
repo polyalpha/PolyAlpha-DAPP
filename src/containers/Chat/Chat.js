@@ -281,8 +281,8 @@ const defaultTopUsers = [
 
 
 function mapStateToProps(state) {
-	const { auth } = state;
-	return { auth, users:defaultUsers };
+	const { auth, contract } = state;
+	return { auth, users:defaultUsers, contract };
 }
 
 const connectedChat = connect(mapStateToProps)(Chat);

@@ -5,17 +5,7 @@ const TransactionManager = require('./TransactionManager');
 class BlockConnector {
     constructor(web3, accountObjects, isTesting = false) {
         this.web3 = web3;
-        this.accountObjects = accountObjects;
         this.isTesting = isTesting;
-        if (isTesting == false && accountObjects.length > 0) {
-            this.transactionManager = new TransactionManager(accountObjects[0], false);
-        }
-
-        this.accounts = [];
-        for (var i=0;i<this.accountObjects.length;i++) {
-            this.accounts.push(this.accountObjects[i].address);
-        }
-
         this.contract;
         this.tokenContract;
         this.userContract;
@@ -23,6 +13,19 @@ class BlockConnector {
         this.bidContract;
         this.decimals = 100000000;
         this.defaultGas = 5000000;
+
+        this.setAccounts(accountObjects);
+    }
+
+    setAccounts(accountObjects) {
+        this.accountObjects = accountObjects;
+        if (this.isTesting == false && accountObjects.length > 0) {
+            this.transactionManager = new TransactionManager(accountObjects[0], false);
+        }
+        this.accounts = [];
+        for (var i=0;i<this.accountObjects.length;i++) {
+            this.accounts.push(this.accountObjects[i].address);
+        }
     }
 
     async load() {

@@ -3,6 +3,7 @@ import {Router} from "react-router";
 import {renderRoutes} from "react-router-config"
 import {history} from "../../_helpers/history";
 import { alertActions } from '../../_actions';
+import { contractActions } from '../../_actions';
 import { connect } from 'react-redux';
 import "./App.scss"
 
@@ -15,6 +16,7 @@ class App extends Component {
 		history.listen(() => {
 			this.props.alert.message && this.props.dispatch(alertActions.clear());
 		});
+		// this.props.dispatch(contractActions.load())
 	}
 
 	render(){

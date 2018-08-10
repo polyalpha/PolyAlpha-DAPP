@@ -39,18 +39,19 @@ class Auth extends Component {
 		window.WWW = e;
 		e.preventDefault();
 		LocalData.setPrivateKey(this.state.privateKey);
+		this.props.contract.setAccounts([{secretKey: Buffer.from(LocalData.getPrivateKey(), 'hex'), address: LocalData.getAddress()}]);
 
-		console.log(this.props);
+		// console.log(this.props);
 
 		// Need to show LOADING
-		// let isRegistered = await this.blockConnector.isRegistered();
-		// console.log(isRegistered);
-		// if (isRegistered) {
-		// 	LocalData.setLoggedIn();
-		// 	history.push("/chat/discover");
-		// } else {
-		// 	history.push("/auth/signup");
-		// }
+		let isRegistered = await this.props.contract.isRegistered();
+		console.log(isRegistered);
+		if (isRegistered) {
+			LocalData.setLoggedIn();
+			history.push("/chat/discover");
+		} else {
+			history.push("/auth/signup");
+		}
 	};
 
 	render() {
