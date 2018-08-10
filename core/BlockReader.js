@@ -29,7 +29,10 @@ class BlockReader {
 
         this.myAddress = LocalData.getAddress();
         this.myAddressTopic = this.myAddress.slice(0, 2) + '000000000000000000000000' + this.myAddress.slice(2, this.myAddress.length);
-        console.log('my address:' + this.myAddress);
+
+        if (this.myAddress != "") {
+            this.startRunLoop();
+        }
     }
 
     async startRunLoop() {
@@ -92,9 +95,11 @@ class BlockReader {
             let values = userEvents[i].returnValues;
             if (name == 'UserJoined') {
                 LocalData.addUser(values.sender, values.publicKeyLeft, values.publicKeyRight,
-                    values.name, values.avatarUrl);
+                    Utils.hexToString(values.username), Utils.hexToString(values.name), Utils.hexToString(values.avatarUrl), 
+                    userEvents[i].blockNumber);
             } else if (name == 'UserProfileUpdated') {
-                LocalData.addUser(values.sender, values.name, values.avatarUrl);
+                LocalData.addUser(values.sender, Utils.hexToString(values.username), 
+                    Utils.hexToString(values.name), Utils.hexToString(values.avatarUrl), userEvents[i].blockNumber);
             }
         }
 
@@ -136,6 +141,8 @@ class BlockReader {
                 LocalData.addMessage(values.sender, values.message, Static.MsgType.FROM);
             }
         }
+
+        LocalData.setLastBlockNumber(currentBlockNumber);
     }
 
     /// Merge 2 list of events and order by blockNumber

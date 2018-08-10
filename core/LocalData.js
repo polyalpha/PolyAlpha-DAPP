@@ -62,10 +62,12 @@ class LocalData {
      * @param {string} address The eth address of the user
      */
     static getUser(address) {
+        let user = {};
         if (this.hasLocalStorage()) {
-            return this.getObjectItem(address);
+            user = this.getObjectItem(address);
         }
-        return {};
+        user[Static.KEY.USER_ADDRESS] = address;
+        return user;
     }
 
     /// Add a new user who has registered with PolyAlpha to local storage
@@ -240,11 +242,11 @@ class LocalData {
     }
 
     static setLastBlockNumber(value) {
-        this.setObjectItem(Static.KEY.LAST_BLOCK_NUMBER, value);
+        this.setItem(Static.KEY.LAST_BLOCK_NUMBER, value);
     }
 
     static getLastBlockNumber() {
-        this.getItem(Static.KEY.LAST_BLOCK_NUMBER);
+        return this.getItem(Static.KEY.LAST_BLOCK_NUMBER);
     }
 
     static setLoggedIn() {

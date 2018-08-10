@@ -3,8 +3,10 @@ import {Router} from "react-router";
 import {renderRoutes} from "react-router-config"
 import {history} from "../../_helpers/history";
 import { alertActions } from '../../_actions';
-import { contractActions } from '../../_actions';
 import { connect } from 'react-redux';
+import BlockReader from '../../_services/BlockReader';
+import web3 from '../../_services/web3';
+import {ENV} from '../../_configs/Config';
 import "./App.scss"
 
 
@@ -16,7 +18,8 @@ class App extends Component {
 		history.listen(() => {
 			this.props.alert.message && this.props.dispatch(alertActions.clear());
 		});
-		// this.props.dispatch(contractActions.load())
+		this.blockReader = new BlockReader(web3, ENV.ContractAddress);
+		this.blockReader.initialize();
 	}
 
 	render(){
@@ -26,7 +29,6 @@ class App extends Component {
 					{renderRoutes(this.props.routes)}
 				</Router>
 			</Fragment>
-
 		)
 	}
 }
