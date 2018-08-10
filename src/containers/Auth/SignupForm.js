@@ -41,6 +41,7 @@ class SignupForm extends Component {
 			result.on(txConstants.ON_RECEIPT, (receipt) => {
 				// console.log('Transaction success');
 				// console.log(receipt);
+				LocalData.setLoggedIn();
 				history.push("/chat/discover");
 			}).on (txConstants.ON_ERROR, (err, txHash) => {
 				// console.log('transaction error: ' + txHash);

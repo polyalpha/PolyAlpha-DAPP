@@ -123,4 +123,4 @@ class TransactionsManager {
     }
 }
 
-export default TransactionsManager;
+module.exports = TransactionsManager;

@@ -39,5 +39,6 @@ module.exports.KEY = {
     ADDRESS: 'a',
     AVATAR_URL: 'au',
     PRIVATE_KEY: 'pk',
+    LOGGED_IN: 'lin',
     LAST_BLOCK_NUMBER: 'lbn'
 }

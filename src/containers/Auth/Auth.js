@@ -18,14 +18,14 @@ class Auth extends Component {
 		super(props);
 		this.pp = ["Welcome to the next generation decentralised, private and scaleable instant messenger that pays you ABT tokens for your attention.", "When you sign up you will recieve a PolyAlpha messenger address pair on the Ethereum Testnet. If you already have an account, log in with your private key."];
 		this.state = {privateKey: ""};
-		this.loadContract();
+		// this.loadContract();
 	}
 
-	loadContract = async () => {
-		this.blockConnector = new BlockConnector(web3, [{secretKey: Buffer.from(LocalData.getPrivateKey(), 'hex'), address: LocalData.getAddress()}]);
-		await this.blockConnector.load();
-		console.log('Connected to smart contracts');
-	}
+	// loadContract = async () => {
+	// 	this.blockConnector = new BlockConnector(web3, [{secretKey: Buffer.from(LocalData.getPrivateKey(), 'hex'), address: LocalData.getAddress()}]);
+	// 	await this.blockConnector.load();
+	// 	console.log('Connected to smart contracts');
+	// }
 
 	keyValidator = () => {
 		if (!/^[\da-z]{64}$/.test(this.state.privateKey.toString().trim())) {
@@ -40,14 +40,17 @@ class Auth extends Component {
 		e.preventDefault();
 		LocalData.setPrivateKey(this.state.privateKey);
 
+		console.log(this.props);
+
 		// Need to show LOADING
-		let isRegistered = await this.blockConnector.isRegistered();
-		console.log(isRegistered);
-		if (isRegistered) {
-			history.push("/chat/discover");
-		} else {
-			history.push("/auth/signup");
-		}
+		// let isRegistered = await this.blockConnector.isRegistered();
+		// console.log(isRegistered);
+		// if (isRegistered) {
+		// 	LocalData.setLoggedIn();
+		// 	history.push("/chat/discover");
+		// } else {
+		// 	history.push("/auth/signup");
+		// }
 	};
 
 	render() {
@@ -101,8 +104,8 @@ class Auth extends Component {
 };
 
 function mapStateToProps(state) {
-	const { auth } = state;
-	return { auth };
+	const { auth, contract } = state;
+	return { auth, contract };
 }
 
 const connectedAuth = connect(mapStateToProps)(Auth);

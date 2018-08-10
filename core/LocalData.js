@@ -247,6 +247,14 @@ class LocalData {
         this.getItem(Static.KEY.LAST_BLOCK_NUMBER);
     }
 
+    static setLoggedIn() {
+        this.setItem(Static.KEY.LOGGED_IN, 'true');
+    }
+
+    static isLoggedIn() {
+        return (this.getItem(Static.KEY.LOGGED_IN) == 'true');
+    }
+
     static setPrivateKey(value) {
         this.setItem(Static.KEY.PRIVATE_KEY, value);
         let valueBuffer = Buffer.from(value, 'hex');
