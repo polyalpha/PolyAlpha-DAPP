@@ -6,6 +6,7 @@ import Button from 'react-validation/build/button';
 import Input from 'react-validation/build/input';
 import classnames from "classnames"
 import {Link} from "react-router-dom"
+import LocalData from '../../_services/LocalData';
 
 
 
@@ -44,10 +45,14 @@ export class CreateNewBid extends Component {
 		e.preventDefault()
 	};
 
-	createHandler = (e) => {
-		let message = this.state.message;
-		this.setState({isSubmitted: true, message});
+	createHandler = async (e) => {
 		e.preventDefault();
+
+		let {message, bid} = this.state;
+		this.setState({isSubmitted: true});
+
+		let result = await this.props.contract.createBid(this.props.userId, bid, message);
+		console.log(result);
 	};
 
 	cancelHandler = (e) => {
@@ -138,8 +143,15 @@ const DiscoverInfo = (props) => (
 
 
 const Discover = ({users, match, ...props}) => {
+	let newAddresses = users.newAddresses;
+	let newUsers = LocalData.getUsers(newAddresses);
+
+	let userLists = [];
+	userLists.push(newUsers);
+	userLists.push([]);
+
 	match.params.tab = match.params.tab || sideBarTabs[0].name;
-	users = users && users || defaultUsers[sideBarTabs.findIndex(x=>x.name === match.params.tab )];
+	users = userLists[sideBarTabs.findIndex(x=>x.name === match.params.tab )];
 
 	let sidebar = {
 		name: "discover",
@@ -149,7 +161,7 @@ const Discover = ({users, match, ...props}) => {
 		userId: match.params.id,
 	};
 
-	let messages = [<CreateNewBid />];
+	let messages = [<CreateNewBid userId={match.params.id} {...props}/>];
 
 	return (
 		<ChatLayout {...props} sidebar={sidebar} back="/chat/discover">
@@ -160,24 +172,24 @@ const Discover = ({users, match, ...props}) => {
 	)
 };
 
-const defaultUsers = [
-	[
-		{id: 2, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-		{id: 3, name: "John Copley", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-		{id: 4, name: "MargotRobbie", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-		{id: 5, name: "Vincent van Gogh", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-	],
-	[
-		{id: 2, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 100, abt:"2.33"},
-		{id: 3, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 60, abt:"0.02"},
-		{id: 4, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 80, abt:"3.01"},
-	]
-];
+// const defaultUsers = [
+// 	[
+// 		{id: 2, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", date:"Yesterday"},
+// 		{id: 3, name: "John Copley", avatar: "/i/avatars/adam.png", date:"Yesterday"},
+// 		{id: 4, name: "MargotRobbie", avatar: "/i/avatars/adam.png", date:"Yesterday"},
+// 		{id: 5, name: "Vincent van Gogh", avatar: "/i/avatars/adam.png", date:"Yesterday"},
+// 	],
+// 	[
+// 		{id: 2, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 100, abt:"2.33"},
+// 		{id: 3, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 60, abt:"0.02"},
+// 		{id: 4, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 80, abt:"3.01"},
+// 	]
+// ];
 
 
 function mapStateToProps(state) {
-	const { auth } = state;
-	return { auth };
+	const { auth, contract, users } = state;
+	return { auth, contract, users };
 }
 
 const connectedDiscover = connect(mapStateToProps)(Discover);

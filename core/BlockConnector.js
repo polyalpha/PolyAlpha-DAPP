@@ -111,7 +111,7 @@ class BlockConnector {
     }
 
     async getBid(toId, fromAccountId = 0) {
-        return await this.contract.methods.getBid(this.accounts[fromAccountId], this.accounts[toId]).call();
+        return await this.contract.methods.getBid(this.accounts[fromAccountId], this.getAddress(toId)).call();
     }
 
     async sendTransaction(method, fromAccountId) {
@@ -119,6 +119,14 @@ class BlockConnector {
             await method.send({from: this.accounts[fromAccountId], gas: this.defaultGas});
         } else {
             return this.transactionManager.executeMethod(method);
+        }
+    }
+
+    getAddress(id) {
+        if (this.isTesting) {
+            return this.accounts[id];
+        } else {
+            return id;
         }
     }
     
@@ -132,32 +140,34 @@ class BlockConnector {
     }
 
     async updateAvailability(availability, fromAccountId = 0) {
-        await this.sendTransaction(this.contract.methods.updateAvailability(availability), fromAccountId);
+        return await this.sendTransaction(this.contract.methods.updateAvailability(availability), fromAccountId);
     }
 
     async updateProfile(username, name, avatarUrl, extra = "", fromAccountId = 0) {
-        await this.sendTransaction(this.contract.methods.updateProfile(Utils.stringToHex(username), Utils.stringToHex(name), 
+        return await this.sendTransaction(this.contract.methods.updateProfile(Utils.stringToHex(username), Utils.stringToHex(name), 
             Utils.stringToHex(avatarUrl), Utils.stringToHex(extra)), fromAccountId);
     }
 
     async createBid(toId, tokenAmount, message = "", fromAccountId = 0) {
-        await this.sendTransaction(this.contract.methods.createBid(this.accounts[toId], tokenAmount, Utils.stringToHex(message)), fromAccountId);
+        console.log('createBid');
+        console.log(toId + '::' + tokenAmount + '::' + message );
+        return await this.sendTransaction(this.contract.methods.createBid(this.getAddress(toId), tokenAmount, Utils.stringToHex(message)), fromAccountId);
     }
 
     async cancelBid(toId, fromAccountId = 0) {
-        await this.sendTransaction(this.contract.methods.cancelBid(this.accounts[toId]), fromAccountId);
+        return await this.sendTransaction(this.contract.methods.cancelBid(this.getAddress(toId)), fromAccountId);
     }
 
     async acceptBid(fromId, message = "", fromAccountId = 0) {
-        await this.sendTransaction(this.contract.methods.acceptBid(this.accounts[fromId], Utils.stringToHex(message)), fromAccountId);
+        return await this.sendTransaction(this.contract.methods.acceptBid(this.getAddress(fromId), Utils.stringToHex(message)), fromAccountId);
     }
 
     async blockBid(fromId, fromAccountId = 0) {
-        await this.sendTransaction(this.contract.methods.blockBid(this.accounts[fromId]), fromAccountId);
+        return await this.sendTransaction(this.contract.methods.blockBid(this.getAddress(fromId)), fromAccountId);
     }
 
     async sendMessage(toId, message, fromAccountId = 0) {
-        await this.sendTransaction(this.contract.methods.sendMessage(this.accounts[toId], Utils.stringToHex(message)), fromAccountId);
+        return await this.sendTransaction(this.contract.methods.sendMessage(this.getAddress(toId), Utils.stringToHex(message)), fromAccountId);
     }
 
     async isFailed(params, methodName) {

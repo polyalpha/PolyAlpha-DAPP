@@ -70,6 +70,15 @@ class LocalData {
         return user;
     }
 
+    static getUsers(addresses) {
+        let result = [];
+        for (var i=0;i<addresses.length;i++) {
+            let user = LocalData.getUser(addresses[i]);
+            result.push(user);
+        }
+        return result;
+    }
+
     /// Add a new user who has registered with PolyAlpha to local storage
     static addUser(address, publicKeyLeft, publicKeyRight, username, name, avatarUrl, blockNumber) {
         address = address.toLowerCase();

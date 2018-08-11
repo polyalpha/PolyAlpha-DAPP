@@ -106,6 +106,8 @@ class BlockReader {
         for (var i=0;i<bidEvents.length;i++) {
             let name = bidEvents[i].event;
             let values = bidEvents[i].returnValues;
+            values.sender = values.sender.toLowerCase();
+            values.receiver = values.receiver.toLowerCase();
             if (name == 'BidCreated') {
                 if (values.sender == this.myAddress) {
                     LocalData.addBid(values.receiver, values.tokenAmount, Static.BidType.TO);
@@ -135,6 +137,8 @@ class BlockReader {
 
         for (var i=0;i<messageEvents.length;i++) {
             let values = messageEvents[i].returnValues;
+            values.sender = values.sender.toLowerCase();
+            values.receiver = values.receiver.toLowerCase();
             if (values.sender == this.myAddress) {
                 LocalData.addMessage(values.receiver, values.message, Static.MsgType.TO);
             } else {

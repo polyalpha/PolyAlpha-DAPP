@@ -11,6 +11,7 @@ import {renderRoutes} from "react-router-config";
 import {history} from "../../_helpers/history";
 import {alertActions} from "../../_actions";
 import {MainBlock} from "../App/App";
+import {KEY} from '../../_constants/Static';
 
 
 export const MessageContext = React.createContext("");
@@ -78,10 +79,10 @@ export const UserList = ({userId, name, tab, users}) => (
 	<div className="users">
 		<div className="scroll">
 			{users.map(user=>(
-				<Link className={classNames(["user", {selected: String(user.id) === userId}])} key={user.id} to={`/chat/${name}/${tab}/${user.id}`}>
-					<i className="img" style={{backgroundImage: `url(${user.avatar})`}} />
-					<div className="name">{user.name}</div>
-					{user.bid && (
+				<Link className={classNames(["user", {selected: String(user[KEY.USER_ADDRESS]) === userId}])} key={user[KEY.USER_ADDRESS]} to={`/chat/${name}/${tab}/${user[KEY.USER_ADDRESS]}`}>
+					<i className="img" style={{backgroundImage: `url(${user[KEY.USER_AVARTAR_URL]})`}} />
+					<div className="name">{user[KEY.USER_NAME]}</div>
+					{/* {user.bid && (
 						<div className="users-bid-abt">
 							<div className="users-bid-abt-bid">{user.bid} bids</div>
 							<div className="users-bid-abt-abt">{user.abt} ABT</div>
@@ -89,7 +90,7 @@ export const UserList = ({userId, name, tab, users}) => (
 
 					) || (
 						user.date && <div className="date">{user.date}</div>
-					)}
+					)} */}
 				</Link>
 			))}
 		</div>

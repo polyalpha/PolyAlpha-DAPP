@@ -1,6 +1,7 @@
 import React, {Fragment, Component} from "react";
 import { connect } from 'react-redux';
 import {AbtValue, ChatLayout, MessagesBlock, Message} from "./Chat"
+import LocalData from '../../_services/LocalData';
 
 
 const sideBarTabs = [
@@ -21,14 +22,20 @@ const onClickHandler = (e) => {
 
 
 const Bids = ({auth, match, users, ...props}) => {
-	match.params.tab = match.params.tab || sideBarTabs[0].name;
-	users = users && users || defaultUsers[sideBarTabs.findIndex(x=>x.name === match.params.tab )];
+	match.params.tab = match.params.tab || sideBarTabs[0].name;	
+	let bidAddresses;
+	if (match.params.tab == "me") {
+		bidAddresses = users.bidAddresses;
+	} else {
+		bidAddresses = users.myBidAddresses;
+	}
+	let bidUsers = LocalData.getUsers(bidAddresses);
 
 	let sidebar = {
 		name: "bids",
 		tab: match.params.tab,
 		tabs: sideBarTabs,
-		users,
+		users: bidUsers,
 		userId: match.params.id,
 	};
 
@@ -44,23 +51,23 @@ const Bids = ({auth, match, users, ...props}) => {
 };
 
 
-const defaultUsers = [
-	[
-		{id: 2, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-		{id: 3, name: "John Copley", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-		{id: 4, name: "MargotRobbie", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-		{id: 5, name: "Vincent van Gogh", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-	],
-	[
-		{id: 2, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 100, abt:"2.33"},
-		{id: 3, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 60, abt:"0.02"},
-		{id: 4, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 80, abt:"3.01"},
-	]
-];
+// const defaultUsers = [
+// 	[
+// 		{id: 2, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", date:"Yesterday"},
+// 		{id: 3, name: "John Copley", avatar: "/i/avatars/adam.png", date:"Yesterday"},
+// 		{id: 4, name: "MargotRobbie", avatar: "/i/avatars/adam.png", date:"Yesterday"},
+// 		{id: 5, name: "Vincent van Gogh", avatar: "/i/avatars/adam.png", date:"Yesterday"},
+// 	],
+// 	[
+// 		{id: 2, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 100, abt:"2.33"},
+// 		{id: 3, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 60, abt:"0.02"},
+// 		{id: 4, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 80, abt:"3.01"},
+// 	]
+// ];
 
 function mapStateToProps(state) {
-	const { auth } = state;
-	return { auth };
+	const { auth, users, contract } = state;
+	return { auth, users, contract };
 }
 
 const connectedBids = connect(mapStateToProps)(Bids);
