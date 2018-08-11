@@ -7,6 +7,7 @@ import Input from 'react-validation/build/input';
 import classnames from "classnames"
 import {Link} from "react-router-dom"
 import LocalData from '../../_services/LocalData';
+import {KEY} from '../../_constants/Static';
 
 
 
@@ -50,6 +51,8 @@ export class CreateNewBid extends Component {
 
 		let {message, bid} = this.state;
 		this.setState({isSubmitted: true});
+
+		let user = LocalData.getUser(this.props.userId);
 
 		let result = await this.props.contract.createBid(this.props.userId, bid, message);
 		console.log(result);

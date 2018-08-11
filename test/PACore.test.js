@@ -82,7 +82,7 @@ describe('PolyAlpha core contract testing', function() {
     it('can create bid', async() => {
         await connector.register("sample0", "sample", "sample", "sample", 0);
         await connector.register("sample1", "sample", "sample", "sample", 1);
-        await connector.createBid(1, 1000, "message", 0);
+        await connector.createBid(1, 1000, Utils.stringToHex("message"), 0);
         
         let bid = await connector.getBid(1, 0);
         assert.equal(1000, bid[0]);
@@ -91,7 +91,7 @@ describe('PolyAlpha core contract testing', function() {
 
     it('cannot create bid if not registered', async() => {
         await connector.register("sample1", "sample", "sample", "sample", 1);
-        assert(await connector.isFailed([1, 1000, "message", 0], connector.createBid.name));
+        assert(await connector.isFailed([1, 1000, Utils.stringToHex("message"), 0], connector.createBid.name));
     })
 
     it('cannot create bid to an unavailable user', async() => {
@@ -99,7 +99,7 @@ describe('PolyAlpha core contract testing', function() {
         await connector.register("sample1", "sample", "sample", "sample", 1);
         await connector.updateAvailability(false, 1);
 
-        assert(await connector.isFailed([1, 1000, "message", 0], connector.createBid.name));
+        assert(await connector.isFailed([1, 1000, Utils.stringToHex("message"), 0], connector.createBid.name));
     })
 
     it('can enable availability', async() => {
@@ -107,7 +107,7 @@ describe('PolyAlpha core contract testing', function() {
         await connector.register("sample1", "sample", "sample", "sample", 1);
         await connector.updateAvailability(false, 1);
         await connector.updateAvailability(true, 1);
-        await connector.createBid(1, 1000, "message", 0);
+        await connector.createBid(1, 1000, Utils.stringToHex("message"), 0);
 
         let bid = await connector.getBid(1, 0);
         assert.equal(1000, bid[0]);
@@ -116,27 +116,27 @@ describe('PolyAlpha core contract testing', function() {
 
     it('cannot create bid if other have not registered', async() => {
         await connector.register("sample0", "sample", "sample", "sample", 0);
-        assert(await connector.isFailed([1, 1000, "message", 0], connector.createBid.name));
+        assert(await connector.isFailed([1, 1000, Utils.stringToHex("message"), 0], connector.createBid.name));
     })
 
     it('cannot create a bid twice', async() => {
         await connector.register("sample0", "sample", "sample", "sample", 0);
         await connector.register("sample1", "sample", "sample", "sample", 1);
-        await connector.createBid(1, 1000, "message", 0);
-        assert(await connector.isFailed([1, 1000, "message", 0], connector.createBid.name));
+        await connector.createBid(1, 1000, Utils.stringToHex("message"), 0);
+        assert(await connector.isFailed([1, 1000, Utils.stringToHex("message"), 0], connector.createBid.name));
     })
 
     it('cannot create bid if a bid has been sent from the other side', async() => {
         await connector.register("sample0", "sample", "sample", "sample", 0);
         await connector.register("sample1", "sample", "sample", "sample", 1);
-        await connector.createBid(1, 1000, "message", 0);
-        assert(await connector.isFailed([0, 1000, "message", 1], connector.createBid.name));
+        await connector.createBid(1, 1000, Utils.stringToHex("message"), 0);
+        assert(await connector.isFailed([0, 1000, Utils.stringToHex("message"), 1], connector.createBid.name));
     })
 
     it('can cancel bid', async() => {
         await connector.register("sample0", "sample", "sample", "sample", 0);
         await connector.register("sample1", "sample", "sample", "sample", 1);
-        await connector.createBid(1, 1000, "message", 0);
+        await connector.createBid(1, 1000, Utils.stringToHex("message"), 0);
         await connector.cancelBid(1, 0);
 
         let bid = await connector.getBid(1, 0);
@@ -147,17 +147,17 @@ describe('PolyAlpha core contract testing', function() {
     it('cannot accept a canncelled bid', async() => {
         await connector.register("sample0", "sample", "sample", "sample", 0);
         await connector.register("sample1", "sample", "sample", "sample", 1);
-        await connector.createBid(1, 1000, "message", 0);
+        await connector.createBid(1, 1000, Utils.stringToHex("message"), 0);
         await connector.cancelBid(1, 0);
-        assert(await connector.isFailed([0, "message", 1], connector.acceptBid.name));
+        assert(await connector.isFailed([0, Utils.stringToHex("message"), 1], connector.acceptBid.name));
     })
 
     it('can create bid again after cancelled', async() => {
         await connector.register("sample0", "sample", "sample", "sample", 0);
         await connector.register("sample1", "sample", "sample", "sample", 1);
-        await connector.createBid(1, 1000, "message", 0);
+        await connector.createBid(1, 1000, Utils.stringToHex("message"), 0);
         await connector.cancelBid(1, 0);
-        await connector.createBid(1, 10000, "message", 0);
+        await connector.createBid(1, 10000, Utils.stringToHex("message"), 0);
         
         let bid = await connector.getBid(1, 0);
         assert.equal(10000, bid[0]);
@@ -167,8 +167,8 @@ describe('PolyAlpha core contract testing', function() {
     it('can accept bid', async() => {
         await connector.register("sample0", "sample", "sample", "sample", 0);
         await connector.register("sample1", "sample", "sample", "sample", 1);
-        await connector.createBid(1, 1000, "message", 0);
-        await connector.acceptBid(0, "message", 1);
+        await connector.createBid(1, 1000, Utils.stringToHex("message"), 0);
+        await connector.acceptBid(0, Utils.stringToHex("message"), 1);
 
         let bid = await connector.getBid(1, 0);
         assert.equal(Static.BidStatus.ACCEPTED, bid[1]);
@@ -177,28 +177,28 @@ describe('PolyAlpha core contract testing', function() {
     it('cannot accept your own bid', async() => {
         await connector.register("sample0", "sample", "sample", "sample", 0);
         await connector.register("sample1", "sample", "sample", "sample", 1);
-        await connector.createBid(1, 1000, "message", 0);
-        assert(await connector.isFailed([1, "message", 0], connector.acceptBid.name));
+        await connector.createBid(1, 1000, Utils.stringToHex("message"), 0);
+        assert(await connector.isFailed([1, Utils.stringToHex("message"), 0], connector.acceptBid.name));
     })
 
     it('cannot accept bid twice', async() => {
         await connector.register("sample0", "sample", "sample", "sample", 0);
         await connector.register("sample1", "sample", "sample", "sample", 1);
-        await connector.createBid(1, 1000, "message", 0);
-        await connector.acceptBid(0, "message", 1);
-        assert(await connector.isFailed([0, "message", 1], connector.acceptBid.name));
+        await connector.createBid(1, 1000, Utils.stringToHex("message"), 0);
+        await connector.acceptBid(0, Utils.stringToHex("message"), 1);
+        assert(await connector.isFailed([0, Utils.stringToHex("message"), 1], connector.acceptBid.name));
     });
 
     it('cannot accept a bid that is not exists', async() => {
         await connector.register("sample0", "sample", "sample", "sample", 0);
         await connector.register("sample1", "sample", "sample", "sample", 1);
-        assert(await connector.isFailed([0, "message", 1], connector.acceptBid.name));
+        assert(await connector.isFailed([0, Utils.stringToHex("message"), 1], connector.acceptBid.name));
     })
 
     it('can block bid', async() => {
         await connector.register("sample0", "sample", "sample", "sample", 0);
         await connector.register("sample1", "sample", "sample", "sample", 1);
-        await connector.createBid(1, 1000, "message", 0);
+        await connector.createBid(1, 1000, Utils.stringToHex("message"), 0);
         await connector.blockBid(0, 1);
 
         let bid = await connector.getBid(1, 0);
@@ -208,7 +208,7 @@ describe('PolyAlpha core contract testing', function() {
     it('cannot block bid twice', async() => {
         await connector.register("sample0", "sample", "sample", "sample", 0);
         await connector.register("sample1", "sample", "sample", "sample", 1);
-        await connector.createBid(1, 1000, "message", 0);
+        await connector.createBid(1, 1000, Utils.stringToHex("message"), 0);
         await connector.blockBid(0, 1);
         assert(await connector.isFailed([0, 1], connector.blockBid.name));
     });
@@ -222,7 +222,7 @@ describe('PolyAlpha core contract testing', function() {
     it('cannot cancel a blocked bid', async() => {
         await connector.register("sample0", "sample", "sample", "sample", 0);
         await connector.register("sample1", "sample", "sample", "sample", 1);
-        await connector.createBid(1, 1000, "message", 0);
+        await connector.createBid(1, 1000, Utils.stringToHex("message"), 0);
         await connector.blockBid(0, 1);
         assert(await connector.isFailed([1, 0], connector.cancelBid.name));
     })
@@ -230,19 +230,19 @@ describe('PolyAlpha core contract testing', function() {
     it('cannot cancel an accepted bid', async() => {
         await connector.register("sample0", "sample", "sample", "sample", 0);
         await connector.register("sample1", "sample", "sample", "sample", 1);
-        await connector.createBid(1, 1000, "message", 0);
-        await connector.acceptBid(0, "message", 1);
+        await connector.createBid(1, 1000, Utils.stringToHex("message"), 0);
+        await connector.acceptBid(0, Utils.stringToHex("message"), 1);
         assert(await connector.isFailed([1, 0], connector.cancelBid.name));
     })
 
     it('can send message', async() => {
         await connector.register("sample0", "sample", "sample", "sample", 0);
         await connector.register("sample1", "sample", "sample", "sample", 1);
-        await connector.createBid(1, 1000, "message", 0);
-        await connector.acceptBid(0, "message", 1);
+        await connector.createBid(1, 1000, Utils.stringToHex("message"), 0);
+        await connector.acceptBid(0, Utils.stringToHex("message"), 1);
 
         let msg = "how are you?"
-        await connector.sendMessage(1, msg, 0);
+        await connector.sendMessage(1, Utils.stringToHex(msg), 0);
         let msgEvents = await connector.messagingContract.getPastEvents('MessageSent', {
             filter: {}, fromBlock: 0
         });
@@ -251,37 +251,66 @@ describe('PolyAlpha core contract testing', function() {
         assert.equal(msg, Utils.hexToString(msgOnChain));
     })
 
+    it('can send encrypted messages', async() => {
+        await connector.register("sample0", "sample", "sample", "sample", 0);
+        await connector.register("sample1", "sample", "sample", "sample", 1);
+        await connector.createBid(1, 1000, Utils.stringToHex("message"), 0);
+        await connector.acceptBid(0, Utils.stringToHex("message"), 1);
+
+        let msg = "how are you?";
+        let user1 = await connector.getAccount(1);
+        let pubkey1 = user1[0].substring(2) + user1[1].substring(2);
+
+        let secret0 = Utils.computeSecret(testAccounts[0].secretKey, Buffer.from('04' + pubkey1, 'hex'));
+        let msgEncrypted = Utils.encrypt(msg, secret0);
+        console.log(msgEncrypted);
+        await connector.sendMessage(1, '0x' + msgEncrypted, 0);
+
+        let msgEvents = await connector.messagingContract.getPastEvents('MessageSent', {
+            filter: {}, fromBlock: 0
+        });
+
+        let msgOnChain = msgEvents[0]['returnValues'].message.substring(2);
+        let user0 = await connector.getAccount(0);
+        let pubkey0 = user0[0].substring(2) + user0[1].substring(2);
+        let secret1 = Utils.computeSecret(testAccounts[1].secretKey, Buffer.from('04' + pubkey0, 'hex'));
+
+        let msgDecrypted = Utils.decrypt(msgOnChain, secret1);
+        assert.equal(secret0.toString('hex'), secret1.toString('hex'));
+        assert.equal(msg, msgDecrypted);
+    })
+
     it('cannot send message to an unregistered user', async() => {
         await connector.register("sample0", "sample", "sample", "sample", 0);
-        await connector.isFailed([1, "how are you?", 0], connector.sendMessage.name);
+        await connector.isFailed([1, Utils.stringToHex("how are you?"), 0], connector.sendMessage.name);
     })
 
     it('cannot send message if have not registered', async() => {
         await connector.register("sample1", "sample", "sample", "sample", 1);
-        assert(await connector.isFailed([1, "how are you?", 0], connector.sendMessage.name));
+        assert(await connector.isFailed([1, Utils.stringToHex("how are you?"), 0], connector.sendMessage.name));
     })
 
     it('cannot send message before bid get accepted', async() => {
         await connector.register("sample0", "sample", "sample", "sample", 0);
         await connector.register("sample1", "sample", "sample", "sample", 1);
-        await connector.createBid(1, 1000, "message", 0);
+        await connector.createBid(1, 1000, Utils.stringToHex("message"), 0);
 
         let msg = "how are you?";
-        assert(await connector.isFailed([1, msg, 0], connector.sendMessage.name));
+        assert(await connector.isFailed([1, Utils.stringToHex(msg), 0], connector.sendMessage.name));
 
-        await connector.acceptBid(0, "message", 1);
-        await connector.sendMessage(1, msg, 0);
+        await connector.acceptBid(0, Utils.stringToHex("message"), 1);
+        await connector.sendMessage(1, Utils.stringToHex(msg), 0);
         assert(true);
     })
 
     it('cannot send message if bid get blocked', async() => {
         await connector.register("sample0", "sample", "sample", "sample", 0);
         await connector.register("sample1", "sample", "sample", "sample", 1);
-        await connector.createBid(1, 1000, "message", 0);
+        await connector.createBid(1, 1000, Utils.stringToHex("message"), 0);
         await connector.blockBid(0, 1);
 
         let msg = "how are you?";
-        assert(await connector.isFailed([1, msg, 0], connector.sendMessage.name));
+        assert(await connector.isFailed([1, Utils.stringToHex(msg), 0], connector.sendMessage.name));
     })
 
     it('has UserJoined events', async() => {
@@ -333,7 +362,7 @@ describe('PolyAlpha core contract testing', function() {
     it('has BidCreated event', async() => {
         await connector.register("username1", "user 1", "user 1 avatar", "", 0);
         await connector.register("username2", "user 2", "user 2 avatar", "", 1);
-        await connector.createBid(1,1000, "message",0);
+        await connector.createBid(1,1000, Utils.stringToHex("message"),0);
 
         let events = await connector.bidContract.getPastEvents('BidCreated', {filter: {}, fromBlock: 0});
         let event0 = events[0].returnValues;
@@ -345,7 +374,7 @@ describe('PolyAlpha core contract testing', function() {
     it('has BidCancelled event', async() => {
         await connector.register("username1", "user 1", "user 1 avatar", "", 0);
         await connector.register("username2", "user 2", "user 2 avatar", "", 1);
-        await connector.createBid(1,1000, "message",0);
+        await connector.createBid(1,1000, Utils.stringToHex("message"),0);
         await connector.cancelBid(1,0);
 
         let events = await connector.bidContract.getPastEvents('BidCancelled', {filter: {}, fromBlock: 0});
@@ -357,8 +386,8 @@ describe('PolyAlpha core contract testing', function() {
     it('has BidAccepted event', async() => {
         await connector.register("username1", "user 1", "user 1 avatar", "", 0);
         await connector.register("username2", "user 2", "user 2 avatar", "", 1);
-        await connector.createBid(1, 1000, "message", 0);
-        await connector.acceptBid(0, "message", 1);
+        await connector.createBid(1, 1000, Utils.stringToHex("message"), 0);
+        await connector.acceptBid(0, Utils.stringToHex("message"), 1);
 
         let events = await connector.bidContract.getPastEvents('BidAccepted', {filter: {}, fromBlock: 0});
         let event0 = events[0].returnValues;
@@ -369,7 +398,7 @@ describe('PolyAlpha core contract testing', function() {
     it('has BidBlocked event', async() => {
         await connector.register("username1", "user 1", "user 1 avatar", "", 0);
         await connector.register("username2", "user 2", "user 2 avatar", "", 1);
-        await connector.createBid(1, 1000, "message", 0);
+        await connector.createBid(1, 1000, Utils.stringToHex("message"), 0);
         await connector.blockBid(0, 1);
 
         let events = await connector.bidContract.getPastEvents('BidBlocked', {filter: {}, fromBlock: 0});
@@ -381,10 +410,10 @@ describe('PolyAlpha core contract testing', function() {
     it('has MessageSent event', async() => {
         await connector.register("username1", "user 1", "user 1 avatar", "", 0);
         await connector.register("username2", "user 2", "user 2 avatar", "", 1);
-        await connector.createBid(1, 1000, "message", 0);
-        await connector.acceptBid(0, "message", 1);
-        await connector.sendMessage(1, "hello 1", 0);
-        await connector.sendMessage(0, "hello 0", 1);
+        await connector.createBid(1, 1000, Utils.stringToHex("message"), 0);
+        await connector.acceptBid(0, Utils.stringToHex("message"), 1);
+        await connector.sendMessage(1,  Utils.stringToHex("hello 1"), 0);
+        await connector.sendMessage(0, Utils.stringToHex("hello 0"), 1);
 
         let events = await connector.messagingContract.getPastEvents('MessageSent', {filter: {}, fromBlock: 0});
         let event0 = events[0].returnValues;
@@ -405,8 +434,8 @@ describe('PolyAlpha core contract testing', function() {
 
         await connector.register("username1", "user 1", "user 1 avatar", "", 0);
         await connector.register("username2", "user 2", "user 2 avatar", "", 1);
-        await connector.createBid(1, 1000, "message", 0);
-        await connector.acceptBid(0, "message", 1);
+        await connector.createBid(1, 1000, Utils.stringToHex("message"), 0);
+        await connector.acceptBid(0, Utils.stringToHex("message"), 1);
 
         let balance0 = BigNumber(await connector.tokenContract.methods.balanceOf(connector.accounts[0]).call());
         let balance1 = BigNumber(await connector.tokenContract.methods.balanceOf(connector.accounts[1]).call());

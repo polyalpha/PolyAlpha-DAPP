@@ -95,11 +95,11 @@ class BlockConnector {
     }
 
     async isRegistered(fromAccountId = 0) {
-        return await this.contract.methods.isRegistered(this.accounts[fromAccountId]).call();
+        return await this.contract.methods.isRegistered(this.getAddress(fromAccountId)).call();
     }
 
     async isUserAvailable(fromAccountId = 0) {
-        return await this.contract.methods.isUserAvailable(this.accounts[fromAccountId]).call();
+        return await this.contract.methods.isUserAvailable(this.getAddress(fromAccountId)).call();
     }
 
     async isUsernameAvailable(username) {
@@ -107,16 +107,16 @@ class BlockConnector {
     }
 
     async getAccount(fromAccountId = 0) {
-        return await this.contract.methods.getUser(this.accounts[fromAccountId]).call();
+        return await this.contract.methods.getUser(this.getAddress(fromAccountId)).call();
     }
 
     async getBid(toId, fromAccountId = 0) {
-        return await this.contract.methods.getBid(this.accounts[fromAccountId], this.getAddress(toId)).call();
+        return await this.contract.methods.getBid(this.getAddress(fromAccountId), this.getAddress(toId)).call();
     }
 
     async sendTransaction(method, fromAccountId) {
         if (this.isTesting) {
-            await method.send({from: this.accounts[fromAccountId], gas: this.defaultGas});
+            await method.send({from: this.getAddress(fromAccountId), gas: this.defaultGas});
         } else {
             return this.transactionManager.executeMethod(method);
         }
@@ -148,18 +148,16 @@ class BlockConnector {
             Utils.stringToHex(avatarUrl), Utils.stringToHex(extra)), fromAccountId);
     }
 
-    async createBid(toId, tokenAmount, message = "", fromAccountId = 0) {
-        console.log('createBid');
-        console.log(toId + '::' + tokenAmount + '::' + message );
-        return await this.sendTransaction(this.contract.methods.createBid(this.getAddress(toId), tokenAmount, Utils.stringToHex(message)), fromAccountId);
+    async createBid(toId, tokenAmount, message = "0x", fromAccountId = 0) {
+        return await this.sendTransaction(this.contract.methods.createBid(this.getAddress(toId), tokenAmount, message), fromAccountId);
     }
 
     async cancelBid(toId, fromAccountId = 0) {
         return await this.sendTransaction(this.contract.methods.cancelBid(this.getAddress(toId)), fromAccountId);
     }
 
-    async acceptBid(fromId, message = "", fromAccountId = 0) {
-        return await this.sendTransaction(this.contract.methods.acceptBid(this.getAddress(fromId), Utils.stringToHex(message)), fromAccountId);
+    async acceptBid(fromId, message = "0x", fromAccountId = 0) {
+        return await this.sendTransaction(this.contract.methods.acceptBid(this.getAddress(fromId), message), fromAccountId);
     }
 
     async blockBid(fromId, fromAccountId = 0) {
@@ -167,7 +165,7 @@ class BlockConnector {
     }
 
     async sendMessage(toId, message, fromAccountId = 0) {
-        return await this.sendTransaction(this.contract.methods.sendMessage(this.getAddress(toId), Utils.stringToHex(message)), fromAccountId);
+        return await this.sendTransaction(this.contract.methods.sendMessage(this.getAddress(toId), message), fromAccountId);
     }
 
     async isFailed(params, methodName) {
