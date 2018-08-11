@@ -95,11 +95,11 @@ class BlockConnector {
     }
 
     async isRegistered(fromAccountId = 0) {
-        return await this.contract.methods.isRegistered(this.getAddress(fromAccountId)).call();
+        return await this.contract.methods.isRegistered(this.accounts[fromAccountId]).call();
     }
 
     async isUserAvailable(fromAccountId = 0) {
-        return await this.contract.methods.isUserAvailable(this.getAddress(fromAccountId)).call();
+        return await this.contract.methods.isUserAvailable(this.accounts[fromAccountId]).call();
     }
 
     async isUsernameAvailable(username) {
@@ -107,16 +107,16 @@ class BlockConnector {
     }
 
     async getAccount(fromAccountId = 0) {
-        return await this.contract.methods.getUser(this.getAddress(fromAccountId)).call();
+        return await this.contract.methods.getUser(this.accounts[fromAccountId]).call();
     }
 
     async getBid(toId, fromAccountId = 0) {
-        return await this.contract.methods.getBid(this.getAddress(fromAccountId), this.getAddress(toId)).call();
+        return await this.contract.methods.getBid(this.accounts[fromAccountId], this.getAddress(toId)).call();
     }
 
     async sendTransaction(method, fromAccountId) {
         if (this.isTesting) {
-            await method.send({from: this.getAddress(fromAccountId), gas: this.defaultGas});
+            await method.send({from: this.accounts[fromAccountId], gas: this.defaultGas});
         } else {
             return this.transactionManager.executeMethod(method);
         }
@@ -148,6 +148,9 @@ class BlockConnector {
             Utils.stringToHex(avatarUrl), Utils.stringToHex(extra)), fromAccountId);
     }
 
+    // toId is the index of the account when testing
+    // toId is the address of the account when running in browser
+    // This cause some confusions and need to be fixed properly
     async createBid(toId, tokenAmount, message = "0x", fromAccountId = 0) {
         return await this.sendTransaction(this.contract.methods.createBid(this.getAddress(toId), tokenAmount, message), fromAccountId);
     }
