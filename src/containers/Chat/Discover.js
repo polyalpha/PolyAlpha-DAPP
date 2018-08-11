@@ -8,8 +8,7 @@ import classnames from "classnames"
 import {Link} from "react-router-dom"
 import LocalData from '../../_services/LocalData';
 import {KEY} from '../../_constants/Static';
-
-
+import Utils from '../../_helpers/Utils';
 
 
 const abcValidator = (value) => {
@@ -53,8 +52,10 @@ export class CreateNewBid extends Component {
 		this.setState({isSubmitted: true});
 
 		let user = LocalData.getUser(this.props.userId);
+		let secret = Utils.computeSecret(Buffer.from(LocalData.getPrivateKey(), 'hex'), Buffer.from('04' + user[KEY.USER_PUBKEY], 'hex'));
+		let encryptedMessage = Utils.encrypt(message, secret);
 
-		let result = await this.props.contract.createBid(this.props.userId, bid, message);
+		let result = await this.props.contract.createBid(this.props.userId, bid, '0x' + encryptedMessage);
 		console.log(result);
 	};
 

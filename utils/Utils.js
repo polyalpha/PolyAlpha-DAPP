@@ -21,6 +21,11 @@ module.exports.privateToAddress = (privateKey) => {
     return '0x' + EthUtil.privateToAddress(privateKey).toString('hex');
 }
 
+/**
+ * Compute a secret from user A's private key and user B's public key
+ * @param {Buffer} privateKeyFromA Private key from user A
+ * @param {Buffer} publicKeyFromB Public key from user B
+ */
 module.exports.computeSecret = (privateKeyFromA, publicKeyFromB) => {
     var A = crypto.createECDH('secp256k1');
     A.setPrivateKey(privateKeyFromA);

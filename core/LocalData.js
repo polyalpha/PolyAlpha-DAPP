@@ -88,12 +88,10 @@ class LocalData {
             if (address == this.getAddress()) return;
 
             let user = this.getObjectItem(address);
-            // user[Static.KEY.USER_ADDRESS] = address;
             user[Static.KEY.USER_UNAME] = username;
             user[Static.KEY.USER_NAME] = name;
             user[Static.KEY.USER_AVARTAR_URL] = avatarUrl;
-            user[Static.KEY.USER_PUBKEY_LEFT] = publicKeyLeft;
-            user[Static.KEY.USER_PUBKEY_RIGHT] = publicKeyRight;
+            user[Static.KEY.USER_PUBKEY] = publicKeyLeft.substring(2) + publicKeyRight.substring(2);
             user[Static.KEY.BID_STATUS] = Static.BidStatus.NOBID;
             user[Static.KEY.USER_BLOCKNUMBER] = blockNumber;
 
