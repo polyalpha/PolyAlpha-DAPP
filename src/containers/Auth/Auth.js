@@ -11,6 +11,7 @@ import ethereumUtil from 'ethereumjs-util';
 import LocalData from '../../_services/LocalData';
 import BlockConnector from '../../_services/BlockConnector';
 import web3 from '../../_services/web3';
+import blockReader from '../../_services/blockReader.service';
 
 class Auth extends Component {
 
@@ -44,10 +45,12 @@ class Auth extends Component {
 		// console.log(this.props);
 
 		// Need to show LOADING
+		console.log(LocalData.getAddress());
 		let isRegistered = await this.props.contract.isRegistered();
 		console.log(isRegistered);
 		if (isRegistered) {
 			LocalData.setLoggedIn();
+			blockReader.startRunLoop();
 			history.push("/chat/discover");
 		} else {
 			history.push("/auth/signup");
@@ -60,6 +63,8 @@ class Auth extends Component {
 				I want my bids, log me in
 			</Button>
 		);
+
+		console.log(this.props);
 
 		return (
 			<Fragment>

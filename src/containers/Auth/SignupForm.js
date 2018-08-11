@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import {history} from "../../_helpers";
 import LocalData from '../../_services/LocalData';
 import {txConstants} from '../../_constants';
+import blockReader from '../../_services/blockReader.service';
 
 
 class SignupForm extends Component {
@@ -33,6 +34,7 @@ class SignupForm extends Component {
 				// console.log('Transaction success');
 				// console.log(receipt);
 				LocalData.setLoggedIn();
+				blockReader.startRunLoop();
 				history.push("/chat/discover");
 			}).on (txConstants.ON_ERROR, (err, txHash) => {
 				// console.log('transaction error: ' + txHash);

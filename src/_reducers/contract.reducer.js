@@ -10,7 +10,7 @@ if (LocalData.getAddress() != "") {
 
 async function load() {
     await blockConnector.load();
-    console.log('Connected to ethereum network');
+    console.log('Connected to ethereum network. Contract loaded at: ' + blockConnector.contract.options.address);
 }
 
 load();

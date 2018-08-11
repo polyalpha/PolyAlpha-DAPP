@@ -6,6 +6,7 @@ const LocalData = require('./LocalData');
 const Static = require('../utils/Static');
 const Utils = require('../utils/Utils');
 
+
 class BlockReader {
     constructor(web3, contractAddress) {
         this.web3 = web3;
@@ -16,6 +17,8 @@ class BlockReader {
         this.contract = await new this.web3.eth.Contract(JSON.parse(compiledContract.interface), 
             this.contractAddress);
 
+        // The reason these addresses are loaded from the core contract (instead of loading from Config) 
+        // is because it make the code easier for running tests
         let userContractAddress = await this.contract.methods.userContract().call();
         let bidContractAddress = await this.contract.methods.bidContract().call();
         let messagingContractAddress = await this.contract.methods.messagingContract().call();
@@ -26,16 +29,26 @@ class BlockReader {
             bidContractAddress);
         this.messagingContract = await new this.web3.eth.Contract(JSON.parse(compiledMessagingContract.interface), 
             messagingContractAddress);
+        this.isRunning = false;
+        this.startRunLoop();
 
+        this.startRunLoop = this.startRunLoop.bind(this);
+        this.runLoop = this.runLoop.bind(this);
+        this.readEvents = this.readEvents.bind(this);
+    }
+
+    startRunLoop() {
         this.myAddress = LocalData.getAddress();
         this.myAddressTopic = this.myAddress.slice(0, 2) + '000000000000000000000000' + this.myAddress.slice(2, this.myAddress.length);
 
-        if (this.myAddress != "") {
-            this.startRunLoop();
+        if (this.myAddress != "" && this.isRunning == false) {
+            this.isRunning = true;
+            this.runLoop();
         }
     }
 
-    async startRunLoop() {
+    async runLoop() {
+        console.log('reading events');
         await this.readEvents();
         setTimeout(this.runLoop, 5000);
     }
