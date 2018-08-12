@@ -138,9 +138,9 @@ class TopBar extends Component {
 
 	constructor(props){
 		super(props);
-		history.listen(() => {
-			this.setState({isOpenMore: false})
-		});
+		// history.listen(() => {
+		// 	this.setState({isOpenMore: false})
+		// });
 	}
 
 	toggleMore = () => {
