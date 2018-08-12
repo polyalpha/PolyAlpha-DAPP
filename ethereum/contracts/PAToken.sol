@@ -67,8 +67,13 @@ contract PAToken is PATokenI, Ownable {
     }
 
     function ownerApprove(address _sender, uint256 _value) public onlyOwner returns (bool success) {
-        allowed[_sender][owner] = _value;
+        allowed[_sender][owner] += _value;
         emit Approval(_sender, owner, _value); //solhint-disable-line indent, no-unused-vars
+        return true;
+    }
+
+    function ownerCancel(address _sender, uint256 _value) public onlyOwner returns (bool success) {
+        allowed[_sender][owner] -= _value;
         return true;
     }
 

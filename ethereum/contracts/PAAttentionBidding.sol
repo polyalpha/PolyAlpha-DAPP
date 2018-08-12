@@ -49,6 +49,9 @@ contract PAAttentionBidding is PAAttentionBiddingI, Ownable {
         require(bids[sender][toUser].status == Static.BidStatus.CREATED);
 
         Bid storage b = bids[sender][toUser];
+
+        tokenContract.ownerCancel(sender, b.value);
+
         b.value = 0;
         b.status = Static.BidStatus.NOBID;
 

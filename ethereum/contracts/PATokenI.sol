@@ -7,6 +7,7 @@ interface PATokenI {
     function transferFrom(address _from, address _to, uint256 _value) external returns (bool success);
     function approve(address _spender, uint256 _value) external returns (bool success);
     function ownerApprove(address _sender, uint256 _value) external returns (bool success);
+    function ownerCancel(address _sender, uint256 _value) external returns (bool success);
     function allowance(address _owner, address _spender) external view returns (uint256 remaining);
 
     event Transfer(address indexed _from, address indexed _to, uint256 _value);

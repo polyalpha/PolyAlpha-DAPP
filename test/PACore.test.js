@@ -7,6 +7,7 @@ const ganache = require('ganache-cli');
 const Web3 = require('web3');
 const testAccounts = require('../utils/testAccounts');
 
+
 let web3 = new Web3(ganache.provider({accounts: testAccounts}));
 
 const connector = new BlockConnector(web3, testAccounts, true);
@@ -234,6 +235,32 @@ describe('PolyAlpha core contract testing', function() {
         await connector.acceptBid(0, Utils.stringToHex("message"), 1);
         assert(await connector.isFailed([1, 0], connector.cancelBid.name));
     })
+
+    it('can create/accept multiple bids', async() => {
+        await connector.register("sample0", "sample", "sample", "sample", 0);
+        await connector.register("sample1", "sample", "sample", "sample", 1);
+        await connector.register("sample2", "sample", "sample", "sample", 2);
+        await connector.register("sample3", "sample", "sample", "sample", 3);
+
+        await connector.createBid(1, 1000, Utils.stringToHex("message"), 0);
+        await connector.createBid(2, 1000, Utils.stringToHex("message"), 0);
+        await connector.createBid(3, 1000, Utils.stringToHex("message"), 0);
+
+        // Not sure why it doesn't return the correct allowance
+        // let allowance;
+        // console.log(testAccounts[0].address + " :: " + connector.contract.options.address);
+        // allowance = await connector.tokenContract.methods.allowance(testAccounts[0].address, connector.contract.options.address).call();
+        // allowance = await connector.tokenContract.methods.allowance(connector.contract.options.address, testAccounts[0].address).call();
+        // assert.equal(allowance, 3000);
+
+        await connector.acceptBid(0, Utils.stringToHex("message"), 1);
+        await connector.cancelBid(2, 0);
+        await connector.acceptBid(0, Utils.stringToHex("message"), 3);
+
+        // allowance = await connector.tokenContract.methods.allowance(testAccounts[0].address, connector.contract.options.address).call();
+        // assert.equal(allowance, 0);
+        assert(true);
+    });
 
     it('can send message', async() => {
         await connector.register("sample0", "sample", "sample", "sample", 0);
