@@ -7,6 +7,7 @@ import Input from 'react-validation/build/input';
 import classnames from "classnames"
 import {Link} from "react-router-dom"
 import LocalData from "../../_services/LocalData";
+import blockConnector from '../../_services/blockConnector.service';
 
 
 
@@ -62,8 +63,8 @@ const Chats = ({users, match, ...props}) => {
 // ];
 
 function mapStateToProps(state) {
-	const { auth, users, contract } = state;
-	return { auth, users, contract };
+	const { auth, users } = state;
+	return { auth, users };
 }
 
 const connectedChats = connect(mapStateToProps)(Chats);

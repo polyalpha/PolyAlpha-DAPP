@@ -10,6 +10,7 @@ import LocalData from '../../_services/LocalData';
 import {KEY} from '../../_constants/Static';
 import Utils from '../../_helpers/Utils';
 import {TOKEN_DECIMAL} from '../../_configs/Config';
+import blockConnector from '../../_services/blockConnector.service';
 
 
 const abcValidator = (value) => {
@@ -57,7 +58,7 @@ export class CreateNewBid extends Component {
 			Buffer.from('04' + user[KEY.USER_PUBKEY], 'hex'));
 		let encryptedMessage = Utils.encrypt(message, secret);
 
-		let result = await this.props.contract.createBid(this.props.userId, 
+		let result = await blockConnector.createBid(this.props.userId, 
 			Utils.parseIntSafe(bid) * TOKEN_DECIMAL, '0x' + encryptedMessage);
 		console.log(result);
 	};
@@ -152,9 +153,10 @@ class Discover extends Component {
 		super(props);
 		this.loadProps = this.loadProps.bind(this);
 
-		console.log('discover props');
-		console.log(props);
+		this.loadProps(props);
+	}
 
+	componentWillReceiveProps(props) {
 		this.loadProps(props);
 	}
 
@@ -182,12 +184,6 @@ class Discover extends Component {
 		this.messages = [<CreateNewBid userId={match.params.id} {...props}/>];
 	}
 
-	componentWillReceiveProps(props) {
-		console.log('discover received props');
-		console.log(props);
-		this.loadProps(props);
-	}
-
 	render() {
 		console.log('render discover');
 		return (
@@ -200,57 +196,9 @@ class Discover extends Component {
 	}
 };
 
-// const Discover = ({users, match, ...props}) => {
-// 	let newAddresses = users.newAddresses;
-// 	let newUsers = LocalData.getUsers(newAddresses);
-
-// 	console.log('discover props');
-// 	console.log(props);
-
-// 	let userLists = [];
-// 	userLists.push(newUsers);
-// 	userLists.push([]);
-
-// 	match.params.tab = match.params.tab || sideBarTabs[0].name;
-// 	users = userLists[sideBarTabs.findIndex(x=>x.name === match.params.tab )];
-
-// 	let sidebar = {
-// 		name: "discover",
-// 		tab: match.params.tab,
-// 		tabs: sideBarTabs,
-// 		users,
-// 		userId: match.params.id,
-// 	};
-
-// 	let messages = [<CreateNewBid userId={match.params.id} {...props}/>];
-
-// 	return (
-// 		<ChatLayout {...props} sidebar={sidebar} back="/chat/discover">
-// 			{match.params.id && (
-// 				<MessagesBlock messages={messages}/>
-// 			) || <DiscoverInfo />}
-// 		</ChatLayout>
-// 	)
-// };
-
-// const defaultUsers = [
-// 	[
-// 		{id: 2, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-// 		{id: 3, name: "John Copley", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-// 		{id: 4, name: "MargotRobbie", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-// 		{id: 5, name: "Vincent van Gogh", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-// 	],
-// 	[
-// 		{id: 2, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 100, abt:"2.33"},
-// 		{id: 3, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 60, abt:"0.02"},
-// 		{id: 4, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 80, abt:"3.01"},
-// 	]
-// ];
-
-
 function mapStateToProps(state) {
-	const { auth, contract, users } = state;
-	return { auth, contract, users };
+	const { auth, users } = state;
+	return { auth, users };
 }
 
 const connectedDiscover = connect(mapStateToProps)(Discover);

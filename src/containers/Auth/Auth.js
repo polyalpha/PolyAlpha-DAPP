@@ -12,6 +12,7 @@ import LocalData from '../../_services/LocalData';
 import BlockConnector from '../../_services/BlockConnector';
 import web3 from '../../_services/web3';
 import blockReader from '../../_services/blockReader.service';
+import blockConnector from '../../_services/blockConnector.service';
 
 class Auth extends Component {
 
@@ -40,13 +41,13 @@ class Auth extends Component {
 		window.WWW = e;
 		e.preventDefault();
 		LocalData.setPrivateKey(this.state.privateKey);
-		this.props.contract.setAccounts([{secretKey: Buffer.from(LocalData.getPrivateKey(), 'hex'), address: LocalData.getAddress()}]);
+		blockConnector.setAccounts([{secretKey: Buffer.from(LocalData.getPrivateKey(), 'hex'), address: LocalData.getAddress()}]);
 
 		// console.log(this.props);
 
 		// Need to show LOADING
 		console.log(LocalData.getAddress());
-		let isRegistered = await this.props.contract.isRegistered();
+		let isRegistered = await blockConnector.isRegistered();
 		console.log(isRegistered);
 		if (isRegistered) {
 			LocalData.setLoggedIn();
@@ -110,8 +111,8 @@ class Auth extends Component {
 };
 
 function mapStateToProps(state) {
-	const { auth, contract } = state;
-	return { auth, contract };
+	const { auth } = state;
+	return { auth };
 }
 
 const connectedAuth = connect(mapStateToProps)(Auth);
