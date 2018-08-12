@@ -8,9 +8,11 @@ const Utils = require('../utils/Utils');
 
 
 class BlockReader {
-    constructor(web3, contractAddress) {
+    constructor(web3, contractAddress, updateHandler) {
         this.web3 = web3;
         this.contractAddress = contractAddress;
+        this.updateHandler = updateHandler;
+        this.initialize();
     }
 
     async initialize() {
@@ -48,7 +50,6 @@ class BlockReader {
     }
 
     async runLoop() {
-        console.log('reading events');
         await this.readEvents();
         setTimeout(this.runLoop, 5000);
     }
@@ -66,100 +67,109 @@ class BlockReader {
     async readEvents() {
         let storedBlockNumber = Utils.parseIntSafe(LocalData.getLastBlockNumber());
         let currentBlockNumber = Utils.parseIntSafe(await this.web3.eth.getBlockNumber()) - 1;
-        if (storedBlockNumber >= currentBlockNumber) return;
+        console.log('reading events from: ' + storedBlockNumber + ' to ' + currentBlockNumber);
+        if (storedBlockNumber < currentBlockNumber) {
+            let userEvents = await this.userContract.getPastEvents('allEvents', {
+                filter: {},
+                fromBlock: storedBlockNumber,
+                toBlock: currentBlockNumber
+            });
+            let bidEvents_to = await this.bidContract.getPastEvents('allEvents', {
+                // filter: {sender: this.myAddress},
+                topics: [null, this.myAddressTopic],
+                fromBlock: storedBlockNumber,
+                toBlock: currentBlockNumber
+            });
+            let bidEvents_from = await this.bidContract.getPastEvents('allEvents', {
+                // filter: {receiver: this.myAddress},
+                topics: [null, null, this.myAddressTopic],
+                fromBlock: storedBlockNumber,
+                toBlock: currentBlockNumber
+            });
+            let bidEvents = this.mergeEvents(bidEvents_to, bidEvents_from);
 
-        let userEvents = await this.userContract.getPastEvents('allEvents', {
-            filter: {},
-            fromBlock: storedBlockNumber,
-            toBlock: currentBlockNumber
-        });
-        let bidEvents_to = await this.bidContract.getPastEvents('allEvents', {
-            // filter: {sender: this.myAddress},
-            topics: [null, this.myAddressTopic],
-            fromBlock: storedBlockNumber,
-            toBlock: currentBlockNumber
-        });
-        let bidEvents_from = await this.bidContract.getPastEvents('allEvents', {
-            // filter: {receiver: this.myAddress},
-            topics: [null, null, this.myAddressTopic],
-            fromBlock: storedBlockNumber,
-            toBlock: currentBlockNumber
-        });
-        let bidEvents = this.mergeEvents(bidEvents_to, bidEvents_from);
+            let messageEvents_to = await this.messagingContract.getPastEvents('MessageSent', {
+                // filter: {sender: this.myAddress},
+                topics: [null, this.myAddressTopic],
+                fromBlock: storedBlockNumber,
+                toBlock: currentBlockNumber
+            });
+            let messageEvents_from = await this.messagingContract.getPastEvents('MessageSent', {
+                // filter: {receiver: this.myAddress},
+                topics: [null, null, this.myAddressTopic],
+                fromBlock: storedBlockNumber,
+                toBlock: currentBlockNumber
+            });
 
-        let messageEvents_to = await this.messagingContract.getPastEvents('MessageSent', {
-            // filter: {sender: this.myAddress},
-            topics: [null, this.myAddressTopic],
-            fromBlock: storedBlockNumber,
-            toBlock: currentBlockNumber
-        });
-        let messageEvents_from = await this.messagingContract.getPastEvents('MessageSent', {
-            // filter: {receiver: this.myAddress},
-            topics: [null, null, this.myAddressTopic],
-            fromBlock: storedBlockNumber,
-            toBlock: currentBlockNumber
-        });
+            // Messages need to be orderred by blockNumber
+            let messageEvents = this.mergeEvents(messageEvents_to, messageEvents_from);
 
-        // Messages need to be orderred by blockNumber
-        let messageEvents = this.mergeEvents(messageEvents_to, messageEvents_from);
-
-        for (var i=0;i<userEvents.length;i++) {
-            let name = userEvents[i].event;
-            let values = userEvents[i].returnValues;
-            if (name == 'UserJoined') {
-                LocalData.addUser(values.sender, values.publicKeyLeft, values.publicKeyRight,
-                    Utils.hexToString(values.username), Utils.hexToString(values.name), Utils.hexToString(values.avatarUrl), 
-                    userEvents[i].blockNumber);
-            } else if (name == 'UserProfileUpdated') {
-                LocalData.addUser(values.sender, Utils.hexToString(values.username), 
-                    Utils.hexToString(values.name), Utils.hexToString(values.avatarUrl), userEvents[i].blockNumber);
-            }
-        }
-
-        for (var i=0;i<bidEvents.length;i++) {
-            let name = bidEvents[i].event;
-            let values = bidEvents[i].returnValues;
-            values.sender = values.sender.toLowerCase();
-            values.receiver = values.receiver.toLowerCase();
-            if (name == 'BidCreated') {
-                if (values.sender == this.myAddress) {
-                    LocalData.addBid(values.receiver, values.tokenAmount, Static.BidType.TO);
-                } else {
-                    LocalData.addBid(values.sender, values.tokenAmount, Static.BidType.FROM);
-                }
-            } else if (name == 'BidCancelled') {
-                if (values.sender == this.myAddress) {
-                    LocalData.cancelMyBid(values.receiver);
-                } else {
-                    LocalData.bidGetCancelled(values.sender);
-                }
-            } else if (name == 'BidAccepted') {
-                if (values.sender == this.myAddress) {
-                    LocalData.acceptBid(values.receiver, Static.BidType.TO);
-                } else {
-                    LocalData.acceptBid(values.sender, Static.BidType.FROM);
-                }
-            } else if (name == 'BidBlocked') {
-                if (values.sender == this.myAddress) {
-                    LocalData.blockBid(values.receiver);
-                } else {
-                    LocalData.myBidGetBlocked(values.sender);
+            for (var i=0;i<userEvents.length;i++) {
+                let name = userEvents[i].event;
+                let values = userEvents[i].returnValues;
+                if (name == 'UserJoined') {
+                    LocalData.addUser(values.sender, values.publicKeyLeft, values.publicKeyRight,
+                        Utils.hexToString(values.username), Utils.hexToString(values.name), Utils.hexToString(values.avatarUrl), 
+                        userEvents[i].blockNumber);
+                } else if (name == 'UserProfileUpdated') {
+                    LocalData.addUser(values.sender, Utils.hexToString(values.username), 
+                        Utils.hexToString(values.name), Utils.hexToString(values.avatarUrl), userEvents[i].blockNumber);
                 }
             }
-        }
 
-        for (var i=0;i<messageEvents.length;i++) {
-            let values = messageEvents[i].returnValues;
-            values.sender = values.sender.toLowerCase();
-            values.receiver = values.receiver.toLowerCase();
-            if (values.sender == this.myAddress) {
-                LocalData.addMessage(values.receiver, values.message, Static.MsgType.TO);
-            } else {
-                LocalData.addMessage(values.sender, values.message, Static.MsgType.FROM);
+            for (var i=0;i<bidEvents.length;i++) {
+                let name = bidEvents[i].event;
+                let values = bidEvents[i].returnValues;
+                values.sender = values.sender.toLowerCase();
+                values.receiver = values.receiver.toLowerCase();
+                if (name == 'BidCreated') {
+                    if (values.sender == this.myAddress) {
+                        LocalData.addBid(values.receiver, values.tokenAmount, Static.BidType.TO);
+                    } else {
+                        LocalData.addBid(values.sender, values.tokenAmount, Static.BidType.FROM);
+                    }
+                } else if (name == 'BidCancelled') {
+                    if (values.sender == this.myAddress) {
+                        LocalData.cancelMyBid(values.receiver);
+                    } else {
+                        LocalData.bidGetCancelled(values.sender);
+                    }
+                } else if (name == 'BidAccepted') {
+                    if (values.sender == this.myAddress) {
+                        LocalData.acceptBid(values.receiver, Static.BidType.TO);
+                    } else {
+                        LocalData.acceptBid(values.sender, Static.BidType.FROM);
+                    }
+                } else if (name == 'BidBlocked') {
+                    if (values.sender == this.myAddress) {
+                        LocalData.blockBid(values.receiver);
+                    } else {
+                        LocalData.myBidGetBlocked(values.sender);
+                    }
+                }
             }
+
+            for (var i=0;i<messageEvents.length;i++) {
+                let values = messageEvents[i].returnValues;
+                values.sender = values.sender.toLowerCase();
+                values.receiver = values.receiver.toLowerCase();
+                if (values.sender == this.myAddress) {
+                    LocalData.addMessage(values.receiver, values.message, Static.MsgType.TO);
+                } else {
+                    LocalData.addMessage(values.sender, values.message, Static.MsgType.FROM);
+                }
+            }
+
+            if (this.updateHandler != undefined) {
+                if (userEvents.length > 0 || bidEvents.length > 0 || messageEvents.length > 0) {
+                    this.updateHandler();
+                }
+            }
+
+            LocalData.setLastBlockNumber(currentBlockNumber + 1); // Need to plus 1, otherwise it will read the currentblock again
         }
 
-        LocalData.setLastBlockNumber(currentBlockNumber);
+        console.log('read events done');
     }
 
     /// Merge 2 list of events and order by blockNumber
