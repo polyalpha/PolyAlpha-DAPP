@@ -185,7 +185,7 @@ class LocalData {
         }
     }
 
-    static acceptBid(address, bidType) {
+    static acceptBid(address, message, bidType, blockNumber) {
         address = address.toLowerCase();
 
         if (this.hasLocalStorage()) {
@@ -200,10 +200,19 @@ class LocalData {
             let accepteds = this.getArrayItem(Static.KEY.ACCEPTED_BIDS);
             accepteds.push(address);
             this.setObjectItem(Static.KEY.ACCEPTED_BIDS, accepteds);
+
+            let msg = {};
+            msg[Static.KEY.MESSAGE_CONTENT] = this.decryptMessage(address, message);
+            msg[Static.KEY.MESSAGE_TYPE] = !bidType;
+            msg[Static.KEY.MESSAGE_BLOCKNUMBER] = blockNumber;
+
+            let user = this.getObjectItem(address);
+            user[Static.KEY.MESSAGES].push(msg);
+            this.setObjectItem(address, user);
         }
     }
 
-    static addBid(userAddress, tokenAmount, bidType, blockNumber) {
+    static addBid(userAddress, message, tokenAmount, bidType, blockNumber) {
         userAddress = userAddress.toLowerCase();
 
         let arrayKey = Static.KEY.BIDS;
@@ -226,6 +235,7 @@ class LocalData {
             user[Static.KEY.BID_STATUS] = Static.BidStatus.CREATED;
             user[Static.KEY.BID_AMOUNT] = tokenAmount;
             user[Static.KEY.USER_BLOCKNUMBER] = blockNumber;
+            user[Static.KEY.BID_MESSAGE] = this.decryptMessage(userAddress, message);
             
             this.setObjectItem(userAddress, user);
         }
@@ -239,7 +249,7 @@ class LocalData {
             user[Static.KEY.MESSAGES] = [];
         }
         let msg = {};
-        msg[Static.KEY.MESSAGE_CONTENT] = message;
+        msg[Static.KEY.MESSAGE_CONTENT] = this.decryptMessage(userAddress, message);
         msg[Static.KEY.MESSAGE_TYPE] = type;
         msg[Static.KEY.MESSAGE_BLOCKNUMBER] = blockNumber;
 
@@ -312,6 +322,20 @@ class LocalData {
 
 
     /// PRIVATE METHODS
+
+    static decryptMessage(address, onChainMessage) {
+        let message = onChainMessage.substring(2);
+        try {
+            let user = this.getUser(address);
+            let secret = Utils.computeSecret(Buffer.from(this.getPrivateKey(), 'hex'), 
+                Buffer.from('04' + user[Static.KEY.USER_PUBKEY], 'hex'));
+            return Utils.decrypt(message, secret);
+        } catch (err) {
+            console.log(err);
+            return Utils.hexToString(message);
+        }
+        
+    }
 
     static setItem(key, value) {
         localStorage.setItem(key, value);

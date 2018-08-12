@@ -20,6 +20,8 @@ module.exports.NETWORK_LIST = [
     }
 ]
 
+module.exports.TOKEN_DECIMAL = 100000000; // 8 decimals
+
 module.exports.ENV = {
     get ContractAddress() {
         return this.getProperty('contractAddress');
@@ -54,17 +56,20 @@ module.exports.ENV = {
     },
 
     getProperty(propertyName) {
-        if (typeof(Storage) !== 'undefined' && localStorage.ethNetwork != undefined) {
-            var network = parseInt(localStorage.ethNetwork);
-            for (var i=0;i<module.exports.NETWORK_LIST.length;i++) {
-                if (network == module.exports.NETWORK_LIST[i].id) {
-                    return module.exports.NETWORK_LIST[i][propertyName];
-                }
+        var network = this.EthNetworkId;
+        console.log('current network: ' + network + '::' + localStorage.ethNetwork);
+        for (var i=0;i<module.exports.NETWORK_LIST.length;i++) {
+            if (network == module.exports.NETWORK_LIST[i].id) {
+                return module.exports.NETWORK_LIST[i][propertyName];
             }
-        } else {
-            // return "";
-            return module.exports.NETWORK_LIST[0][propertyName];
         }
+        // if (typeof(Storage) !== 'undefined' && localStorage.ethNetwork != undefined) {
+            
+            
+        // } else {
+        //     // return "";
+        //     return module.exports.NETWORK_LIST[0][propertyName];
+        // }
     },
 
     set EthNetworkId(networkId) {

@@ -9,6 +9,7 @@ import {Link} from "react-router-dom"
 import LocalData from '../../_services/LocalData';
 import {KEY} from '../../_constants/Static';
 import Utils from '../../_helpers/Utils';
+import {TOKEN_DECIMAL} from '../../_configs/Config';
 
 
 const abcValidator = (value) => {
@@ -52,10 +53,12 @@ export class CreateNewBid extends Component {
 		this.setState({isSubmitted: true});
 
 		let user = LocalData.getUser(this.props.userId);
-		let secret = Utils.computeSecret(Buffer.from(LocalData.getPrivateKey(), 'hex'), Buffer.from('04' + user[KEY.USER_PUBKEY], 'hex'));
+		let secret = Utils.computeSecret(Buffer.from(LocalData.getPrivateKey(), 'hex'), 
+			Buffer.from('04' + user[KEY.USER_PUBKEY], 'hex'));
 		let encryptedMessage = Utils.encrypt(message, secret);
 
-		let result = await this.props.contract.createBid(this.props.userId, bid, '0x' + encryptedMessage);
+		let result = await this.props.contract.createBid(this.props.userId, 
+			Utils.parseIntSafe(bid) * TOKEN_DECIMAL, '0x' + encryptedMessage);
 		console.log(result);
 	};
 
@@ -144,37 +147,91 @@ const DiscoverInfo = (props) => (
 	</div>
 )
 
+class Discover extends Component {
+	constructor(props) {
+		super(props);
+		this.loadProps = this.loadProps.bind(this);
 
+		console.log('discover props');
+		console.log(props);
 
-const Discover = ({users, match, ...props}) => {
-	let newAddresses = users.newAddresses;
-	let newUsers = LocalData.getUsers(newAddresses);
+		this.loadProps(props);
+	}
 
-	let userLists = [];
-	userLists.push(newUsers);
-	userLists.push([]);
+	loadProps(props) {
+		let {match, users} = props;
 
-	match.params.tab = match.params.tab || sideBarTabs[0].name;
-	users = userLists[sideBarTabs.findIndex(x=>x.name === match.params.tab )];
+		let newAddresses = props.users.newAddresses;
+		let newUsers = LocalData.getUsers(newAddresses);
 
-	let sidebar = {
-		name: "discover",
-		tab: match.params.tab,
-		tabs: sideBarTabs,
-		users,
-		userId: match.params.id,
-	};
+		let userLists = [];
+		userLists.push(newUsers);
+		userLists.push([]);
 
-	let messages = [<CreateNewBid userId={match.params.id} {...props}/>];
+		match.params.tab = match.params.tab || sideBarTabs[0].name;
+		users = userLists[sideBarTabs.findIndex(x=>x.name === match.params.tab )];
 
-	return (
-		<ChatLayout {...props} sidebar={sidebar} back="/chat/discover">
-			{match.params.id && (
-				<MessagesBlock messages={messages}/>
+		this.sidebar = {
+			name: "discover",
+			tab: match.params.tab,
+			tabs: sideBarTabs,
+			users,
+			userId: match.params.id,
+		};
+
+		this.messages = [<CreateNewBid userId={match.params.id} {...props}/>];
+	}
+
+	componentWillReceiveProps(props) {
+		console.log('discover received props');
+		console.log(props);
+		this.loadProps(props);
+	}
+
+	render() {
+		console.log('render discover');
+		return (
+		<ChatLayout {...this.props} sidebar={this.sidebar} back="/chat/discover">
+			{this.props.match.params.id && (
+				<MessagesBlock messages={this.messages}/>
 			) || <DiscoverInfo />}
 		</ChatLayout>
-	)
+		)
+	}
 };
+
+// const Discover = ({users, match, ...props}) => {
+// 	let newAddresses = users.newAddresses;
+// 	let newUsers = LocalData.getUsers(newAddresses);
+
+// 	console.log('discover props');
+// 	console.log(props);
+
+// 	let userLists = [];
+// 	userLists.push(newUsers);
+// 	userLists.push([]);
+
+// 	match.params.tab = match.params.tab || sideBarTabs[0].name;
+// 	users = userLists[sideBarTabs.findIndex(x=>x.name === match.params.tab )];
+
+// 	let sidebar = {
+// 		name: "discover",
+// 		tab: match.params.tab,
+// 		tabs: sideBarTabs,
+// 		users,
+// 		userId: match.params.id,
+// 	};
+
+// 	let messages = [<CreateNewBid userId={match.params.id} {...props}/>];
+
+// 	return (
+// 		<ChatLayout {...props} sidebar={sidebar} back="/chat/discover">
+// 			{match.params.id && (
+// 				<MessagesBlock messages={messages}/>
+// 			) || <DiscoverInfo />}
+// 		</ChatLayout>
+// 	)
+// };
 
 // const defaultUsers = [
 // 	[

@@ -31,6 +31,7 @@ module.exports.KEY = {
     BID_AMOUNT: 'ba',
     BID_TYPE:'bty',
     BID_STATUS: 'bs',
+    BID_MESSAGE: 'bmsg',
     MY_BIDS: 'mbids',
     BIDS: 'bids',
     ACCEPTED_BIDS: 'aba',

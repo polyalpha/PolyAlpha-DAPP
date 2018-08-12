@@ -124,9 +124,9 @@ class BlockReader {
                 values.receiver = values.receiver.toLowerCase();
                 if (name == 'BidCreated') {
                     if (values.sender == this.myAddress) {
-                        LocalData.addBid(values.receiver, values.tokenAmount, Static.BidType.TO);
+                        LocalData.addBid(values.receiver, values.message, values.tokenAmount, Static.BidType.TO);
                     } else {
-                        LocalData.addBid(values.sender, values.tokenAmount, Static.BidType.FROM);
+                        LocalData.addBid(values.sender, values.message, values.tokenAmount, Static.BidType.FROM);
                     }
                 } else if (name == 'BidCancelled') {
                     if (values.sender == this.myAddress) {
@@ -136,9 +136,9 @@ class BlockReader {
                     }
                 } else if (name == 'BidAccepted') {
                     if (values.sender == this.myAddress) {
-                        LocalData.acceptBid(values.receiver, Static.BidType.TO);
+                        LocalData.acceptBid(values.receiver, values.message, Static.BidType.TO);
                     } else {
-                        LocalData.acceptBid(values.sender, Static.BidType.FROM);
+                        LocalData.acceptBid(values.sender, values.message, Static.BidType.FROM);
                     }
                 } else if (name == 'BidBlocked') {
                     if (values.sender == this.myAddress) {

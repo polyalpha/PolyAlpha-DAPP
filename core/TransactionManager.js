@@ -38,6 +38,9 @@ class TransactionsManager {
         var data = method.encodeABI();
         var transactionCount = await web3.eth.getTransactionCount(this.account.address);
 
+        console.log('send transaction to:');
+        console.log(ENV.ContractAddress);
+
         var rawTx = {
             nonce: parseInt(transactionCount + this.numPendingTx),
             gasPrice: parseInt(gasPrice),
