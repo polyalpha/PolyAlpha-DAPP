@@ -2,7 +2,9 @@ import React, {Fragment, Component} from "react";
 import { connect } from 'react-redux';
 import {AbtValue, ChatLayout, MessagesBlock, Message} from "./Chat"
 import LocalData from '../../_services/LocalData';
-
+import Static from '../../_constants/Static';
+import {TOKEN_DECIMAL} from '../../_configs/Config';
+import blockConnector from '../../_services/blockConnector.service';
 
 const sideBarTabs = [
 	{
@@ -16,38 +18,67 @@ const sideBarTabs = [
 ];
 
 
-const onClickHandler = (e) => {
-	console.log(e.target)
-};
+class Bids extends Component  {
+	//= ({auth, match, users, ...props}) =>
+	
+	constructor(props) {
+		super(props);
+		this.loadProps = this.loadProps.bind(this);
+		this.onCancelHandler = this.onCancelHandler.bind(this);
+		this.onAcceptHandler = this.onAcceptHandler.bind(this);
 
-
-const Bids = ({auth, match, users, ...props}) => {
-	match.params.tab = match.params.tab || sideBarTabs[0].name;	
-	let bidAddresses;
-	if (match.params.tab == "me") {
-		bidAddresses = users.bidAddresses;
-	} else {
-		bidAddresses = users.myBidAddresses;
+		this.loadProps(props);
 	}
-	let bidUsers = LocalData.getUsers(bidAddresses);
 
-	let sidebar = {
-		name: "bids",
-		tab: match.params.tab,
-		tabs: sideBarTabs,
-		users: bidUsers,
-		userId: match.params.id,
+	componentWillReceiveProps(props) {
+		this.loadProps(props);
+	}
+
+	onCancelHandler = () => {
 	};
 
-	let messages = [
-		<Message my={true} className="chat-message-big-circle" bid={100} button={{title: "Accept bid and reply", onClick:onClickHandler}}>Hi Leonard, I am trying to get advice for my side project and I know you have experience in DAPPs as well as DAICO’s. May you give me your opinion on www.project.help please?</Message>
-	];
+	onAcceptHandler = () => {
 
-	return (
-		<ChatLayout {...props} sidebar={sidebar}>
-			{match.params.id && <MessagesBlock messages={messages}/>}
-		</ChatLayout>
-	)
+	}
+
+	loadProps(props) {
+		let {match, users} = props;
+
+		match.params.tab = match.params.tab || sideBarTabs[0].name;	
+		let bidAddresses;
+		if (match.params.tab == "me") {
+			bidAddresses = users.bidAddresses;
+		} else {
+			bidAddresses = users.myBidAddresses;
+		}
+		let bidUsers = LocalData.getUsers(bidAddresses);
+
+		this.sidebar = {
+			name: "bids",
+			tab: match.params.tab,
+			tabs: sideBarTabs,
+			users: bidUsers,
+			userId: match.params.id,
+		};
+
+		let user = LocalData.getUser(match.params.id);
+		let bidAmount = parseInt(user[Static.KEY.BID_AMOUNT] / TOKEN_DECIMAL);
+
+		let buttonTitle = user[Static.KEY.BID_TYPE] == Static.BidType.TO ? "Cancel my bid" : "Accept bid and reply";
+		let action = user[Static.KEY.BID_TYPE] == Static.BidType.TO ? this.onCancelHandler : this.onAcceptHandler;
+
+		this.messages = [
+			<Message my={true} className="chat-message-big-circle" bid={bidAmount} button={{title: buttonTitle, onClick: action}}>{user[Static.KEY.BID_MESSAGE]}</Message>
+		];
+	}
+
+	render() {
+		return (
+			<ChatLayout {...this.props} sidebar={this.sidebar}>
+				{this.props.match.params.id && <MessagesBlock messages={this.messages}/>}
+			</ChatLayout>
+		)
+	}
 };
 
 
@@ -66,8 +97,8 @@ const Bids = ({auth, match, users, ...props}) => {
 // ];
 
 function mapStateToProps(state) {
-	const { auth, users, contract } = state;
-	return { auth, users, contract };
+	const { auth, users } = state;
+	return { auth, users };
 }
 
 const connectedBids = connect(mapStateToProps)(Bids);
