@@ -7,6 +7,7 @@ import {history} from "../../_helpers";
 import LocalData from '../../_services/LocalData';
 import {txConstants} from '../../_constants';
 import blockReader from '../../_services/blockReader.service';
+import blockConnector from '../../_services/blockConnector.service';
 
 
 class SignupForm extends Component {
@@ -26,14 +27,18 @@ class SignupForm extends Component {
 		e.preventDefault();
 		
 		// Check if username is exists
-		let available = await this.props.contract.isUsernameAvailable(this.state.username);
+		let available = await blockConnector.isUsernameAvailable(this.state.username);
 		if (available) {
 			console.log('send form');
-			let result = await this.props.contract.register(this.state.username, this.state.displayName, this.state.avatarUrl);
-			result.on(txConstants.ON_RECEIPT, (receipt) => {
+			let result = await blockConnector.register(this.state.username, this.state.displayName, this.state.avatarUrl);
+			result.on(txConstants.ON_RECEIPT, async (receipt) => {
 				// console.log('Transaction success');
 				// console.log(receipt);
-				LocalData.setLoggedIn();
+				let user = await blockConnector.getAccount();
+				let username = Utils.hexToString(user[2]);
+				let name = Utils.hexToString(user[3]);
+				let avatarUrl = Utils.hexToString(user[4]);
+				LocalData.setLoggedIn(username, name, avatarUrl);
 				blockReader.startRunLoop();
 				history.push("/chat/discover");
 			}).on (txConstants.ON_ERROR, (err, txHash) => {
@@ -135,8 +140,8 @@ const lengthCheck = (value) => {
 
 
 function mapStateToProps(state) {
-	const { auth, contract } = state;
-	return { auth, contract };
+	const { auth } = state;
+	return { auth };
 }
 
 const connectedSignupForm = connect(mapStateToProps)(SignupForm);

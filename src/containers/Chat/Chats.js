@@ -33,8 +33,6 @@ const Chats = ({users, match, ...props}) => {
 		userId: match.params.id
 	};
 
-	
-
 	let messages = [
 		<Message my={true} bid={98} isEarned={false} key={1}>Hey John, great to meet at TechCrunch. It is great to be able to have private conversations here.</Message>,
 		<Message key={2} button={{title:"Add to whitelist", onClick: onClickHandler}}>Yea I like this project because I can use it for business development as well as partnerships.</Message>,

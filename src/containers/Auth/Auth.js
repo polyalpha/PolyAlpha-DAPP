@@ -9,10 +9,10 @@ import Textarea from 'react-validation/build/textarea';
 import {Button} from './Button';
 import ethereumUtil from 'ethereumjs-util';
 import LocalData from '../../_services/LocalData';
-import BlockConnector from '../../_services/BlockConnector';
-import web3 from '../../_services/web3';
+import {userActions} from '../../_actions';
 import blockReader from '../../_services/blockReader.service';
 import blockConnector from '../../_services/blockConnector.service';
+import Utils from '../../_helpers/Utils';
 
 class Auth extends Component {
 
@@ -20,6 +20,8 @@ class Auth extends Component {
 		super(props);
 		this.pp = ["Welcome to the next generation decentralised, private and scaleable instant messenger that pays you ABT tokens for your attention.", "When you sign up you will recieve a PolyAlpha messenger address pair on the Ethereum Testnet. If you already have an account, log in with your private key."];
 		this.state = {privateKey: ""};
+
+		this.signinHandler = this.signinHandler.bind(this);
 		// this.loadContract();
 	}
 
@@ -50,7 +52,12 @@ class Auth extends Component {
 		let isRegistered = await blockConnector.isRegistered();
 		console.log(isRegistered);
 		if (isRegistered) {
-			LocalData.setLoggedIn();
+			let user = await blockConnector.getAccount();
+			let username = Utils.hexToString(user[2]);
+			let name = Utils.hexToString(user[3]);
+			let avatarUrl = Utils.hexToString(user[4]);
+			LocalData.setLoggedIn(username, name, avatarUrl);
+			this.props.dispatch(userActions.loggedIn());
 			blockReader.startRunLoop();
 			history.push("/chat/discover");
 		} else {

@@ -1,13 +1,14 @@
 export const userConstants = {
-    UPDATE_LIST: 'user/UPDATE_LIST'
+    UPDATE_LIST: 'user/UPDATE_LIST',
 
+    LOGIN_SUCCESS: 'user/LOGIN_SUCCESS',
     
     // REGISTER_REQUEST: 'user/REGISTER_REQUEST',
     // REGISTER_SUCCESS: 'user/REGISTER_SUCCESS',
     // REGISTER_FAILURE: 'user/REGISTER_FAILURE',
 
     // LOGIN_REQUEST: 'user/LOGIN_REQUEST',
-    // LOGIN_SUCCESS: 'user/LOGIN_SUCCESS',
+    
     // LOGIN_FAILURE: 'user/LOGIN_FAILURE',
 
     // LOGOUT: 'user/LOGOUT',

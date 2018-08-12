@@ -20,7 +20,7 @@ class BlockConnector {
     setAccounts(accountObjects) {
         this.accountObjects = accountObjects;
         if (this.isTesting == false && accountObjects.length > 0) {
-            this.transactionManager = new TransactionManager(accountObjects[0], false);
+            this.transactionManager = new TransactionManager(this.web3, accountObjects[0], false);
         }
         this.accounts = [];
         for (var i=0;i<this.accountObjects.length;i++) {

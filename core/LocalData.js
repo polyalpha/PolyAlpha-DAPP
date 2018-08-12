@@ -207,6 +207,9 @@ class LocalData {
             msg[Static.KEY.MESSAGE_BLOCKNUMBER] = blockNumber;
 
             let user = this.getObjectItem(address);
+            if (user[Static.KEY.MESSAGES] == undefined) {
+                user[Static.KEY.MESSAGES] = [];
+            }
             user[Static.KEY.MESSAGES].push(msg);
             this.setObjectItem(address, user);
         }
@@ -266,7 +269,10 @@ class LocalData {
         return this.getItem(Static.KEY.LAST_BLOCK_NUMBER);
     }
 
-    static setLoggedIn() {
+    static setLoggedIn(username, name, avatarUrl) {
+        this.setItem(Static.KEY.UNAME, username);
+        this.setItem(Static.KEY.NAME, name);
+        this.setItem(Static.KEY.AVATAR_URL, avatarUrl);
         this.setItem(Static.KEY.LOGGED_IN, 'true');
     }
 
@@ -287,6 +293,25 @@ class LocalData {
 
     static getAddress() {
         return this.getItem(Static.KEY.ADDRESS);
+    }
+
+    static getName() {
+        return this.getItem(Static.KEY.NAME);
+    }
+
+    static getUsername() {
+        return this.getItem(Static.KEY.UNAME);
+    }
+
+    static getAvatarUrl() {
+        return this.getItem(Static.KEY.AVATAR_URL);
+    }
+
+    static getCurrentUser() {
+        let user = {};
+        user.name = this.getName();
+        user.avatar = this.getAvatarUrl();
+        return user;
     }
 
     static getBlockTime(blockNumber) {

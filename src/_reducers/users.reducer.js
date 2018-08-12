@@ -1,13 +1,22 @@
-// import { userConstants } from '../_constants';
+import { userConstants } from '../_constants';
 import LocalData from '../_services/LocalData';
 
-export function users(state = {}, action) {
-  console.log('get user list');
+function getAddresses() {
+  let result = {};
+  result.chatAddresses = LocalData.getConenctedAddresses();
+  result.bidAddresses = LocalData.getBidAddresses();
+  result.myBidAddresses = LocalData.getMyBidAddresses();
+  result.newAddresses = LocalData.getNewUserAddresses();
+  return result;
+}
 
-  let updatedState = {};
-  updatedState.chatAddresses = LocalData.getConenctedAddresses();
-  updatedState.bidAddresses = LocalData.getBidAddresses();
-  updatedState.myBidAddresses = LocalData.getMyBidAddresses();
-  updatedState.newAddresses = LocalData.getNewUserAddresses();
-  return updatedState;
+let initialState = getAddresses();
+
+export function users(state = initialState, action) {
+  if (action.type == userConstants.UPDATE_LIST) {
+    console.log('get user list');
+
+    return getAddresses();
+  }
+  return state;
 }

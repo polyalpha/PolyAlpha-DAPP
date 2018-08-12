@@ -34,6 +34,9 @@ export class MessagesBlock extends Component {
 
 	onChangeMessage = (e) => {
 		let message = e.target.value.trim();
+		if (this.props.onMessageChange) {
+			this.props.onMessageChange(message);
+		}
 		this.setState({message});
 	};
 
@@ -62,9 +65,9 @@ export class MessagesBlock extends Component {
 					/>
 						</div>
 						<div className="buttons">
-							<Svg id="svg-mic" className="button" />
+							{/* <Svg id="svg-mic" className="button" /> */}
 							<Svg id="svg-share" className="button" />
-							<Svg id="svg-smile" className="button" />
+							{/* <Svg id="svg-smile" className="button" /> */}
 						</div>
 					</div>
 				</Form>

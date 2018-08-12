@@ -35,6 +35,7 @@ module.exports.KEY = {
     MY_BIDS: 'mbids',
     BIDS: 'bids',
     ACCEPTED_BIDS: 'aba',
+    UNAME: 'uname',
     NAME: 'n',
     ADDRESS: 'a',
     AVATAR_URL: 'au',

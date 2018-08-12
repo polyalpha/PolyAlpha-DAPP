@@ -12,11 +12,11 @@ module.exports.NETWORK_LIST = [
         name: 'Rinkeby Test Net',
         explorerUrl: 'https://rinkeby.etherscan.io/',
         providerUrl: 'https://rinkeby.infura.io/Q2aBIgYNhIB60VsqyrN1',
-        contractAddress: '0x70d36a1383d69EF65be55ff439d3c90AC2f13e27',
-        tokenContractAddress: '0xEFd3F89c5B88583a3AE87e5b0012BfE2BAEAD29E',
-        userContractAddress: '0x3941de3060196e9cdD01f5e29741fFb01b316305',
-        bidContractAddress: '0x928CC3393AaD7B0aCC6232Be0Ed386FD69498751',
-        messagingContractAddress: '0x16999f0cc661A5e6C23702076A9fD462186e5640'
+        contractAddress: '0xbE233C4bc5C4e4f0c9C7D2B1908047dC51F98748',
+        tokenContractAddress: '0x9c2fA57F790e14dD686146CC4cdAfB4e87d90F2B',
+        userContractAddress: '0xa089E99E3FcDc262Ad681323DCCA4f48597412bF',
+        bidContractAddress: '0xbaAD71bDaF021C5dc39e4dBb800232c914e99860',
+        messagingContractAddress: '0x8fA42019F82b8E2815D488B1cE9d75A8d89c945c'
     }
 ]
 

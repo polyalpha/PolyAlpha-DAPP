@@ -2,15 +2,13 @@
 // Distributed under the MIT software license, see the accompanying file LICENSE
 
 const EventEmitter = require('events');
-// import Constant from '../support/Constant';
 const {ENV} = require('../src/_configs/Config');
-// import {Dispatcher} from 'flux';
-const web3 = require('../ethereum/web3');
 const Tx = require('ethereumjs-tx');
 const {txConstants} = require('../src/_constants/tx.constants');
 
 class TransactionsManager {
-    constructor(account, askForTransactionApproval) {
+    constructor(web3, account, askForTransactionApproval) {
+        this.web3 = web3;
         this.account = account;
         this.askForTransactionApproval = askForTransactionApproval;
         this.numPendingTx = 0;      // Number of pending Ethereum transactions
@@ -36,7 +34,7 @@ class TransactionsManager {
         var emitter = this.emitterMapping[transactionId];
 
         var data = method.encodeABI();
-        var transactionCount = await web3.eth.getTransactionCount(this.account.address);
+        var transactionCount = await this.web3.eth.getTransactionCount(this.account.address);
 
         console.log('send transaction to:');
         console.log(ENV.ContractAddress);
@@ -56,7 +54,7 @@ class TransactionsManager {
 
         this.updatePendingTx(this.numPendingTx+1);
         console.log(serializedTx.toString('hex'));
-        web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
+        this.web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
                 .on('receipt', (receipt) => {
                     this.updatePendingTx(this.numPendingTx-1);
                     emitter.emit(txConstants.ON_RECEIPT, receipt);
@@ -120,8 +118,8 @@ class TransactionsManager {
         } catch(err) {
             estimatedGas = 3000000;
         }
-        console.log(web3);
-        var gasPrice = await web3.eth.getGasPrice();
+        console.log(this.web3);
+        var gasPrice = await this.web3.eth.getGasPrice();
         this.approveTransaction(transactionId, gasPrice, estimatedGas, method);
     }
 }

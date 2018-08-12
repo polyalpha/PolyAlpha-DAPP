@@ -5,6 +5,8 @@ import LocalData from '../../_services/LocalData';
 import Static from '../../_constants/Static';
 import {TOKEN_DECIMAL} from '../../_configs/Config';
 import blockConnector from '../../_services/blockConnector.service';
+import Utils from '../../_helpers/Utils';
+import {KEY} from '../../_constants/Static';
 
 const sideBarTabs = [
 	{
@@ -18,14 +20,14 @@ const sideBarTabs = [
 ];
 
 
-class Bids extends Component  {
-	//= ({auth, match, users, ...props}) =>
-	
+class Bids extends Component  {	
 	constructor(props) {
 		super(props);
 		this.loadProps = this.loadProps.bind(this);
 		this.onCancelHandler = this.onCancelHandler.bind(this);
 		this.onAcceptHandler = this.onAcceptHandler.bind(this);
+
+		this.state = {message: ""};
 
 		this.loadProps(props);
 	}
@@ -37,8 +39,22 @@ class Bids extends Component  {
 	onCancelHandler = () => {
 	};
 
-	onAcceptHandler = () => {
+	onAcceptHandler = async () => {
+		let { message } = this.state;
 
+		let user = LocalData.getUser(this.props.match.params.id);
+		let secret = Utils.computeSecret(Buffer.from(LocalData.getPrivateKey(), 'hex'), 
+			Buffer.from('04' + user[KEY.USER_PUBKEY], 'hex'));
+		let encryptedMessage = Utils.encrypt(message, secret);
+
+		console.log('accept bid to: ' + this.props.match.params.id);
+		console.log(encryptedMessage);
+		let receipt = await blockConnector.acceptBid(this.props.match.params.id, '0x' + encryptedMessage);
+		console.log(receipt);
+	}
+
+	onMessageChange = (newMessage) => {
+		this.setState({message: newMessage});
 	}
 
 	loadProps(props) {
@@ -63,38 +79,24 @@ class Bids extends Component  {
 
 		let user = LocalData.getUser(match.params.id);
 		let bidAmount = parseInt(user[Static.KEY.BID_AMOUNT] / TOKEN_DECIMAL);
+		let mine = user[Static.KEY.BID_TYPE] == Static.BidType.TO;
 
-		let buttonTitle = user[Static.KEY.BID_TYPE] == Static.BidType.TO ? "Cancel my bid" : "Accept bid and reply";
-		let action = user[Static.KEY.BID_TYPE] == Static.BidType.TO ? this.onCancelHandler : this.onAcceptHandler;
+		let buttonTitle = mine ? "Cancel my bid" : "Accept bid and reply";
+		let action = mine ? this.onCancelHandler : this.onAcceptHandler;
 
 		this.messages = [
-			<Message my={true} className="chat-message-big-circle" bid={bidAmount} button={{title: buttonTitle, onClick: action}}>{user[Static.KEY.BID_MESSAGE]}</Message>
+			<Message my={mine} className="chat-message-big-circle" bid={bidAmount} button={{title: buttonTitle, onClick: action}}>{user[Static.KEY.BID_MESSAGE]}</Message>
 		];
 	}
 
 	render() {
 		return (
 			<ChatLayout {...this.props} sidebar={this.sidebar}>
-				{this.props.match.params.id && <MessagesBlock messages={this.messages}/>}
+				{this.props.match.params.id && <MessagesBlock messages={this.messages} onMessageChange={this.onMessageChange}/>}
 			</ChatLayout>
 		)
 	}
 };
-
-
-// const defaultUsers = [
-// 	[
-// 		{id: 2, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-// 		{id: 3, name: "John Copley", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-// 		{id: 4, name: "MargotRobbie", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-// 		{id: 5, name: "Vincent van Gogh", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-// 	],
-// 	[
-// 		{id: 2, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 100, abt:"2.33"},
-// 		{id: 3, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 60, abt:"0.02"},
-// 		{id: 4, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 80, abt:"3.01"},
-// 	]
-// ];
 
 function mapStateToProps(state) {
 	const { auth, users } = state;
