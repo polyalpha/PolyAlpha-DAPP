@@ -8,6 +8,8 @@ import classnames from "classnames"
 import {Link} from "react-router-dom"
 import LocalData from "../../_services/LocalData";
 import blockConnector from '../../_services/blockConnector.service';
+import Static from '../../_constants/Static';
+import {TOKEN_DECIMAL} from '../../_configs/Config';
 
 
 
@@ -33,10 +35,22 @@ const Chats = ({users, match, ...props}) => {
 		userId: match.params.id
 	};
 
+	let user = LocalData.getUser(match.params.id);
+	let bidAmount = parseInt(user[Static.KEY.BID_AMOUNT] / TOKEN_DECIMAL);
+	let mine = user[Static.KEY.BID_TYPE] == Static.BidType.TO;
+	console.log('Bid type: ' + user[Static.KEY.BID_TYPE]);
+
 	let messages = [
-		<Message my={true} bid={98} isEarned={false} key={1}>Hey John, great to meet at TechCrunch. It is great to be able to have private conversations here.</Message>,
-		<Message key={2} button={{title:"Add to whitelist", onClick: onClickHandler}}>Yea I like this project because I can use it for business development as well as partnerships.</Message>,
+		<Message my={mine} bid={bidAmount} isEarned={false} key={1}>{user[Static.KEY.BID_MESSAGE]}</Message>,
 	];
+	let rawMessages = user[Static.KEY.MESSAGES];
+	if (rawMessages != undefined) {
+		for (var i=0;i<rawMessages.length;i++) {
+			console.log('Message type: ' + rawMessages[i][Static.KEY.MESSAGE_TYPE]);
+			let mine = rawMessages[i][Static.KEY.MESSAGE_TYPE] == Static.MsgType.TO;
+			messages.push(<Message key={2 + i} my={mine}>{rawMessages[i][Static.KEY.MESSAGE_CONTENT]}</Message>);
+		}
+	}
 
 	return (
 		<ChatLayout {...props} sidebar={sidebar}>

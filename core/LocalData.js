@@ -193,9 +193,14 @@ class LocalData {
             if (bidType == Static.BidType.TO) {
                 arrayKey = Static.KEY.MY_BIDS;
             }
+
+            console.log('accept bid');
+            console.log(arrayKey);
             let bids = this.getArrayItem(arrayKey);
+            console.log(bids);
             bids.remove(address);
             this.setObjectItem(arrayKey, bids);
+            console.log(bids);
 
             let accepteds = this.getArrayItem(Static.KEY.ACCEPTED_BIDS);
             accepteds.push(address);
@@ -203,7 +208,7 @@ class LocalData {
 
             let msg = {};
             msg[Static.KEY.MESSAGE_CONTENT] = this.decryptMessage(address, message);
-            msg[Static.KEY.MESSAGE_TYPE] = !bidType;
+            msg[Static.KEY.MESSAGE_TYPE] = (bidType == Static.BidType.TO ? Static.MsgType.FROM : Static.MsgType.TO);
             msg[Static.KEY.MESSAGE_BLOCKNUMBER] = blockNumber;
 
             let user = this.getObjectItem(address);
@@ -356,7 +361,7 @@ class LocalData {
                 Buffer.from('04' + user[Static.KEY.USER_PUBKEY], 'hex'));
             return Utils.decrypt(message, secret);
         } catch (err) {
-            console.log(err);
+            // console.log(err);
             return Utils.hexToString(message);
         }
         
@@ -402,6 +407,13 @@ class LocalData {
         } else {
             return false;
         }
+    }
+
+    static testArray() {
+        let arr = [];
+        arr.push('hello');
+        arr.remove('hello');
+        console.log(arr);
     }
 }
 

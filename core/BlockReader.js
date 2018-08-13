@@ -136,9 +136,10 @@ class BlockReader {
                     }
                 } else if (name == 'BidAccepted') {
                     if (values.sender == this.myAddress) {
-                        LocalData.acceptBid(values.receiver, values.message, Static.BidType.TO);
+                        // If you are the one who accepted a bid, it mean the bid is FROM the other side user
+                        LocalData.acceptBid(values.receiver, values.message, Static.BidType.FROM);
                     } else {
-                        LocalData.acceptBid(values.sender, values.message, Static.BidType.FROM);
+                        LocalData.acceptBid(values.sender, values.message, Static.BidType.TO);
                     }
                 } else if (name == 'BidBlocked') {
                     if (values.sender == this.myAddress) {

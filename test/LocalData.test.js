@@ -70,9 +70,9 @@ describe('Test local storage', function() {
             LocalData.addUser('address' + i, 'pubkeyleft' + i,
                 'pubkeyright' + i, 'username' +i, 'name' + i, 'avatar' + i);
         }
-        LocalData.addBid('address0', 1000, Static.BidType.TO);
-        LocalData.addBid('address1', 1000, Static.BidType.TO);
-        LocalData.addBid('address3', 1000, Static.BidType.TO);
+        LocalData.addBid('address0', 'message', 1000, Static.BidType.TO);
+        LocalData.addBid('address1', 'message', 1000, Static.BidType.TO);
+        LocalData.addBid('address3', 'message', 1000, Static.BidType.TO);
 
         let users = LocalData.getNewUserAddresses();
         assert.equal(users.length, 7);
@@ -88,10 +88,10 @@ describe('Test local storage', function() {
             LocalData.addUser('address' + i, 'pubkeyleft' + i,
                 'pubkeyright' + i, 'username' +i, 'name' + i, 'avatar' + i);
         }
-        LocalData.addBid('address0', 1000, Static.BidType.TO);
-        LocalData.addBid('address1', 1000, Static.BidType.TO);
-        LocalData.addBid('address3', 1000, Static.BidType.TO);
-        LocalData.addBid('address4', 1000, Static.BidType.TO);
+        LocalData.addBid('address0', 'message', 1000, Static.BidType.TO);
+        LocalData.addBid('address1', 'message', 1000, Static.BidType.TO);
+        LocalData.addBid('address3', 'message', 1000, Static.BidType.TO);
+        LocalData.addBid('address4', 'message', 1000, Static.BidType.TO);
 
         LocalData.cancelMyBid('address1');
         LocalData.cancelMyBid('address3');
@@ -111,9 +111,9 @@ describe('Test local storage', function() {
             LocalData.addUser('address' + i, 'pubkeyleft' + i,
                 'pubkeyright' + i, 'username' +i, 'name' + i, 'avatar' + i);
         }
-        LocalData.addBid('address0', 1000, Static.BidType.TO);
-        LocalData.addBid('address1', 1000, Static.BidType.TO);
-        LocalData.addBid('address3', 1000, Static.BidType.TO);
+        LocalData.addBid('address0', 'message', 1000, Static.BidType.TO);
+        LocalData.addBid('address1', 'message', 1000, Static.BidType.TO);
+        LocalData.addBid('address3', 'message', 1000, Static.BidType.TO);
 
         LocalData.myBidGetBlocked('address1');
 
@@ -133,9 +133,9 @@ describe('Test local storage', function() {
             LocalData.addUser('address' + i, 'pubkeyleft' + i,
                 'pubkeyright' + i, 'username' +i, 'name' + i, 'avatar' + i);
         }
-        LocalData.addBid('address0', 1000, Static.BidType.TO);
-        LocalData.addBid('address1', 1000, Static.BidType.FROM);
-        LocalData.addBid('address3', 1000, Static.BidType.FROM);
+        LocalData.addBid('address0', 'message', 1000, Static.BidType.TO);
+        LocalData.addBid('address1', 'message', 1000, Static.BidType.FROM);
+        LocalData.addBid('address3', 'message', 1000, Static.BidType.FROM);
 
         let users = LocalData.getNewUserAddresses();
         assert.equal(users.length, 7);
@@ -150,9 +150,9 @@ describe('Test local storage', function() {
             LocalData.addUser('address' + i, 'pubkeyleft' + i,
                 'pubkeyright' + i, 'username' +i, 'name' + i, 'avatar' + i);
         }
-        LocalData.addBid('address0', 1000, Static.BidType.FROM);
-        LocalData.addBid('address1', 1000, Static.BidType.FROM);
-        LocalData.addBid('address3', 1000, Static.BidType.FROM);
+        LocalData.addBid('address0', 'message', 1000, Static.BidType.FROM);
+        LocalData.addBid('address1', 'message', 1000, Static.BidType.FROM);
+        LocalData.addBid('address3', 'message', 1000, Static.BidType.FROM);
         LocalData.blockBid('address1');
 
         let user = LocalData.getUser('address1');
@@ -167,9 +167,9 @@ describe('Test local storage', function() {
             LocalData.addUser('address' + i, 'pubkeyleft' + i,
                 'pubkeyright' + i, 'username' +i, 'name' + i, 'avatar' + i);
         }
-        LocalData.addBid('address0', 1000, Static.BidType.FROM);
-        LocalData.addBid('address1', 1000, Static.BidType.FROM);
-        LocalData.addBid('address3', 1000, Static.BidType.FROM);
+        LocalData.addBid('address0', 'message', 1000, Static.BidType.FROM);
+        LocalData.addBid('address1', 'message', 1000, Static.BidType.FROM);
+        LocalData.addBid('address3', 'message', 1000, Static.BidType.FROM);
         LocalData.bidGetCancelled('address0');
         LocalData.bidGetCancelled('address3');
 
@@ -186,15 +186,15 @@ describe('Test local storage', function() {
             LocalData.addUser('address' + i, 'pubkeyleft' + i,
                 'pubkeyright' + i, 'username' +i, 'name' + i, 'avatar' + i);
         }
-        LocalData.addBid('address0', 1000, Static.BidType.FROM);
-        LocalData.addBid('address1', 1000, Static.BidType.FROM);
-        LocalData.addBid('address3', 1000, Static.BidType.FROM);
-        LocalData.addBid('address5', 1000, Static.BidType.TO);
-        LocalData.addBid('address6', 1000, Static.BidType.TO);
+        LocalData.addBid('address0', 'message', 1000, Static.BidType.FROM);
+        LocalData.addBid('address1', 'message', 1000, Static.BidType.FROM);
+        LocalData.addBid('address3', 'message', 1000, Static.BidType.FROM);
+        LocalData.addBid('address5', 'message', 1000, Static.BidType.TO);
+        LocalData.addBid('address6', 'message', 1000, Static.BidType.TO);
 
-        LocalData.acceptBid('address0', Static.BidType.FROM);
-        LocalData.acceptBid('address3', Static.BidType.FROM);
-        LocalData.acceptBid('address5', Static.BidType.TO);
+        LocalData.acceptBid('address0', 'message', Static.BidType.FROM);
+        LocalData.acceptBid('address3', 'message', Static.BidType.FROM);
+        LocalData.acceptBid('address5', 'message', Static.BidType.TO);
 
         let bids = LocalData.getBidAddresses();
         assert.equal(bids.length, 1);
@@ -229,6 +229,11 @@ describe('Test local storage', function() {
         let user3 = LocalData.getUser('address3');
         assert.equal(user2[Static.KEY.MESSAGES].length, 6);
         assert.equal(user3[Static.KEY.MESSAGES].length, 2);
+    })
+
+    it('test remove method in array', () => {
+        LocalData.testArray();
+        assert(true);
     })
 
 
