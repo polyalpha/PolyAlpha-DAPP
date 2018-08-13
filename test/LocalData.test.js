@@ -192,9 +192,9 @@ describe('Test local storage', function() {
         LocalData.addBid('address5', 'message', 1000, Static.BidType.TO);
         LocalData.addBid('address6', 'message', 1000, Static.BidType.TO);
 
-        LocalData.acceptBid('address0', 'message', Static.BidType.FROM);
-        LocalData.acceptBid('address3', 'message', Static.BidType.FROM);
-        LocalData.acceptBid('address5', 'message', Static.BidType.TO);
+        LocalData.acceptBid('address0', 'message', Utils.makeid(20), Static.BidType.FROM);
+        LocalData.acceptBid('address3', 'message', Utils.makeid(20), Static.BidType.FROM);
+        LocalData.acceptBid('address5', 'message', Utils.makeid(20), Static.BidType.TO);
 
         let bids = LocalData.getBidAddresses();
         assert.equal(bids.length, 1);
@@ -215,20 +215,38 @@ describe('Test local storage', function() {
                 'pubkeyright' + i, 'username' +i, 'name' + i, 'avatar' + i);
         }
 
-        LocalData.addMessage('address2', Utils.makeid(20), Static.MsgType.TO);
-        LocalData.addMessage('address2', Utils.makeid(20), Static.MsgType.TO);
-        LocalData.addMessage('address2', Utils.makeid(20), Static.MsgType.FROM);
-        LocalData.addMessage('address2', Utils.makeid(20), Static.MsgType.FROM);
-        LocalData.addMessage('address2', Utils.makeid(20), Static.MsgType.FROM);
-        LocalData.addMessage('address2', Utils.makeid(20), Static.MsgType.TO);
+        LocalData.addMessage('address2', Utils.makeid(20), Utils.makeid(20), Static.MsgStatus.SENT, Static.MsgType.TO);
+        LocalData.addMessage('address2', Utils.makeid(20), Utils.makeid(20), Static.MsgStatus.SENT, Static.MsgType.TO);
+        LocalData.addMessage('address2', Utils.makeid(20), Utils.makeid(20), Static.MsgStatus.SENT, Static.MsgType.FROM);
+        LocalData.addMessage('address2', Utils.makeid(20), Utils.makeid(20), Static.MsgStatus.SENT, Static.MsgType.FROM);
+        LocalData.addMessage('address2', Utils.makeid(20), Utils.makeid(20), Static.MsgStatus.SENT, Static.MsgType.FROM);
+        LocalData.addMessage('address2', Utils.makeid(20), Utils.makeid(20), Static.MsgStatus.SENT, Static.MsgType.TO);
 
-        LocalData.addMessage('address3', Utils.makeid(20), Static.MsgType.TO);
-        LocalData.addMessage('address3', Utils.makeid(20), Static.MsgType.FROM);
+        LocalData.addMessage('address3', Utils.makeid(20), Utils.makeid(20), Static.MsgStatus.SENT, Static.MsgType.TO);
+        LocalData.addMessage('address3', Utils.makeid(20), Utils.makeid(20), Static.MsgStatus.SENT, Static.MsgType.FROM);
 
         let user2 = LocalData.getUser('address2');
         let user3 = LocalData.getUser('address3');
         assert.equal(user2[Static.KEY.MESSAGES].length, 6);
         assert.equal(user3[Static.KEY.MESSAGES].length, 2);
+    })
+
+    it('can replace message', () => {
+        for (var i=0;i<10;i++) {
+            LocalData.addUser('address' + i, 'pubkeyleft' + i,
+                'pubkeyright' + i, 'username' +i, 'name' + i, 'avatar' + i);
+        }
+
+        LocalData.addMessage('address2', '0x' + Utils.stringToHex('message1'), 'msg1', Static.MsgStatus.PENDING, Static.MsgType.TO);
+        LocalData.addMessage('address2', '0x' + Utils.stringToHex('message2'), 'msg2', Static.MsgStatus.PENDING, Static.MsgType.TO);
+        LocalData.addMessage('address2', '0x' + Utils.stringToHex(Utils.makeid(20)), Utils.makeid(20), Static.MsgStatus.SENT, Static.MsgType.FROM);
+        LocalData.addMessage('address2', '0x' + Utils.stringToHex(Utils.makeid(20)), Utils.makeid(20), Static.MsgStatus.SENT, Static.MsgType.FROM);
+
+        LocalData.addMessage('address2', '0x' + Utils.stringToHex('message1'), 'msg2', Static.MsgStatus.SENT, Static.MsgType.TO);
+        LocalData.addMessage('address2', '0x' + Utils.stringToHex('message2'), 'msg1', Static.MsgStatus.SENT, Static.MsgType.TO);
+        let user2 = LocalData.getUser('address2');
+        assert.equal(user2[Static.KEY.MESSAGES].length, 4);
+        // console.log(user2[Static.KEY.MESSAGES]);
     })
 
     it('test remove method in array', () => {

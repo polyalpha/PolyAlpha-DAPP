@@ -185,7 +185,7 @@ class LocalData {
         }
     }
 
-    static acceptBid(address, message, bidType, blockNumber) {
+    static acceptBid(address, message, txHash, bidType, blockNumber) {
         address = address.toLowerCase();
 
         if (this.hasLocalStorage()) {
@@ -194,29 +194,16 @@ class LocalData {
                 arrayKey = Static.KEY.MY_BIDS;
             }
 
-            console.log('accept bid');
-            console.log(arrayKey);
             let bids = this.getArrayItem(arrayKey);
-            console.log(bids);
             bids.remove(address);
             this.setObjectItem(arrayKey, bids);
-            console.log(bids);
 
             let accepteds = this.getArrayItem(Static.KEY.ACCEPTED_BIDS);
             accepteds.push(address);
             this.setObjectItem(Static.KEY.ACCEPTED_BIDS, accepteds);
 
-            let msg = {};
-            msg[Static.KEY.MESSAGE_CONTENT] = this.decryptMessage(address, message);
-            msg[Static.KEY.MESSAGE_TYPE] = (bidType == Static.BidType.TO ? Static.MsgType.FROM : Static.MsgType.TO);
-            msg[Static.KEY.MESSAGE_BLOCKNUMBER] = blockNumber;
-
-            let user = this.getObjectItem(address);
-            if (user[Static.KEY.MESSAGES] == undefined) {
-                user[Static.KEY.MESSAGES] = [];
-            }
-            user[Static.KEY.MESSAGES].push(msg);
-            this.setObjectItem(address, user);
+            this.addMessage(address, message, txHash, Static.MsgStatus.SENT, 
+                (bidType == Static.BidType.TO ? Static.MsgType.FROM : Static.MsgType.TO), blockNumber);
         }
     }
 
@@ -249,20 +236,39 @@ class LocalData {
         }
     }
 
-    static addMessage(userAddress, message, type, blockNumber) {
+    static addMessage(userAddress, message, txHash, status, type, blockNumber = 0) {
+        console.log('addMessage:' + userAddress + ':' + message + ':' + 
+            txHash + ':' + status + ':' + type + ':' + blockNumber);
         userAddress = userAddress.toLowerCase();
 
         let user = this.getObjectItem(userAddress);
         if (user[Static.KEY.MESSAGES] == undefined) {
             user[Static.KEY.MESSAGES] = [];
         }
+
         let msg = {};
         msg[Static.KEY.MESSAGE_CONTENT] = this.decryptMessage(userAddress, message);
         msg[Static.KEY.MESSAGE_TYPE] = type;
+        msg[Static.KEY.MESSAGE_TXHASH] = txHash;
+        msg[Static.KEY.MESSAGE_STATUS] = status;
         msg[Static.KEY.MESSAGE_BLOCKNUMBER] = blockNumber;
 
-        user[Static.KEY.MESSAGES].push(msg);
-        user[Static.KEY.USER_BLOCKNUMBER] = blockNumber;
+        let msgArray = user[Static.KEY.MESSAGES];
+        let updateMessage = false;
+        for (var i=0; i<msgArray.length; i++) {
+            if (msgArray[i][Static.KEY.MESSAGE_TXHASH] == txHash) {
+                msgArray[i] = msg;
+                updateMessage = true;
+            }
+        }
+
+        if (updateMessage == false) {
+            user[Static.KEY.MESSAGES].push(msg);
+        }
+        
+        if (blockNumber != 0) {
+            user[Static.KEY.USER_BLOCKNUMBER] = blockNumber;
+        }
         this.setObjectItem(userAddress, user);
     }
 

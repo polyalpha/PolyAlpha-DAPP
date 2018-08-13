@@ -119,14 +119,16 @@ class BlockReader {
 
             for (var i=0;i<bidEvents.length;i++) {
                 let name = bidEvents[i].event;
+                let txHash = bidEvents[i].transactionHash;
+                let blockNumber = bidEvents[i].blockNumber;
                 let values = bidEvents[i].returnValues;
                 values.sender = values.sender.toLowerCase();
                 values.receiver = values.receiver.toLowerCase();
                 if (name == 'BidCreated') {
                     if (values.sender == this.myAddress) {
-                        LocalData.addBid(values.receiver, values.message, values.tokenAmount, Static.BidType.TO);
+                        LocalData.addBid(values.receiver, values.message, values.tokenAmount, Static.BidType.TO, blockNumber);
                     } else {
-                        LocalData.addBid(values.sender, values.message, values.tokenAmount, Static.BidType.FROM);
+                        LocalData.addBid(values.sender, values.message, values.tokenAmount, Static.BidType.FROM, blockNumber);
                     }
                 } else if (name == 'BidCancelled') {
                     if (values.sender == this.myAddress) {
@@ -137,9 +139,9 @@ class BlockReader {
                 } else if (name == 'BidAccepted') {
                     if (values.sender == this.myAddress) {
                         // If you are the one who accepted a bid, it mean the bid is FROM the other side user
-                        LocalData.acceptBid(values.receiver, values.message, Static.BidType.FROM);
+                        LocalData.acceptBid(values.receiver, values.message, txHash, Static.BidType.FROM, blockNumber);
                     } else {
-                        LocalData.acceptBid(values.sender, values.message, Static.BidType.TO);
+                        LocalData.acceptBid(values.sender, values.message, txHash, Static.BidType.TO, blockNumber);
                     }
                 } else if (name == 'BidBlocked') {
                     if (values.sender == this.myAddress) {
@@ -151,13 +153,15 @@ class BlockReader {
             }
 
             for (var i=0;i<messageEvents.length;i++) {
+                let txHash = messageEvents[i].transactionHash;
+                let blockNumber = messageEvents[i].blockNumber;
                 let values = messageEvents[i].returnValues;
                 values.sender = values.sender.toLowerCase();
                 values.receiver = values.receiver.toLowerCase();
                 if (values.sender == this.myAddress) {
-                    LocalData.addMessage(values.receiver, values.message, Static.MsgType.TO);
+                    LocalData.addMessage(values.receiver, values.message, txHash, Static.MsgStatus.SENT, Static.MsgType.TO, blockNumber);
                 } else {
-                    LocalData.addMessage(values.sender, values.message, Static.MsgType.FROM);
+                    LocalData.addMessage(values.sender, values.message, txHash, Static.MsgStatus.SENT, Static.MsgType.FROM, blockNumber);
                 }
             }
 

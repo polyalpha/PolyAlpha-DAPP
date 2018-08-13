@@ -48,7 +48,7 @@ const Chats = ({users, match, ...props}) => {
 		for (var i=0;i<rawMessages.length;i++) {
 			console.log('Message type: ' + rawMessages[i][Static.KEY.MESSAGE_TYPE]);
 			let mine = rawMessages[i][Static.KEY.MESSAGE_TYPE] == Static.MsgType.TO;
-			messages.push(<Message key={2 + i} my={mine}>{rawMessages[i][Static.KEY.MESSAGE_CONTENT]}</Message>);
+			messages.push(<Message key={2 + i} my={mine} type='pending'>{rawMessages[i][Static.KEY.MESSAGE_CONTENT]}</Message>);
 		}
 	}
 

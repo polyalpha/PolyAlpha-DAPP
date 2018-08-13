@@ -245,20 +245,20 @@ const Chat = ({auth, title, route}) => {
 };
 
 
-export const Message = ({children, my, bid, isEarned, button, className}) => (
+export const Message = ({children, my, bid, isEarned, button, className, type = "sent"}) => (
 	<div className={classNames([className, "chat-message", {"chat-message-my": my, "chat-message-bid": !!bid}])}>
 		<div className="chat-message-block">
 			<div className="chat-message-block-message">
 				{children}
 				{bid && <AbtValue value={bid} isEarned={isEarned} className="chat-message-block-abt"/>}
 			</div>
+			<div style={{fontSize: '0.7em'}}>{type == 'sent' ? "sent" : "sending..."}</div>
 			{button &&  (
 				<div className="chat-message-buttons">
 					<button {...button} className="chat-message-buttons-button" >{button.title}</button>
 				</div>
 			)}
 		</div>
-
 	</div>
 );
 

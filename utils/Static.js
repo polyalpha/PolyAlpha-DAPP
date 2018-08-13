@@ -15,6 +15,11 @@ module.exports.MsgType = {
     FROM: 'f'
 }
 
+module.exports.MsgStatus = {
+    PENDING: 'p',
+    SENT: 's'
+}
+
 module.exports.KEY = {
     USER_UNAME: 'uun',
     USER_NAME: 'un',
@@ -26,6 +31,8 @@ module.exports.KEY = {
     MESSAGES: 'msgs',
     MESSAGE_TYPE: 'msgt',
     MESSAGE_CONTENT: 'msgc',
+    MESSAGE_TXHASH: 'mtxh',
+    MESSAGE_STATUS: 'msgst',
     MESSAGE_BLOCKNUMBER: 'msgblkn',
     BID_TO: 'bt',
     BID_AMOUNT: 'ba',
