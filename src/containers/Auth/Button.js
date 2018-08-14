@@ -11,7 +11,7 @@ export class Button extends Component {
 		let {isLoading} = this.props;
 		let icon;
 		if (isLoading) {
-			icon = (<FontAwesomeIcon icon={faSpinner} spin className="icon"/>);
+			icon = (<FontAwesomeIcon icon={faSpinner} spin style={{marginRight: '14px'}}/>);
 		} else {
 			icon = (<Svg id={this.props.icon} className="icon" />);
 		}
@@ -23,7 +23,7 @@ export class Button extends Component {
 			</ReactButton>
 		);
 	}
-} 
+}
 
 export const DivButton = (props) => (
 	<button {...props}>
