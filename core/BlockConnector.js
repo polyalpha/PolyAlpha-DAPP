@@ -1,6 +1,7 @@
 const Utils = require('../utils/Utils');
 const {ENV} = require('../src/_configs/Config');
 const TransactionManager = require('./TransactionManager');
+const {txConstants} = require('../src/_constants/tx.constants');
 
 class BlockConnector {
     constructor(web3, accountObjects, isTesting = false) {
@@ -118,7 +119,23 @@ class BlockConnector {
         if (this.isTesting) {
             await method.send({from: this.accounts[fromAccountId], gas: this.defaultGas});
         } else {
-            return this.transactionManager.executeMethod(method);
+            let emitter = this.transactionManager.executeMethod(method);
+            // console.log('transaction emitter');
+            // console.log(emitter);
+            // emitter.on(txConstants.ON_APPROVE, (txHash) => {
+            //     console.log('fuck approve');
+            //     console.log(txHash);
+            // }).on(txConstants.ON_RECEIPT, (receipt) => {
+            //     console.log('received receipt');
+            //     console.log(receipt);
+            // }).on(txConstants.ON_ERROR, (err, data) => {
+            //     console.log('received error');
+            //     console.log(err);
+            // }).on(txConstants.ON_REJECT, (txHash) => {
+            //     console.log('fuck reject');
+            //     console.log(txHash);
+            // });
+            return emitter; //this.transactionManager.executeMethod(method);;
         }
     }
 

@@ -17,7 +17,8 @@ module.exports.MsgType = {
 
 module.exports.MsgStatus = {
     PENDING: 'p',
-    SENT: 's'
+    SENT: 's',
+    FAILED: 'f'
 }
 
 module.exports.KEY = {

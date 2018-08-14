@@ -53,7 +53,7 @@ class Bids extends Component  {
 		console.log(receipt);
 	}
 
-	onMessageChange = (newMessage) => {
+	onMessageChanged = (newMessage) => {
 		this.setState({message: newMessage});
 	}
 
@@ -92,7 +92,7 @@ class Bids extends Component  {
 	render() {
 		return (
 			<ChatLayout {...this.props} sidebar={this.sidebar}>
-				{this.props.match.params.id && <MessagesBlock messages={this.messages} onMessageChange={this.onMessageChange}/>}
+				{this.props.match.params.id && <MessagesBlock messages={this.messages} onMessageChanged={this.onMessageChanged}/>}
 			</ChatLayout>
 		)
 	}

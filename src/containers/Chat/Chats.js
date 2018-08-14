@@ -8,8 +8,10 @@ import classnames from "classnames"
 import {Link} from "react-router-dom"
 import LocalData from "../../_services/LocalData";
 import blockConnector from '../../_services/blockConnector.service';
-import Static from '../../_constants/Static';
+import {KEY, MsgType, MsgStatus, BidType} from '../../_constants/Static';
 import {TOKEN_DECIMAL} from '../../_configs/Config';
+import Utils from '../../_helpers/Utils';
+import { txConstants } from "../../_constants";
 
 
 
@@ -25,38 +27,96 @@ const SearchInput = (props) => (
 );
 
 
-const Chats = ({users, match, ...props}) => {
-	let tabs = [<SearchInput key="chats-search" />];
-	let chatAddresses = users.chatAddresses;
-	let chatUsers = LocalData.getUsers(chatAddresses);
-	let sidebar = {
-		name: "chats",
-		tabs, users: chatUsers,
-		userId: match.params.id
-	};
+class Chats extends Component {
+	constructor(props) {
+		super(props);
+		this.loadUserList = this.loadUserList.bind(this);
+		this.onMessageSent = this.onMessageSent.bind(this);
 
-	let user = LocalData.getUser(match.params.id);
-	let bidAmount = parseInt(user[Static.KEY.BID_AMOUNT] / TOKEN_DECIMAL);
-	let mine = user[Static.KEY.BID_TYPE] == Static.BidType.TO;
-	console.log('Bid type: ' + user[Static.KEY.BID_TYPE]);
-
-	let messages = [
-		<Message my={mine} bid={bidAmount} isEarned={false} key={1}>{user[Static.KEY.BID_MESSAGE]}</Message>,
-	];
-	let rawMessages = user[Static.KEY.MESSAGES];
-	if (rawMessages != undefined) {
-		for (var i=0;i<rawMessages.length;i++) {
-			console.log('Message type: ' + rawMessages[i][Static.KEY.MESSAGE_TYPE]);
-			let mine = rawMessages[i][Static.KEY.MESSAGE_TYPE] == Static.MsgType.TO;
-			messages.push(<Message key={2 + i} my={mine} type='pending'>{rawMessages[i][Static.KEY.MESSAGE_CONTENT]}</Message>);
+		let userId = props.match.params.id;
+		let user = LocalData.getUser(userId);
+		let messages = user[KEY.MESSAGES];
+		if (messages == undefined) {
+			messages = [];
 		}
+		this.state = {messages, user, userId: userId};
+
+		this.loadUserList(props.users);
 	}
 
-	return (
-		<ChatLayout {...props} sidebar={sidebar}>
-			{match.params.id && <MessagesBlock messages={messages} />}
-		</ChatLayout>
-	)
+	componentWillReceiveProps(props) {
+		this.loadUserList(props.users);
+		this.setState({messages: LocalData.getUser(this.state.userId)[KEY.MESSAGES]});
+	}
+
+	componentDidMount() {
+		this.messagesBlock.scrollToBottom();
+	}
+
+	componentDidUpdate() {
+		this.messagesBlock.scrollToBottom();
+	}
+
+	loadUserList(users) {
+		let tabs = [<SearchInput key="chats-search" />];
+		let chatAddresses = users.chatAddresses;
+		let chatUsers = LocalData.getUsers(chatAddresses);
+		this.sidebar = {
+			name: "chats",
+			tabs, users: chatUsers,
+			userId: this.state.userId
+		};
+	}
+
+	onMessageSent = async (message) => {
+		let user = LocalData.getUser(this.state.userId);
+		let secret = Utils.computeSecret(Buffer.from(LocalData.getPrivateKey(), 'hex'), 
+			Buffer.from('04' + user[KEY.USER_PUBKEY], 'hex'));
+		let encryptedMessage = '0x' + Utils.encrypt(message, secret);
+
+		let result = await blockConnector.sendMessage(this.props.match.params.id, encryptedMessage);
+		result.on(txConstants.ON_APPROVE, (txHash) => {
+			// console.log('transaction approved');
+			// console.log(txHash);
+			LocalData.addMessage(this.state.userId, encryptedMessage, txHash, MsgStatus.PENDING, MsgType.TO);
+			this.setState({messages: LocalData.getUser(this.state.userId)[KEY.MESSAGES]});
+		}).on(txConstants.ON_RECEIPT, (receipt) => {
+			// console.log('received receipt');
+			// console.log(receipt);
+			LocalData.addMessage(this.state.userId, encryptedMessage, receipt.transactionHash, MsgStatus.SENT, MsgType.TO, receipt.blockNumber);
+			this.setState({messages: LocalData.getUser(this.state.userId)[KEY.MESSAGES]});
+		}).on(txConstants.ON_ERROR, (err, data) => {
+			// console.log('received error')
+			// console.log(err);
+			LocalData.addMessage(this.state.userId, encryptedMessage, txHash, MsgStatus.FAILED, MsgType.TO);
+			this.setState({messages: LocalData.getUser(this.state.userId)[KEY.MESSAGES]});
+		})
+		console.log('send message result')
+		console.log(result);
+	}
+
+	render() {
+		let {messages, user} = this.state;
+		let bidAmount = parseInt(user[KEY.BID_AMOUNT] / TOKEN_DECIMAL);
+		let mine = user[KEY.BID_TYPE] == BidType.TO;
+
+		this.messageElements = [
+			<Message my={mine} bid={bidAmount} isEarned={false} key={1}>{user[KEY.BID_MESSAGE]}</Message>,
+		];
+		if (messages != undefined) {
+			for (var i=0;i<messages.length;i++) {
+				console.log('Message type: ' + messages[i][KEY.MESSAGE_TYPE]);
+				let mine = messages[i][KEY.MESSAGE_TYPE] == MsgType.TO;
+				this.messageElements.push(<Message key={2 + i} my={mine} status={messages[i][KEY.MESSAGE_STATUS]}>{messages[i][KEY.MESSAGE_CONTENT]}</Message>);
+			}
+		}
+
+		return (
+			<ChatLayout {...this.props} sidebar={this.sidebar}>
+				{this.props.match.params.id && <MessagesBlock messages={this.messageElements} onMessageSent={this.onMessageSent} ref={messagesBlock => this.messagesBlock = messagesBlock} />}
+			</ChatLayout>
+		)
+	}
 };
 
 

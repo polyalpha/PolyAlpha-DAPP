@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import {history} from "../../_helpers";
 import LocalData from '../../_services/LocalData';
 import {txConstants} from '../../_constants';
+import Utils from '../../_helpers/Utils';
 import blockReader from '../../_services/blockReader.service';
 import blockConnector from '../../_services/blockConnector.service';
 

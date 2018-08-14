@@ -11,7 +11,8 @@ import {renderRoutes} from "react-router-config";
 import {history} from "../../_helpers/history";
 import {alertActions} from "../../_actions";
 import {MainBlock} from "../App/App";
-import {KEY} from '../../_constants/Static';
+import {KEY, MsgStatus} from '../../_constants/Static';
+import Utils from '../../_helpers/Utils';
 
 
 export const MessageContext = React.createContext("");
@@ -25,6 +26,7 @@ export class MessagesBlock extends Component {
 
 	constructor(props) {
 		super(props);
+		this.scrollToBottom = this.scrollToBottom.bind(this);
 		const parent = this;
 		this.children = React.Children.map(this.props.children, child => {
 			return React.cloneElement(child, {parent});
@@ -32,13 +34,27 @@ export class MessagesBlock extends Component {
 	}
 
 
-	onChangeMessage = (e) => {
+	onMessageChanged = (e) => {
 		let message = e.target.value.trim();
-		if (this.props.onMessageChange) {
-			this.props.onMessageChange(message);
+		if (this.props.onMessageChanged) {
+			this.props.onMessageChanged(message);
 		}
 		this.setState({message});
 	};
+
+	onMessageSent = () => {
+		if (this.state.message.length > 0) {
+			if (this.props.onMessageSent) {
+				this.props.onMessageSent(this.state.message);
+				this.setState({message: ""});
+			}
+		}
+	}
+
+	scrollToBottom() {
+		Utils.scrollToBottom(this.messagesContainer, 300);
+	}
+	
 
 	render() {
 
@@ -46,13 +62,12 @@ export class MessagesBlock extends Component {
 
 		return (
 			<div className="messages-block">
-				<div className="messages">
+				<div className="messages" ref={messagesContainer => this.messagesContainer = messagesContainer }>
 					<MessageContext.Provider value={this.state.message}>
 						{this.props.messages.map(
 							msg => React.cloneElement(msg, {key:i++})
 						)}
 					</MessageContext.Provider>
-
 				</div>
 				<Form className="form">
 					<div className="block">
@@ -61,12 +76,13 @@ export class MessagesBlock extends Component {
 						autoFocus
 						placeholder="Type a message..."
 						name="message"
-						onChange={this.onChangeMessage}
+						value={this.state.message}
+						onChange={this.onMessageChanged}
 					/>
 						</div>
 						<div className="buttons">
 							{/* <Svg id="svg-mic" className="button" /> */}
-							<Svg id="svg-share" className="button" />
+							<Svg id="svg-share" className="button" onClick={this.onMessageSent} />
 							{/* <Svg id="svg-smile" className="button" /> */}
 						</div>
 					</div>
@@ -245,14 +261,14 @@ const Chat = ({auth, title, route}) => {
 };
 
 
-export const Message = ({children, my, bid, isEarned, button, className, type = "sent"}) => (
+export const Message = ({children, my, bid, isEarned, button, className, status = MsgStatus.SENT}) => (
 	<div className={classNames([className, "chat-message", {"chat-message-my": my, "chat-message-bid": !!bid}])}>
 		<div className="chat-message-block">
 			<div className="chat-message-block-message">
 				{children}
 				{bid && <AbtValue value={bid} isEarned={isEarned} className="chat-message-block-abt"/>}
 			</div>
-			<div style={{fontSize: '0.7em'}}>{type == 'sent' ? "sent" : "sending..."}</div>
+			<div style={{fontSize: '0.7em'}}>{status == MsgStatus.SENT ? "" : "sending..."}</div>
 			{button &&  (
 				<div className="chat-message-buttons">
 					<button {...button} className="chat-message-buttons-button" >{button.title}</button>
@@ -262,31 +278,9 @@ export const Message = ({children, my, bid, isEarned, button, className, type = 
 	</div>
 );
 
-
-const defaultUsers = [
-	{id: 2, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-	{id: 3, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-	{id: 4, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-	{id: 5, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-];
-
-const defaultNewUsers = [
-	{id: 2, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-	{id: 3, name: "John Copley", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-	{id: 4, name: "MargotRobbie", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-	{id: 5, name: "Vincent van Gogh", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-];
-
-const defaultTopUsers = [
-	{id: 2, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 100, abt:"2.33"},
-	{id: 3, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 60, abt:"0.02"},
-	{id: 4, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 80, abt:"3.01"},
-];
-
-
 function mapStateToProps(state) {
-	const { auth, contract } = state;
-	return { auth, users:defaultUsers, contract };
+	const { auth } = state;
+	return { auth };
 }
 
 const connectedChat = connect(mapStateToProps)(Chat);

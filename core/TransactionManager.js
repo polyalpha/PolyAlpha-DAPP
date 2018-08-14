@@ -54,15 +54,19 @@ class TransactionsManager {
 
         this.updatePendingTx(this.numPendingTx+1);
         console.log(serializedTx.toString('hex'));
+        console.log('emit onApprove');
+        console.log(emitter);
+        emitter.emit(txConstants.ON_APPROVE, txHash);
         this.web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
                 .on('receipt', (receipt) => {
                     this.updatePendingTx(this.numPendingTx-1);
+                    console.log(emitter);
+                    // emitter.emit(txConstants.ON_APPROVED, receipt.transactionHash);
                     emitter.emit(txConstants.ON_RECEIPT, receipt);
                 }).on('error', (err, data) => {
                     this.updatePendingTx(this.numPendingTx-1);
                     emitter.emit(txConstants.ON_ERROR, err, txHash);
                 });
-        emitter.emit(txConstants.ON_APPROVED, txHash);
     }
 
     /**

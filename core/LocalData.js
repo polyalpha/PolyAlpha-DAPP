@@ -236,6 +236,15 @@ class LocalData {
         }
     }
 
+    /**
+     * Add message to localStorage. If a message with the same txHash exists, it will replace that message
+     * @param {hex string} userAddress 
+     * @param {hex string} message 
+     * @param {hex string} txHash 
+     * @param {string} status 
+     * @param {string} type 
+     * @param {number} blockNumber 
+     */
     static addMessage(userAddress, message, txHash, status, type, blockNumber = 0) {
         console.log('addMessage:' + userAddress + ':' + message + ':' + 
             txHash + ':' + status + ':' + type + ':' + blockNumber);
