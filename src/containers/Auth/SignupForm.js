@@ -9,7 +9,7 @@ import {txConstants} from '../../_constants';
 import Utils from '../../_helpers/Utils';
 import blockReader from '../../_services/blockReader.service';
 import blockConnector from '../../_services/blockConnector.service';
-
+import ErrorModal from '../Modal/ErrorModal';
 
 class SignupForm extends Component {
 
@@ -33,8 +33,8 @@ class SignupForm extends Component {
 			console.log('send form');
 			let result = await blockConnector.register(this.state.username, this.state.displayName, this.state.avatarUrl);
 			result.on(txConstants.ON_RECEIPT, async (receipt) => {
-				// console.log('Transaction success');
-				// console.log(receipt);
+				console.log('Transaction success');
+				console.log(receipt);
 				let user = await blockConnector.getAccount();
 				let username = Utils.hexToString(user[2]);
 				let name = Utils.hexToString(user[3]);
@@ -43,9 +43,11 @@ class SignupForm extends Component {
 				blockReader.startRunLoop();
 				history.push("/chat/discover");
 			}).on (txConstants.ON_ERROR, (err, txHash) => {
-				// console.log('transaction error: ' + txHash);
+				// console.log(err.message);
+				ErrorModal.show(err.message);
+				console.log('transaction error: ' + txHash);
 			}).on(txConstants.ON_APPROVE, (txHash) => {
-				// console.log('transaction approved: ' + txHash);
+				console.log('transaction approved: ' + txHash);
 			})
 			
 		} else {
@@ -158,5 +160,3 @@ function mapStateToProps(state) {
 
 const connectedSignupForm = connect(mapStateToProps)(SignupForm);
 export { connectedSignupForm as SignupForm };
-
-

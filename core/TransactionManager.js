@@ -63,7 +63,10 @@ class TransactionsManager {
                     console.log(emitter);
                     // emitter.emit(txConstants.ON_APPROVED, receipt.transactionHash);
                     emitter.emit(txConstants.ON_RECEIPT, receipt);
-                }).on('error', (err, data) => {
+                }).on('error', (err, unusedData) => {
+                    if (err.message.indexOf('insufficient funds') !== -1) {
+                        err.message = 'Insufficient funds. Account you try to send transaction from does not have enough funds.';
+                    }
                     this.updatePendingTx(this.numPendingTx-1);
                     emitter.emit(txConstants.ON_ERROR, err, txHash);
                 });
