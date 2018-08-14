@@ -16,7 +16,8 @@ class SignupForm extends Component {
 	state = {
 		username: "",
 		displayName: "",
-		avatarUrl: ""
+		avatarUrl: "",
+		isLoading: false
 	};
 
 	constructor(props) {
@@ -26,9 +27,12 @@ class SignupForm extends Component {
 	handleSubmit = async(e) => {
 		console.log(this.state);
 		e.preventDefault();
+
+		this.setState({isLoading: true})
 		
 		// Check if username is exists
 		let available = await blockConnector.isUsernameAvailable(this.state.username);
+
 		if (available) {
 			console.log('send form');
 			let result = await blockConnector.register(this.state.username, this.state.displayName, this.state.avatarUrl);
@@ -41,21 +45,27 @@ class SignupForm extends Component {
 				let avatarUrl = Utils.hexToString(user[4]);
 				LocalData.setLoggedIn(username, name, avatarUrl);
 				blockReader.startRunLoop();
+				this.setState({isLoading: false});
 				history.push("/chat/discover");
 			}).on (txConstants.ON_ERROR, (err, txHash) => {
 				// console.log(err.message);
 				ErrorModal.show(err.message);
 				console.log('transaction error: ' + txHash);
+				this.setState({isLoading: false});
 			}).on(txConstants.ON_APPROVE, (txHash) => {
 				console.log('transaction approved: ' + txHash);
 			})
-			
 		} else {
 			console.log('Username is already exists');
-			// Show error: Username is already exists
+			ErrorModal.show('"' + this.state.username + '" is already taken. Please choose another username.');
+			this.setState({isLoading: false});
 		}
+	}
 
-		// this.props.dispatch(userActions.register(this.state))
+	checkIsLoading = () => {
+		if (this.state.isLoading) {
+			return "false";
+		}
 	}
 
 	render() {
@@ -118,9 +128,14 @@ class SignupForm extends Component {
 						/>
 				</div>
 				<div className="row">
-					<Button icon="svg-lightning" className="button catamaran">
-						Sign up
-					</Button>
+					<Input 
+						hidden
+						validations={[this.checkIsLoading]}
+					/>
+				</div>
+				<div className="row">
+					<Button isLoading={this.state.isLoading} icon="svg-lightning" 
+						className="button catamaran" content="Sign up" loadingContent="Signing up..." />
 				</div>
 			</Form>
 		)

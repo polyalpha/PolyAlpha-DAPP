@@ -5,6 +5,7 @@ import {history} from "../../_helpers";
 import {MainTitle} from "../App/MainTitle"
 import {Link} from "react-router-dom"
 import Form from 'react-validation/build/form';
+import Input from 'react-validation/build/input';
 import Textarea from 'react-validation/build/textarea';
 import {Button} from './Button';
 import ethereumUtil from 'ethereumjs-util';
@@ -20,7 +21,7 @@ class Auth extends Component {
 	constructor(props) {
 		super(props);
 		this.pp = ["Welcome to the next generation decentralised, private and scaleable instant messenger that pays you ABT tokens for your attention.", "When you sign up you will recieve a PolyAlpha messenger address pair on the Ethereum Testnet. If you already have an account, log in with your private key."];
-		this.state = {privateKey: ""};
+		this.state = {privateKey: "", isLoading: false};
 
 		this.signinHandler = this.signinHandler.bind(this);
 		// this.loadContract();
@@ -51,6 +52,7 @@ class Auth extends Component {
 	signinHandler = async (e) => {
 		window.WWW = e;
 		e.preventDefault();
+		this.setState({isLoading: true});
 		LocalData.setPrivateKey(this.state.privateKey);
 		blockConnector.setAccounts([{secretKey: Buffer.from(LocalData.getPrivateKey(), 'hex'), address: LocalData.getAddress()}]);
 
@@ -68,17 +70,24 @@ class Auth extends Component {
 			LocalData.setLoggedIn(username, name, avatarUrl);
 			this.props.dispatch(userActions.loggedIn());
 			blockReader.startRunLoop();
+			this.setState({isLoading: false});
 			history.push("/chat/discover");
 		} else {
+			this.setState({isLoading: false});
 			history.push("/auth/signup");
 		}
 	};
 
+	checkIsLoading = () => {
+		if (this.state.isLoading) {
+			return "false";
+		}
+	}
+
 	render() {
 		const signin = (
-			<Button icon="svg-crown" className="button catamaran">
-				I want my bids, log me in
-			</Button>
+			<Button icon="svg-crown" className="button catamaran" isLoading={this.state.isLoading} 
+				loadingContent='Logging in...' content='I want my bids, log me in'/>				
 		);
 
 		console.log(this.props);
@@ -111,6 +120,10 @@ class Auth extends Component {
 										rows={1}
 									/>
 									{signin}
+									<Input 
+										hidden
+										validations={[this.checkIsLoading]}
+									/>
 								</Fragment>
 
 							) || (
