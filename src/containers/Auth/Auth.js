@@ -8,6 +8,7 @@ import Form from 'react-validation/build/form';
 import Textarea from 'react-validation/build/textarea';
 import {Button} from './Button';
 import ethereumUtil from 'ethereumjs-util';
+import keythereum from 'keythereum';
 import LocalData from '../../_services/LocalData';
 import {userActions} from '../../_actions';
 import blockReader from '../../_services/blockReader.service';
@@ -38,6 +39,14 @@ class Auth extends Component {
 			return <div>Invalid private key</div>;
 		}
 	};
+
+	createNewAccount = (e) => {
+		e.preventDefault();
+		let dk = keythereum.create();
+		LocalData.setPrivateKey(dk.privateKey.toString('hex'));
+		blockConnector.setAccounts([{secretKey: Buffer.from(LocalData.getPrivateKey(), 'hex'), address: LocalData.getAddress()}]);
+		history.push("/auth/signup");
+	}
 
 	signinHandler = async (e) => {
 		window.WWW = e;
@@ -82,7 +91,7 @@ class Auth extends Component {
 					<div className="buttons-block">
 						<div className="signup row">
 							<Link to="/auth/signup">
-								<DivButton icon="svg-lightning"  className="button catamaran">
+								<DivButton icon="svg-lightning"  className="button catamaran" onClick={this.createNewAccount}>
 									I'm new, create an address pair for me
 								</DivButton>
 							</Link>

@@ -85,7 +85,7 @@ class Chats extends Component {
 			// console.log(receipt);
 			LocalData.addMessage(this.state.userId, encryptedMessage, receipt.transactionHash, MsgStatus.SENT, MsgType.TO, receipt.blockNumber);
 			this.setState({messages: LocalData.getUser(this.state.userId)[KEY.MESSAGES]});
-		}).on(txConstants.ON_ERROR, (err, data) => {
+		}).on(txConstants.ON_ERROR, (err, txHash) => {
 			// console.log('received error')
 			// console.log(err);
 			LocalData.addMessage(this.state.userId, encryptedMessage, txHash, MsgStatus.FAILED, MsgType.TO);

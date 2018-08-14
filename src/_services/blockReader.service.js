@@ -13,6 +13,4 @@ function updateHandler() {
     store.dispatch(userActions.updateUserList());
 }
 
-console.log('load blockreader service');
-
 module.exports = blockReader;

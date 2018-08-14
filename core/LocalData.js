@@ -246,8 +246,6 @@ class LocalData {
      * @param {number} blockNumber 
      */
     static addMessage(userAddress, message, txHash, status, type, blockNumber = 0) {
-        console.log('addMessage:' + userAddress + ':' + message + ':' + 
-            txHash + ':' + status + ':' + type + ':' + blockNumber);
         userAddress = userAddress.toLowerCase();
 
         let user = this.getObjectItem(userAddress);
@@ -300,6 +298,10 @@ class LocalData {
         return (this.getItem(Static.KEY.LOGGED_IN) == 'true');
     }
 
+    /**
+     * Set the account's private key to local storage
+     * @param {string} value Private key in form of hex string
+     */
     static setPrivateKey(value) {
         this.setItem(Static.KEY.PRIVATE_KEY, value);
         let valueBuffer = Buffer.from(value, 'hex');

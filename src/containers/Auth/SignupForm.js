@@ -61,6 +61,18 @@ class SignupForm extends Component {
 			<Form onSubmit={this.handleSubmit}>
 				<div className="row">
 					<div className="form-row">
+						<label>Ethereum address</label>
+						<Input
+							disabled
+							type="text"
+							name="username"
+							value={LocalData.getAddress()}
+							className="input"
+						/>
+					</div>
+				</div>
+				<div className="row">
+					<div className="form-row">
 						<label>Username</label>
 						<Input
 							autoFocus
@@ -79,7 +91,6 @@ class SignupForm extends Component {
 					<div className="form-row">
 						<label>Display name</label>
 						<Input
-							autoFocus
 							placeholder="Type in your name"
 							type="text"
 							name="displayName"

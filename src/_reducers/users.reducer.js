@@ -14,8 +14,6 @@ let initialState = getAddresses();
 
 export function users(state = initialState, action) {
   if (action.type == userConstants.UPDATE_LIST) {
-    console.log('get user list');
-
     return getAddresses();
   }
   return state;

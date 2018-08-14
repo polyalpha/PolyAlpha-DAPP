@@ -6,7 +6,7 @@ export const userActions = {
 };
 
 function updateUserList() {
-    console.log('update user list action');
+    // console.log('update user list action');
     return {type: userConstants.UPDATE_LIST};
 }
 

@@ -57,7 +57,7 @@ module.exports.ENV = {
 
     getProperty(propertyName) {
         var network = this.EthNetworkId;
-        console.log('current network: ' + network + '::' + localStorage.ethNetwork);
+        // console.log('current network: ' + network + '::' + localStorage.ethNetwork);
         for (var i=0;i<module.exports.NETWORK_LIST.length;i++) {
             if (network == module.exports.NETWORK_LIST[i].id) {
                 return module.exports.NETWORK_LIST[i][propertyName];

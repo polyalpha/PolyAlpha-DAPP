@@ -67,7 +67,7 @@ class BlockReader {
     async readEvents() {
         let storedBlockNumber = Utils.parseIntSafe(LocalData.getLastBlockNumber());
         let currentBlockNumber = Utils.parseIntSafe(await this.web3.eth.getBlockNumber()) - 1;
-        console.log('reading events from: ' + storedBlockNumber + ' to ' + currentBlockNumber);
+        // console.log('reading events from: ' + storedBlockNumber + ' to ' + currentBlockNumber);
         if (storedBlockNumber < currentBlockNumber) {
             let userEvents = await this.userContract.getPastEvents('allEvents', {
                 filter: {},
@@ -174,7 +174,7 @@ class BlockReader {
             LocalData.setLastBlockNumber(currentBlockNumber + 1); // Need to plus 1, otherwise it will read the currentblock again
         }
 
-        console.log('read events done');
+        // console.log('read events done');
     }
 
     /// Merge 2 list of events and order by blockNumber
