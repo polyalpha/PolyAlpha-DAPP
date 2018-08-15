@@ -100,7 +100,7 @@ export const UserList = ({userId, name, tab, users}) => (
 			{users.map(user=>(
 				<Link className={classNames(["user", {selected: String(user[KEY.USER_ADDRESS]) === userId}])} key={user[KEY.USER_ADDRESS]} to={`/chat/${name}/${tab}/${user[KEY.USER_ADDRESS]}`}>
 					<i className="img" style={{backgroundImage: `url(${user[KEY.USER_AVARTAR_URL]})`}} />
-					<div className="name">{user[KEY.USER_NAME]}</div>
+					<div className="name">{user[KEY.USER_UNAME]}</div>
 					{/* {user.bid && (
 						<div className="users-bid-abt">
 							<div className="users-bid-abt-bid">{user.bid} bids</div>

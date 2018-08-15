@@ -389,7 +389,7 @@ a {
 
 #body-index .buttons-block .signin .private-key {
 	height: 56px;
-	width: 45%;
+	width: 90%;
 	border: none;
 	background: transparent;
 	float: left;
@@ -811,4 +811,10 @@ a {
 	opacity: 0.8;
 	position: relative;
 	top: 10px;
+}
+
+.form-error {
+	color: #FF4778;
+	font-weight: bold;
+	margin-top: 8px;
 }

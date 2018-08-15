@@ -50,11 +50,15 @@ class Chats extends Component {
 	}
 
 	componentDidMount() {
-		this.messagesBlock.scrollToBottom();
+		if (this.messagesBlock) {
+			this.messagesBlock.scrollToBottom();
+		}
 	}
 
 	componentDidUpdate() {
-		this.messagesBlock.scrollToBottom();
+		if (this.messagesBlock) {
+			this.messagesBlock.scrollToBottom();
+		}
 	}
 
 	loadUserList(users) {

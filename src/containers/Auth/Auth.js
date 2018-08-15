@@ -35,9 +35,9 @@ class Auth extends Component {
 
 	keyValidator = () => {
 		if (!/^[\da-z]{64}$/.test(this.state.privateKey.toString().trim())) {
-			return <div>Bad format secret key</div>;
+			return <div className="form-error" style={{float: 'left'}}>Invalid format</div>;
 		} else if (!ethereumUtil.isValidPrivate(Buffer.from(this.state.privateKey, 'hex'))) {
-			return <div>Invalid private key</div>;
+			return <div className="form-error" style={{float: 'left'}}>Invalid private key</div>;
 		}
 	};
 
@@ -85,13 +85,7 @@ class Auth extends Component {
 	}
 
 	render() {
-		const signin = (
-			<Button icon="svg-crown" className="button catamaran" isLoading={this.state.isLoading} 
-				loadingContent='Logging in...' content='I want my bids, log me in'/>				
-		);
-
-		console.log(this.props);
-
+		// console.log(this.props);
 		return (
 			<Fragment>
 				<MainTitle>{this.props.route.title}</MainTitle>
@@ -108,6 +102,7 @@ class Auth extends Component {
 						<Form className="signin row" method="POST" onSubmit={this.signinHandler}>
 							{this.props.route.path === "/auth/signin" && (
 								<Fragment>
+									<div style={{float: 'left', width: '50%'}}>
 									<Textarea
 										autoFocus
 										placeholder="Enter your private key"
@@ -119,11 +114,16 @@ class Auth extends Component {
 										onChange={(e) => this.setState({privateKey: e.target.value})}
 										rows={1}
 									/>
-									{signin}
 									<Input 
 										hidden
 										validations={[this.checkIsLoading]}
 									/>
+									</div>
+									<div style={{float: 'left', width: '50%'}}>
+									<Button icon="svg-crown" className="button catamaran" isLoading={this.state.isLoading} 
+										loadingContent='Logging in...' content='I want my bids, log me in'/>
+									</div>
+									
 								</Fragment>
 
 							) || (
