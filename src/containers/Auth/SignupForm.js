@@ -99,7 +99,8 @@ class SignupForm extends Component {
 					</div>
 				</div>
 
-				<div className="row">
+				{/* Not ask for display name for now*/}
+				{/* <div className="row">
 					<div className="form-row">
 						<label>Display name</label>
 						<Input
@@ -112,7 +113,7 @@ class SignupForm extends Component {
 							onChange={(e) => this.setState({displayName: e.target.value})}
 						/>
 					</div>
-				</div>
+				</div> */}
 
 
 				<div className="row">
