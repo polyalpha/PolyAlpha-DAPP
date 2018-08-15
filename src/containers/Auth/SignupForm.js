@@ -12,16 +12,25 @@ import blockConnector from '../../_services/blockConnector.service';
 import ErrorModal from '../Modal/ErrorModal';
 
 class SignupForm extends Component {
-
-	state = {
-		username: "",
-		displayName: "",
-		avatarUrl: "",
-		isLoading: false
-	};
-
 	constructor(props) {
 		super(props);
+
+		this.avatarsPath = "/i/avatars";
+		this.defaultAvatars = ["sandy.png","adam.png","sid.png","anjali.png","sadona.png","maya.png","steve.png",
+			"arjun.png","rahul.png"];
+
+		this.state = {
+			username: "",
+			displayName: " ", // Need to contain at least a character, otherwise, smart contract will have error.
+			avatarUrl: this.avatarsPath + '/' + this.defaultAvatars[0],
+			isLoading: false,
+			selectedAvatar: 0
+		};
+	}
+
+	selectAvatar = (i) => {
+		let avatarUrl = this.avatarsPath + '/' + this.defaultAvatars[i];
+		this.setState({selectedAvatar: i, avatarUrl});
 	}
 
 	handleSubmit = async(e) => {
@@ -35,7 +44,9 @@ class SignupForm extends Component {
 
 		if (available) {
 			console.log('send form');
+
 			let result = await blockConnector.register(this.state.username, this.state.displayName, this.state.avatarUrl);
+
 			result.on(txConstants.ON_RECEIPT, async (receipt) => {
 				console.log('Transaction success');
 				console.log(receipt);
@@ -115,8 +126,33 @@ class SignupForm extends Component {
 					</div>
 				</div> */}
 
-
 				<div className="row">
+					<Input
+						type="hidden"
+						name="selectAvatar"
+						className="input"
+						value={this.state.selectAvatar}
+					/>
+					<label>Avatar</label>
+					<div className="placeholder">Select an avatar</div>
+					<div className="select-avatar">
+						{this.defaultAvatars.map((x, i)=>{
+							return (
+								<div key={i} data-id={i} className={'avatar' + (i == this.state.selectedAvatar ? ' selected' : '')} 
+									data-value={x} onClick={() => this.selectAvatar(i)}
+								style={{backgroundImage: `url(${this.avatarsPath+"/"+x})`}}>
+								</div>
+							)
+						})}
+						{/* <div className="avatar animate upload">
+							<input name="fileAvatar" type="file" onChange={this.saveValue}/>
+							<div className="text animate">Upload your own</div>
+						</div> */}
+					</div>
+				</div>
+
+
+				{/* <div className="row">
 					<label>Avatar URL</label>
 					<Input
 							placeholder="Enter your avatar URL"
@@ -127,7 +163,7 @@ class SignupForm extends Component {
 							value={this.state.avatarUrl}
 							onChange={(e) => this.setState({avatarUrl: e.target.value})}
 						/>
-				</div>
+				</div> */}
 				<div className="row">
 					<Input 
 						hidden
