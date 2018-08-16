@@ -60,7 +60,6 @@ export class CreateNewBid extends Component {
 
 		let result = await blockConnector.createBid(this.props.userId, 
 			Utils.parseIntSafe(bid) * TOKEN_DECIMAL, '0x' + encryptedMessage);
-		console.log(result);
 	};
 
 	cancelHandler = (e) => {
@@ -69,7 +68,6 @@ export class CreateNewBid extends Component {
 	};
 
 	messageValidator = () => {
-		console.log("textValidator");
 		if (!this.state.message.length) {
 			return <div>Bad text</div>;
 		}
@@ -79,7 +77,7 @@ export class CreateNewBid extends Component {
 		return (
 			<Fragment>
 				{this.state.isSubmitted && (
-					<Message my={true} bid={this.state.bid} button={{title: "Cancel bid", onClick:this.cancelHandler}}>{this.state.message}</Message>
+					<Message my={true} bid={this.state.bid}>{this.state.message}</Message>
 				) || (
 					<div className="create-new-bid">
 						<h2 className="raleway">Create New Bid</h2>
@@ -185,7 +183,6 @@ class Discover extends Component {
 	}
 
 	render() {
-		console.log('render discover');
 		return (
 		<ChatLayout {...this.props} sidebar={this.sidebar} back="/chat/discover">
 			{this.props.match.params.id && (
