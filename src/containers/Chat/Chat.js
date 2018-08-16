@@ -14,7 +14,8 @@ import {MainBlock} from "../App/App";
 import {KEY, MsgStatus} from '../../_constants/Static';
 import Utils from '../../_helpers/Utils';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import Config from '../../_configs/Config';
 
 
 
@@ -194,7 +195,7 @@ class TopBar extends Component {
 						{this.state.isOpenMore && (
 							<div className="more-select">
 								<div className="more-select-item">Block user</div>
-								<div className="more-select-item">Send ABT</div>
+								<div className="more-select-item">Send {Config.TOKEN_SYMBOL}</div>
 							</div>
 						)}
 					</div>
@@ -222,7 +223,7 @@ export const AbtValue = ({value, isEarned, className}) => (
 			<div className="abt-value-block-middle">
 				{isEarned && <div className="abt-value-is-earned">Earned</div>}
 				<div className="abt-value-numbers">{value}</div>
-				<div className="abt-value-label">ABT</div>
+				<div className="abt-value-label">{Config.TOKEN_SYMBOL}</div>
 			</div>
 		</div>
 	</div>

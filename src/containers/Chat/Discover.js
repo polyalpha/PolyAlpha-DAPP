@@ -15,9 +15,10 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import {txConstants} from '../../_constants';
 import ErrorModal from '../Modal/ErrorModal';
+import Config from '../../_configs/Config';
 
 const abcValidator = (value) => {
-	if (parseInt(value || 0) <= 0) {
+	if (parseInt(value || 0) < 0) {
 		return <div>Bad value</div>;
 	}
 };
@@ -79,7 +80,7 @@ export class CreateNewBid extends Component {
 			})
 		} else {
 			this.setState({isLoading: false});
-			ErrorModal.show("Your account doesn't have enough ABT token.");
+			ErrorModal.show("Your account doesn't have enough " + Config.TOKEN_SYMBOL + " token.");
 		}
 	};
 
@@ -112,9 +113,9 @@ export class CreateNewBid extends Component {
 				) || (
 					<div className="create-new-bid">
 						<h2 className="raleway">Create New Bid</h2>
-						<h3 className="catamaran">Enter the amount of ABT tokens for your new bid</h3>
+						<h3 className="catamaran">Enter the amount of {Config.TOKEN_SYMBOL} tokens for your new bid</h3>
 						<div className="token-value">
-							{this.state.bid <= 0
+							{this.state.bid < 0
 								? (<i className="logo-image" />)
 								: (<AbtValue value={this.state.bid} />)}
 						</div>

@@ -21,6 +21,8 @@ module.exports.NETWORK_LIST = [
 ]
 
 module.exports.TOKEN_DECIMAL = 100000000; // 8 decimals
+module.exports.TOKEN_SYMBOL = 'PADT';
+module.exports.TOKEN_NAME = 'PolyAlpha Demo token';
 
 module.exports.ENV = {
     get ContractAddress() {
