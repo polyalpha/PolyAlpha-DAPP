@@ -241,7 +241,7 @@ export const ChatLayout = ({children, match, sidebar, back}) => {
 			</SideBar>
 			{children && (
 				<div className="main">
-					<TopBar title="Info" back={back} more={true} />
+					<TopBar title="Info" />
 					<div className="scroll">
 						{children}
 					</div>
