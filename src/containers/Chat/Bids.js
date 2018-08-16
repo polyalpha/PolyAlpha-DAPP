@@ -7,6 +7,8 @@ import {TOKEN_DECIMAL} from '../../_configs/Config';
 import blockConnector from '../../_services/blockConnector.service';
 import Utils from '../../_helpers/Utils';
 import {KEY} from '../../_constants/Static';
+import {txConstants} from '../../_constants';
+import ErrorModal from '../Modal/ErrorModal';
 
 const sideBarTabs = [
 	{
@@ -27,7 +29,7 @@ class Bids extends Component  {
 		this.onCancelHandler = this.onCancelHandler.bind(this);
 		this.onAcceptHandler = this.onAcceptHandler.bind(this);
 
-		this.state = {message: ""};
+		this.state = {message: "", isAcceptButtonDisabled: true, isLoading: false};
 
 		this.loadProps(props);
 	}
@@ -49,12 +51,20 @@ class Bids extends Component  {
 
 		console.log('accept bid to: ' + this.props.match.params.id);
 		console.log(encryptedMessage);
-		let receipt = await blockConnector.acceptBid(this.props.match.params.id, '0x' + encryptedMessage);
-		console.log(receipt);
+		this.setState({isLoading: true});
+		let result = await blockConnector.acceptBid(this.props.match.params.id, '0x' + encryptedMessage);
+		result.on(txConstants.ON_APPROVE, (txHash) => {
+			// do nothing
+		}).on(txConstants.ON_RECEIPT, (receipt) => {
+			this.setState({isLoading: false});
+		}).on(txConstants.ON_ERROR, (err, txHash) => {
+			this.setState({isLoading: false});
+			ErrorModal.show(err.message);
+		})
 	}
 
 	onMessageChanged = (newMessage) => {
-		this.setState({message: newMessage});
+		this.setState({message: newMessage, isAcceptButtonDisabled: (newMessage.length == 0)});
 	}
 
 	loadProps(props) {
@@ -76,23 +86,29 @@ class Bids extends Component  {
 			users: bidUsers,
 			userId: match.params.id,
 		};
+	}
 
+	render() {
+		let {match} = this.props;
 		let user = LocalData.getUser(match.params.id);
 		let bidAmount = parseInt(user[Static.KEY.BID_AMOUNT] / TOKEN_DECIMAL);
 		let mine = user[Static.KEY.BID_TYPE] == Static.BidType.TO;
 
 		let buttonTitle = mine ? "Cancel my bid" : "Accept bid and reply";
+		let loadingTitle = mine ? "Cancelling my bid" : "Accepting bid";
 		let action = mine ? this.onCancelHandler : this.onAcceptHandler;
+		let isButtonDisabled = this.state.isLoading ? true : (mine ? false : this.state.isAcceptButtonDisabled);
 
-		this.messages = [
-			<Message my={mine} className="chat-message-big-circle" bid={bidAmount} button={{title: buttonTitle, onClick: action}}>{user[Static.KEY.BID_MESSAGE]}</Message>
+		let messages = [
+			<Message my={mine} className="chat-message-big-circle" bid={bidAmount} 
+				button={{title: (this.state.isLoading ? loadingTitle : buttonTitle), onClick: action, disabled: isButtonDisabled, isLoading: this.state.isLoading}}>
+				{user[Static.KEY.BID_MESSAGE]}
+			</Message>
 		];
-	}
 
-	render() {
 		return (
 			<ChatLayout {...this.props} sidebar={this.sidebar}>
-				{this.props.match.params.id && <MessagesBlock messages={this.messages} onMessageChanged={this.onMessageChanged}/>}
+				{this.props.match.params.id && <MessagesBlock messages={messages} onMessageChanged={this.onMessageChanged}/>}
 			</ChatLayout>
 		)
 	}

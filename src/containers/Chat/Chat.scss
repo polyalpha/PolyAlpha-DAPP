@@ -422,6 +422,10 @@ $messages-block-radius: 15px;
 			}
 		}
 
+		.chat-message-buttons :disabled{
+			background: linear-gradient(360deg, rgba(188, 188, 188, 0.9) 0%, rgba(157, 157, 157, 0.9) 100%), rgba(255, 255, 255, 0.85);
+		}
+
 	}
 }
 

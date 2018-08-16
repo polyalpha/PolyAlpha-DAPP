@@ -288,7 +288,10 @@ export const Message = ({children, my, bid, isEarned, button, className, status 
 			<div style={{fontSize: '0.7em'}}>{status == MsgStatus.SENT ? "" : "sending..."}</div>
 			{button &&  (
 				<div className="chat-message-buttons">
-					<button {...button} className="chat-message-buttons-button" >{button.title}</button>
+						<button disabled={button.disabled} onClick={button.onClick}  className="chat-message-buttons-button">
+							{button.isLoading ? (<FontAwesomeIcon icon={faSpinner} spin style={{marginRight: '14px'}}/>):(<span></span>)}
+							{button.title}
+						</button>
 				</div>
 			)}
 		</div>

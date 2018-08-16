@@ -32,5 +32,3 @@ export const DivButton = (props) => (
 	</button>
 );
 
-
-
