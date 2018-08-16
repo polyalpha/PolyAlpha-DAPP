@@ -92,8 +92,6 @@ export class MessagesBlock extends Component {
 	}
 }
 
-
-
 export const UserList = ({userId, name, tab, users}) => (
 	<div className="users">
 		<div className="scroll">

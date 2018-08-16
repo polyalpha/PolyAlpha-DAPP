@@ -25,7 +25,6 @@ const SearchInput = (props) => (
 class Chats extends Component {
 	constructor(props) {
 		super(props);
-		this.loadUserList = this.loadUserList.bind(this);
 		this.loadUser = this.loadUser.bind(this);
 		this.onMessageSent = this.onMessageSent.bind(this);
 
@@ -50,15 +49,26 @@ class Chats extends Component {
 
 	loadUser(props, fromUpdateProps) {
 		let userId = props.match.params.id;
+
+		let tabs = [<SearchInput key="chats-search" />];
+		let chatAddresses = props.users.chatAddresses; 
+		let chatUsers = LocalData.getUsers(chatAddresses);
+
+		if (userId == undefined && chatAddresses.length > 0) {
+			userId = chatAddresses[0];
+		}
+		this.sidebar = {
+			name: "chats",
+			tabs, users: chatUsers,
+			userId
+		};
+
 		let user = LocalData.getUser(userId);
 		let messages = user[KEY.MESSAGES];
 		if (messages == undefined) {
 			messages = [];
 		}
 		
-		// User list need to be loaded before the page got rerendered by setState
-		this.loadUserList(props);
-
 		if (fromUpdateProps) {
 			this.setState({messages, user, userId});
 		} else {
@@ -67,24 +77,13 @@ class Chats extends Component {
 		
 	}
 
-	loadUserList(props) {
-		let tabs = [<SearchInput key="chats-search" />];
-		let chatAddresses = props.users.chatAddresses;
-		let chatUsers = LocalData.getUsers(chatAddresses);
-		this.sidebar = {
-			name: "chats",
-			tabs, users: chatUsers,
-			userId: props.match.params.id
-		};
-	}
-
 	onMessageSent = async (message) => {
 		let user = LocalData.getUser(this.state.userId);
 		let secret = Utils.computeSecret(Buffer.from(LocalData.getPrivateKey(), 'hex'), 
 			Buffer.from('04' + user[KEY.USER_PUBKEY], 'hex'));
 		let encryptedMessage = '0x' + Utils.encrypt(message, secret);
 
-		let result = await blockConnector.sendMessage(this.props.match.params.id, encryptedMessage);
+		let result = await blockConnector.sendMessage(this.state.userId, encryptedMessage);
 		result.on(txConstants.ON_APPROVE, (txHash) => {
 			LocalData.addMessage(this.state.userId, encryptedMessage, txHash, MsgStatus.PENDING, MsgType.TO);
 			this.setState({messages: LocalData.getUser(this.state.userId)[KEY.MESSAGES]});
@@ -117,7 +116,7 @@ class Chats extends Component {
 
 		return (
 			<ChatLayout {...this.props} sidebar={this.sidebar}>
-				{this.props.match.params.id && <MessagesBlock messages={this.messageElements} onMessageSent={this.onMessageSent} ref={messagesBlock => this.messagesBlock = messagesBlock} />}
+				{this.state.userId && <MessagesBlock messages={this.messageElements} onMessageSent={this.onMessageSent} ref={messagesBlock => this.messagesBlock = messagesBlock} />}
 			</ChatLayout>
 		)
 	}
