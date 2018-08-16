@@ -333,7 +333,7 @@ class LocalData {
 
     static getCurrentUser() {
         let user = {};
-        user.name = this.getName();
+        user.name = this.getUsername();
         user.avatar = this.getAvatarUrl();
         return user;
     }

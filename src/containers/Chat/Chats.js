@@ -15,11 +15,6 @@ import { txConstants } from "../../_constants";
 
 
 
-const onClickHandler = (e) => {
-	console.log(e.target)
-};
-
-
 const SearchInput = (props) => (
 	<input placeholder="Search" className="tabs-search" type="text" name="search" onChange={
 		e => console.log(e.target.value)
@@ -29,28 +24,16 @@ const SearchInput = (props) => (
 
 class Chats extends Component {
 	constructor(props) {
-		console.log('load chats');
-		console.log(props);
 		super(props);
 		this.loadUserList = this.loadUserList.bind(this);
+		this.loadUser = this.loadUser.bind(this);
 		this.onMessageSent = this.onMessageSent.bind(this);
 
-		let userId = props.match.params.id;
-		let user = LocalData.getUser(userId);
-		let messages = user[KEY.MESSAGES];
-		if (messages == undefined) {
-			messages = [];
-		}
-		this.state = {messages, user, userId: userId};
-
-		this.loadUserList(props.users);
+		this.loadUser(props, false);
 	}
 
 	componentWillReceiveProps(props) {
-		console.log('update chats props');
-		console.log(props);
-		this.loadUserList(props.users);
-		this.setState({messages: LocalData.getUser(this.state.userId)[KEY.MESSAGES]});
+		this.loadUser(props, true);		
 	}
 
 	componentDidMount() {
@@ -65,14 +48,33 @@ class Chats extends Component {
 		}
 	}
 
-	loadUserList(users) {
+	loadUser(props, fromUpdateProps) {
+		let userId = props.match.params.id;
+		let user = LocalData.getUser(userId);
+		let messages = user[KEY.MESSAGES];
+		if (messages == undefined) {
+			messages = [];
+		}
+		
+		// User list need to be loaded before the page got rerendered by setState
+		this.loadUserList(props);
+
+		if (fromUpdateProps) {
+			this.setState({messages, user, userId});
+		} else {
+			this.state = {messages, user, userId};
+		}
+		
+	}
+
+	loadUserList(props) {
 		let tabs = [<SearchInput key="chats-search" />];
-		let chatAddresses = users.chatAddresses;
+		let chatAddresses = props.users.chatAddresses;
 		let chatUsers = LocalData.getUsers(chatAddresses);
 		this.sidebar = {
 			name: "chats",
 			tabs, users: chatUsers,
-			userId: this.state.userId
+			userId: props.match.params.id
 		};
 	}
 
@@ -105,9 +107,9 @@ class Chats extends Component {
 		this.messageElements = [
 			<Message my={mine} bid={bidAmount} isEarned={false} key={1}>{user[KEY.BID_MESSAGE]}</Message>,
 		];
+		
 		if (messages != undefined) {
 			for (var i=0;i<messages.length;i++) {
-				console.log('Message type: ' + messages[i][KEY.MESSAGE_TYPE]);
 				let mine = messages[i][KEY.MESSAGE_TYPE] == MsgType.TO;
 				this.messageElements.push(<Message key={2 + i} my={mine} status={messages[i][KEY.MESSAGE_STATUS]}>{messages[i][KEY.MESSAGE_CONTENT]}</Message>);
 			}
@@ -120,21 +122,6 @@ class Chats extends Component {
 		)
 	}
 };
-
-
-// const defaultUsers = [
-// 	[
-// 		{id: 2, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-// 		{id: 3, name: "John Copley", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-// 		{id: 4, name: "MargotRobbie", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-// 		{id: 5, name: "Vincent van Gogh", avatar: "/i/avatars/adam.png", date:"Yesterday"},
-// 	],
-// 	[
-// 		{id: 2, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 100, abt:"2.33"},
-// 		{id: 3, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 60, abt:"0.02"},
-// 		{id: 4, name: "PolyAlpha Assistant", avatar: "/i/avatars/adam.png", bid: 80, abt:"3.01"},
-// 	]
-// ];
 
 function mapStateToProps(state) {
 	const { auth, users } = state;
