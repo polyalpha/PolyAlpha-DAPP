@@ -13,6 +13,9 @@ import {alertActions} from "../../_actions";
 import {MainBlock} from "../App/App";
 import {KEY, MsgStatus} from '../../_constants/Static';
 import Utils from '../../_helpers/Utils';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons'
+
 
 
 export const MessageContext = React.createContext("");
@@ -21,7 +24,8 @@ export const MessageContext = React.createContext("");
 export class MessagesBlock extends Component {
 
 	state = {
-		message: ""
+		message: "",
+		isLoading: false
 	};
 
 	constructor(props) {
@@ -54,11 +58,18 @@ export class MessagesBlock extends Component {
 	scrollToBottom() {
 		Utils.scrollToBottom(this.messagesContainer, 300);
 	}
-	
 
+	setSendLoading = (isLoading) => {
+		this.setState({isLoading})
+	}
+	
 	render() {
 
 		let i = 0;
+		var chatButton = (<Svg id="svg-share" className="button" onClick={this.onMessageSent} />);
+		if (this.state.isLoading) {
+			chatButton = (<FontAwesomeIcon icon={faSpinner} spin/>);
+		}
 
 		return (
 			<div className="messages-block">
@@ -82,7 +93,8 @@ export class MessagesBlock extends Component {
 						</div>
 						<div className="buttons">
 							{/* <Svg id="svg-mic" className="button" /> */}
-							<Svg id="svg-share" className="button" onClick={this.onMessageSent} />
+							
+							{chatButton}
 							{/* <Svg id="svg-smile" className="button" /> */}
 						</div>
 					</div>
@@ -252,7 +264,6 @@ export const ChatLayout = ({children, match, sidebar, back}) => {
 
 
 const Chat = ({auth, title, route}) => {
-	console.log({route})
 	return (
 		<Fragment>
 			<MainTitle>{title || `Hello ${auth.user.name}`}</MainTitle>

@@ -78,13 +78,17 @@ class Chats extends Component {
 	}
 
 	onMessageSent = async (message) => {
+		this.messagesBlock.setSendLoading(true);
+
 		let user = LocalData.getUser(this.state.userId);
 		let secret = Utils.computeSecret(Buffer.from(LocalData.getPrivateKey(), 'hex'), 
 			Buffer.from('04' + user[KEY.USER_PUBKEY], 'hex'));
 		let encryptedMessage = '0x' + Utils.encrypt(message, secret);
 
 		let result = await blockConnector.sendMessage(this.state.userId, encryptedMessage);
+
 		result.on(txConstants.ON_APPROVE, (txHash) => {
+			this.messagesBlock.setSendLoading(false);
 			LocalData.addMessage(this.state.userId, encryptedMessage, txHash, MsgStatus.PENDING, MsgType.TO);
 			this.setState({messages: LocalData.getUser(this.state.userId)[KEY.MESSAGES]});
 		}).on(txConstants.ON_RECEIPT, (receipt) => {
