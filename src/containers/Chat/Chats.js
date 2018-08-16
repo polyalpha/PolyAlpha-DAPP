@@ -29,6 +29,8 @@ const SearchInput = (props) => (
 
 class Chats extends Component {
 	constructor(props) {
+		console.log('load chats');
+		console.log(props);
 		super(props);
 		this.loadUserList = this.loadUserList.bind(this);
 		this.onMessageSent = this.onMessageSent.bind(this);
@@ -45,6 +47,8 @@ class Chats extends Component {
 	}
 
 	componentWillReceiveProps(props) {
+		console.log('update chats props');
+		console.log(props);
 		this.loadUserList(props.users);
 		this.setState({messages: LocalData.getUser(this.state.userId)[KEY.MESSAGES]});
 	}
@@ -80,18 +84,12 @@ class Chats extends Component {
 
 		let result = await blockConnector.sendMessage(this.props.match.params.id, encryptedMessage);
 		result.on(txConstants.ON_APPROVE, (txHash) => {
-			// console.log('transaction approved');
-			// console.log(txHash);
 			LocalData.addMessage(this.state.userId, encryptedMessage, txHash, MsgStatus.PENDING, MsgType.TO);
 			this.setState({messages: LocalData.getUser(this.state.userId)[KEY.MESSAGES]});
 		}).on(txConstants.ON_RECEIPT, (receipt) => {
-			// console.log('received receipt');
-			// console.log(receipt);
 			LocalData.addMessage(this.state.userId, encryptedMessage, receipt.transactionHash, MsgStatus.SENT, MsgType.TO, receipt.blockNumber);
 			this.setState({messages: LocalData.getUser(this.state.userId)[KEY.MESSAGES]});
 		}).on(txConstants.ON_ERROR, (err, txHash) => {
-			// console.log('received error')
-			// console.log(err);
 			LocalData.addMessage(this.state.userId, encryptedMessage, txHash, MsgStatus.FAILED, MsgType.TO);
 			this.setState({messages: LocalData.getUser(this.state.userId)[KEY.MESSAGES]});
 		})

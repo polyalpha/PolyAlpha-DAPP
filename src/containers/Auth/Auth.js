@@ -85,6 +85,8 @@ class Auth extends Component {
 	}
 
 	render() {
+		let logginButton = (<Button icon="svg-crown" className="button catamaran" isLoading={this.state.isLoading} 
+		loadingContent='Logging in...' content='I want my bids, log me in'/>);
 		// console.log(this.props);
 		return (
 			<Fragment>
@@ -120,15 +122,14 @@ class Auth extends Component {
 									/>
 									</div>
 									<div style={{float: 'left', width: '50%'}}>
-									<Button icon="svg-crown" className="button catamaran" isLoading={this.state.isLoading} 
-										loadingContent='Logging in...' content='I want my bids, log me in'/>
+										{logginButton}
 									</div>
 									
 								</Fragment>
 
 							) || (
 								<Fragment>
-									<Link to="/auth/signin">{signin}</Link>
+									<Link to="/auth/signin">{logginButton}</Link>
 								</Fragment>
 							)}
 						</Form>

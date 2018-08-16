@@ -87,7 +87,7 @@ const routes = [
 							}
 							,
 							{
-								path: '/chat/chats/:tab?/:id?',
+								path: '/chat/chats/:id?',
 								exact: true,
 								component: Chats,
 							}
