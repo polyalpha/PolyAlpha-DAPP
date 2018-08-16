@@ -87,7 +87,6 @@ class Auth extends Component {
 	render() {
 		let logginButton = (<Button icon="svg-crown" className="button catamaran" isLoading={this.state.isLoading} 
 		loadingContent='Logging in...' content='I want my bids, log me in'/>);
-		// console.log(this.props);
 		return (
 			<Fragment>
 				<MainTitle>{this.props.route.title}</MainTitle>

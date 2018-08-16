@@ -32,6 +32,9 @@ class BlockConnector {
     async load() {
         const compiledContract = require('../ethereum/build/PACore.json');
         this.contract = await new this.web3.eth.Contract(JSON.parse(compiledContract.interface), ENV.ContractAddress);
+
+        const compiledTokenContract = require('../ethereum/build/PAToken.json');
+        this.tokenContract = await new this.web3.eth.Contract(JSON.parse(compiledTokenContract.interface), ENV.TokenContractAddress);
     }
 
     async deploy() {    
@@ -113,6 +116,10 @@ class BlockConnector {
 
     async getBid(toId, fromAccountId = 0) {
         return await this.contract.methods.getBid(this.accounts[fromAccountId], this.getAddress(toId)).call();
+    }
+
+    async getTokenBalance(userId) {
+        return await this.tokenContract.methods.balanceOf(userId).call();
     }
 
     async sendTransaction(method, fromAccountId) {

@@ -11,7 +11,10 @@ import {KEY} from '../../_constants/Static';
 import Utils from '../../_helpers/Utils';
 import {TOKEN_DECIMAL} from '../../_configs/Config';
 import blockConnector from '../../_services/blockConnector.service';
-
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import {txConstants} from '../../_constants';
+import ErrorModal from '../Modal/ErrorModal';
 
 const abcValidator = (value) => {
 	if (parseInt(value || 0) <= 0) {
@@ -30,14 +33,14 @@ const required = (value) => {
 
 export class CreateNewBid extends Component {
 
-	state = {
-		isSubmitted: false,
-		bid: 0,
-		message: "",
-	};
-
 	constructor(props) {
-		super(props)
+		super(props);
+		this.state = {
+			isSubmitted: false,
+			isLoading: false,
+			bid: 0,
+			message: "",
+		};
 	}
 
 	addHandler = (e) => {
@@ -49,17 +52,35 @@ export class CreateNewBid extends Component {
 
 	createHandler = async (e) => {
 		e.preventDefault();
+		this.setState({isLoading: true});
 
 		let {message, bid} = this.state;
-		this.setState({isSubmitted: true});
 
 		let user = LocalData.getUser(this.props.userId);
 		let secret = Utils.computeSecret(Buffer.from(LocalData.getPrivateKey(), 'hex'), 
 			Buffer.from('04' + user[KEY.USER_PUBKEY], 'hex'));
 		let encryptedMessage = Utils.encrypt(message, secret);
 
-		let result = await blockConnector.createBid(this.props.userId, 
-			Utils.parseIntSafe(bid) * TOKEN_DECIMAL, '0x' + encryptedMessage);
+		let sentAmount = Utils.parseIntSafe(bid) * TOKEN_DECIMAL;
+		let tokenBalance = Utils.parseIntSafe(await blockConnector.getTokenBalance(LocalData.getAddress()));
+
+		console.log('Token balance' + tokenBalance);
+		if (tokenBalance >= sentAmount) {
+			let result = await blockConnector.createBid(this.props.userId, 
+				sentAmount, '0x' + encryptedMessage);
+			result.on(txConstants.ON_APPROVE, (txHash) => {
+				// Don't need to do anything
+			}).on(txConstants.ON_RECEIPT, (receipt) => {
+				this.setState({isSubmitted: true});
+			}).on(txConstants.ON_ERROR, (err, txHash) => {
+				// Show error
+				this.setState({isLoading: false});
+				ErrorModal.show(err.message);
+			})
+		} else {
+			this.setState({isLoading: false});
+			ErrorModal.show("Your account doesn't have enough ABT token.");
+		}
 	};
 
 	cancelHandler = (e) => {
@@ -73,7 +94,17 @@ export class CreateNewBid extends Component {
 		}
 	};
 
+	checkIsLoading = () => {
+		console.log('check is loading: ' + this.state.isLoading);
+		if (this.state.isLoading) {
+			return "false";
+		}
+		// return "false";
+	}
+
 	render() {
+		let loadingSpinner = (<FontAwesomeIcon icon={faSpinner} spin style={{marginRight: '14px'}}/>)
+		console.log('render discover');
 		return (
 			<Fragment>
 				{this.state.isSubmitted && (
@@ -89,6 +120,11 @@ export class CreateNewBid extends Component {
 						</div>
 						<Form className="form" onSubmit={this.createHandler}>
 							<Input type="hidden" name="value" value={this.state.bid} validations={[abcValidator, this.messageValidator]}/>
+							<Input 
+								hidden
+								value={this.state.isLoading ? "true" : ""} // Change the value of this input to force the form to update the button status
+								validations={[this.checkIsLoading]}
+							/>
 							<MessageContext.Consumer>
 								{message => {
 									this.state.message = message;
@@ -100,7 +136,9 @@ export class CreateNewBid extends Component {
 								<button className="button" onClick={this.addHandler}>-10</button>
 								<button className="button" onClick={this.addHandler}>+10</button>
 							</div>
-							<Button className="submit">Submit bid</Button>
+	
+							<Button className="submit">{this.state.isLoading && loadingSpinner} 
+								{this.state.isLoading ? 'Submitting bid...' : 'Submit bid'}</Button>
 						</Form>
 					</div>
 				)}

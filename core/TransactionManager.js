@@ -66,6 +66,8 @@ class TransactionsManager {
                 }).on('error', (err, unusedData) => {
                     if (err.message.indexOf('insufficient funds') !== -1) {
                         err.message = 'Insufficient funds. Account you try to send transaction from does not have enough funds.';
+                    } else if (err.message.indexOf('Transaction ran out of gas') !== -1) {
+                        err.message = 'Transaction failed. Please contact our team for assistance.'
                     }
                     this.updatePendingTx(this.numPendingTx-1);
                     emitter.emit(txConstants.ON_ERROR, err, txHash);
