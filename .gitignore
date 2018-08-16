@@ -60,6 +60,9 @@ typings/
 # next.js build output
 .next
 
+# create-react-app build folder
+build
+
 # vscode
 .vscode
 
