@@ -117,15 +117,16 @@ export const UserList = ({userId, name, tab, users}) => (
 				<Link className={classNames(["user", {selected: String(user[KEY.USER_ADDRESS]) === userId}])} key={user[KEY.USER_ADDRESS]} to={link}>
 					<i className="img" style={{backgroundImage: `url(${user[KEY.USER_AVARTAR_URL]})`}} />
 					<div className="name">{user[KEY.USER_UNAME]}</div>
-					{/* {user.bid && (
+					{user[KEY.BID_AMOUNT] && name=='bids' && (
 						<div className="users-bid-abt">
-							<div className="users-bid-abt-bid">{user.bid} bids</div>
-							<div className="users-bid-abt-abt">{user.abt} ABT</div>
+							{/* <div className="users-bid-abt-bid">{user.bid} bids</div> */}
+							<div className="users-bid-abt-abt">{Utils.parseIntSafe(user[KEY.BID_AMOUNT]) / Config.TOKEN_DECIMAL} {Config.TOKEN_SYMBOL}</div>
 						</div>
 
 					) || (
-						user.date && <div className="date">{user.date}</div>
-					)} */}
+						<div></div>
+						// user.date && <div className="date">{user.date}</div>
+					)}
 				</Link>
 			)
 			}
