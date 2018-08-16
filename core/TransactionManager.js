@@ -36,8 +36,7 @@ class TransactionsManager {
         var data = method.encodeABI();
         var transactionCount = await this.web3.eth.getTransactionCount(this.account.address);
 
-        console.log('send transaction to:');
-        console.log(ENV.ContractAddress);
+        console.log('send transaction to: ' + ENV.ContractAddress);
 
         var rawTx = {
             nonce: parseInt(transactionCount + this.numPendingTx),
@@ -53,17 +52,13 @@ class TransactionsManager {
         var txHash =  '0x' + tx.hash().toString('hex');
 
         this.updatePendingTx(this.numPendingTx+1);
-        console.log(serializedTx.toString('hex'));
-        console.log('emit onApprove');
-        console.log(emitter);
+        console.log('Raw transaction: ' + serializedTx.toString('hex'));
         emitter.emit(txConstants.ON_APPROVE, txHash);
         this.web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
                 .on('receipt', (receipt) => {
                     this.updatePendingTx(this.numPendingTx-1);
-                    console.log(emitter);
-                    // emitter.emit(txConstants.ON_APPROVED, receipt.transactionHash);
                     emitter.emit(txConstants.ON_RECEIPT, receipt);
-                }).on('error', (err, unusedData) => {
+                }).on('error', (err, txHash) => {
                     if (err.message.indexOf('insufficient funds') !== -1) {
                         err.message = 'Insufficient funds. Account you try to send transaction from does not have enough funds.';
                     } else if (err.message.indexOf('Transaction ran out of gas') !== -1) {
