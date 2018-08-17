@@ -26,7 +26,8 @@ export class MessagesBlock extends Component {
 
 	state = {
 		message: "",
-		isLoading: false
+		isLoading: false,
+		isInputDisabled: false,
 	};
 
 	constructor(props) {
@@ -51,7 +52,7 @@ export class MessagesBlock extends Component {
 		if (this.state.message.length > 0) {
 			if (this.props.onMessageSent) {
 				this.props.onMessageSent(this.state.message);
-				this.setState({message: ""});
+				this.clearMessageInput();
 			}
 		}
 	}
@@ -60,8 +61,16 @@ export class MessagesBlock extends Component {
 		Utils.scrollToBottom(this.messagesContainer, 300);
 	}
 
+	clearMessageInput = () => {
+		this.setState({message: ""});
+	}
+
 	setSendLoading = (isLoading) => {
 		this.setState({isLoading})
+	}
+
+	setInputDisabled = (isDisabled) => {
+		this.setState({isInputDisabled: isDisabled});
 	}
 	
 	render() {
@@ -82,10 +91,11 @@ export class MessagesBlock extends Component {
 					</MessageContext.Provider>
 				</div>
 				<Form className="form">
-					<div className="block">
+					<div className="block" disabled={this.state.isInputDisabled}>
 						<div className="textarea">
 					<Textarea
 						autoFocus
+						readOnly={this.state.isInputDisabled}
 						placeholder="Type a message..."
 						name="message"
 						value={this.state.message}

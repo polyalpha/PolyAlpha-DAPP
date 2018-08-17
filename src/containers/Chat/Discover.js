@@ -162,7 +162,7 @@ const sideBarTabs = [
 
 const DiscoverInfo = (props) => (
 	<div className="info-block">
-		<div className="user-info">
+		{/* <div className="user-info">
 			<i className="img" style={{backgroundImage: "url(/i/avatars/adam.png)"}} />
 			<div className="name">PolyAlpha Assistant</div>
 			<div className="date">last seen yesterday</div>
@@ -181,7 +181,7 @@ const DiscoverInfo = (props) => (
 				<p>This DAPP runs on Ethereum testnet so messages are not fast or private.</p>
 				<p>Enjoy PolyAlpha and please send us your thoughts.</p>
 			</div>
-		</div>
+		</div> */}
 	</div>
 )
 

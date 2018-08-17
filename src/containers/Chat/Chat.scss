@@ -45,6 +45,10 @@ $messages-block-radius: 15px;
 				margin: 0;
 				font-size: 14px;
 				line-height: 14px;
+				
+				&:read-only {
+					color: #ffffff;
+				}
 			}
 			.buttons {
 				position: absolute;
@@ -56,7 +60,12 @@ $messages-block-radius: 15px;
 					float: left;
 				}
 			}
+
+			&[disabled] {
+				background: #828282;
+			}
 		}
+		
 	}
 
 	.disabled {

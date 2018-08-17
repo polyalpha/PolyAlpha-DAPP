@@ -49,9 +49,11 @@ class Bids extends Component  {
 			Buffer.from('04' + user[KEY.USER_PUBKEY], 'hex'));
 		let encryptedMessage = Utils.encrypt(message, secret);
 
-		console.log('accept bid to: ' + this.props.match.params.id);
+		console.log('accepted bid from: ' + this.props.match.params.id);
 		console.log(encryptedMessage);
 		this.setState({isLoading: true});
+		this.messagesBlock.clearMessageInput();
+		this.messagesBlock.setInputDisabled(true);
 		let result = await blockConnector.acceptBid(this.props.match.params.id, '0x' + encryptedMessage);
 		result.on(txConstants.ON_APPROVE, (txHash) => {
 			// do nothing
@@ -108,7 +110,7 @@ class Bids extends Component  {
 
 		return (
 			<ChatLayout {...this.props} sidebar={this.sidebar}>
-				{this.props.match.params.id && <MessagesBlock messages={messages} onMessageChanged={this.onMessageChanged}/>}
+				{this.props.match.params.id && <MessagesBlock ref={(messagesBlock) => this.messagesBlock = messagesBlock } messages={messages} onMessageChanged={this.onMessageChanged}/>}
 			</ChatLayout>
 		)
 	}
