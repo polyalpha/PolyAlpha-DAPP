@@ -42,6 +42,7 @@ const SettingsMain = ({config, route}) => (
 			<h2>{LocalData.getUsername()}, here are the configurations for your messenger.</h2>
 			<div>
 				<div className="settings-item">Your Ethereum balance is: <b>{LocalData.getBalance()} ETH</b></div>
+				<div className="settings-item">Your PADT token balance is: <b>{LocalData.getTokenBalance()} PADT</b></div>
 				<div className="settings-item">You are on the <b>{ENV.NetworkName}</b></div>
 				<div className="settings-item">Your public address is <b>{LocalData.getAddress()}</b></div>
 			</div>

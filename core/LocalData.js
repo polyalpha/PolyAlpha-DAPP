@@ -1,6 +1,8 @@
 const Static = require("../utils/Static");
 const Utils = require('../utils/Utils');
 const web3 = require('../ethereum/web3');
+const BigNumber = require('big-number');
+const Config = require('../src/_configs/Config');
 
 Array.prototype.remove = function() {
     var what, a = arguments, L = a.length, ax;
@@ -357,6 +359,20 @@ class LocalData {
             value = "0";
         }
         return parseFloat(web3.utils.fromWei(value, 'ether').toString()).toFixed(decimal);
+    }
+
+    static setTokenBalance(balance) {
+        this.setItem(Static.KEY.TOKEN_BALANCE, balance);
+    }
+
+    static getTokenBalance() {
+        let valueString = this.getItem(Static.KEY.TOKEN_BALANCE);
+        if (valueString == "") {
+            valueString = "0";
+        }
+        let value = new BigNumber(valueString);
+        value = value.div(Config.TOKEN_DECIMAL);
+        return value.toString();
     }
 
     

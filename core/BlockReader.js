@@ -6,6 +6,7 @@ const compiledMessagingContract = require('../ethereum/build/PAMessaging.json');
 const LocalData = require('./LocalData');
 const Static = require('../utils/Static');
 const Utils = require('../utils/Utils');
+const {ENV} = require('../src/_configs/Config');
 
 
 class BlockReader {
@@ -19,22 +20,23 @@ class BlockReader {
     async initialize() {
         this.contract = await new this.web3.eth.Contract(JSON.parse(compiledContract.interface), 
             this.contractAddress);
-        
 
         // The reason these addresses are loaded from the core contract (instead of loading from Config) 
         // is because it make the code easier for running tests
-        let tokenContractAddress = await this.contract.methods.tokenContract().call();
         let userContractAddress = await this.contract.methods.userContract().call();
         let bidContractAddress = await this.contract.methods.bidContract().call();
         let messagingContractAddress = await this.contract.methods.messagingContract().call();
 
-        this.tokenContract = await new this.web3.eth.Contract(JSON.parse(compiledTokenContract.interface), tokenContractAddress);
         this.userContract = await new this.web3.eth.Contract(JSON.parse(compiledUserContract.interface), 
             userContractAddress);
         this.bidContract = await new this.web3.eth.Contract(JSON.parse(compiledBidContract.interface), 
             bidContractAddress);
         this.messagingContract = await new this.web3.eth.Contract(JSON.parse(compiledMessagingContract.interface), 
             messagingContractAddress);
+
+        // Token contract address currently not accessible from the smart contract, so, load it from Config instead
+        this.tokenContract = await new this.web3.eth.Contract(JSON.parse(compiledTokenContract.interface), ENV.TokenContractAddress);
+
         this.isRunning = false;
         this.startRunLoop();
 
@@ -62,8 +64,9 @@ class BlockReader {
 
     async updateEthBalanceLoop() {
         let balance = await this.web3.eth.getBalance(this.myAddress);
-        let tokenBalance = await 
+        let tokenBalance = await this.tokenContract.methods.balanceOf(this.myAddress).call();
         LocalData.setBalance(balance);
+        LocalData.setTokenBalance(tokenBalance);
         setTimeout(this.updateEthBalanceLoop, 8000);
     }
 
