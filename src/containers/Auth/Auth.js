@@ -70,10 +70,8 @@ class Auth extends Component {
 			LocalData.setLoggedIn(username, name, avatarUrl);
 			this.props.dispatch(userActions.loggedIn());
 			blockReader.startRunLoop();
-			this.setState({isLoading: false});
 			history.push("/chat/discover");
 		} else {
-			this.setState({isLoading: false});
 			history.push("/auth/signup");
 		}
 	};
