@@ -1,5 +1,6 @@
 const Static = require("../utils/Static");
 const Utils = require('../utils/Utils');
+const web3 = require('../ethereum/web3');
 
 Array.prototype.remove = function() {
     var what, a = arguments, L = a.length, ax;
@@ -344,6 +345,18 @@ class LocalData {
 
     static setBlockTime(blockNumber, time) {
         return this.setItem('blk_' + blockNumber, time);
+    }
+
+    static setBalance(balance) {
+        this.setItem(Static.KEY.BALANCE, balance);
+    }
+
+    static getBalance(decimal = 4) {
+        let value = this.getItem(Static.KEY.BALANCE);
+        if (value == "") {
+            value = "0";
+        }
+        return parseFloat(web3.utils.fromWei(value, 'ether').toString()).toFixed(decimal);
     }
 
     

@@ -135,4 +135,17 @@ $height: 73px;
 .settings-main {
 	background: #FEFAFE;
 	border-radius: 4px;
+	height: 300px;
+	padding-top: 50px;
+	padding-left: 80px;
+	padding-right: 80px;
+	color: #9DA1A3;
+}
+
+.settings-item {
+	margin-top: 15px;
+	margin-bottom: 15px;
+	b {
+		color: #aa89b5;
+	}
 }

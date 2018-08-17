@@ -9,7 +9,7 @@ module.exports.NETWORK_LIST = [
     },
     {
         id: 4,
-        name: 'Rinkeby Test Net',
+        name: 'Rinkeby Test Network',
         explorerUrl: 'https://rinkeby.etherscan.io/',
         providerUrl: 'https://rinkeby.infura.io/Q2aBIgYNhIB60VsqyrN1',
         contractAddress: '0xbE233C4bc5C4e4f0c9C7D2B1908047dC51F98748',

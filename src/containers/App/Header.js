@@ -7,16 +7,17 @@ import $ from "jquery"
 import ReactDOM from 'react-dom';
 import {history} from "../../_helpers/history";
 import {alertActions} from "../../_actions";
+import LocalData from '../../_services/LocalData';
 
 
 const SelectProfileMenu = ({config}) => (
 	<div className="user-bar-select">
 		<div className="user-bar-select-bg" />
 		<div className="user-bar-select-menu">
-			<Link to="/settings/balance" className="user-bar-select-menu-li">{`Eth balance: ${config.ethBalance} ETH`}</Link>
-			<Link to="/settings/network" className="user-bar-select-menu-li">Change network</Link>
-			<Link to="/settings/public" className="user-bar-select-menu-li">View Public address</Link>
-			<Link to="/settings/gas" className="user-bar-select-menu-li">Set gas limit</Link>
+			<Link to="/settings" className="user-bar-select-menu-li">{`Eth balance: ${LocalData.getBalance()} ETH`}</Link>
+			{/* <Link to="/settings/network" className="user-bar-select-menu-li">Change network</Link> */}
+			{/* <Link to="/settings/public" className="user-bar-select-menu-li">View Public address</Link> */}
+			{/* <Link to="/settings/gas" className="user-bar-select-menu-li">Set gas limit</Link> */}
 			<Link to="/auth/logout" className="user-bar-select-menu-li">Log out</Link>
 		</div>
 	</div>
@@ -67,7 +68,7 @@ class Header extends Component {
 				<div id="top">
 					<Link to="/"><div id="logo" className="catamaran">PolyAlpha</div></Link>
 					<div id="menu" className="catamaran">
-						<a className="selected animate" href="#">Messenger POC</a>
+						<a className="selected animate" href="/">Messenger POC</a>
 						<a className="animate" href="#">The DAICO</a>
 						<a className="animate" href="#">Give Feedback</a>
 					</div>

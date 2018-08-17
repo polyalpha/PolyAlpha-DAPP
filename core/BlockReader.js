@@ -36,6 +36,7 @@ class BlockReader {
 
         this.startRunLoop = this.startRunLoop.bind(this);
         this.runLoop = this.runLoop.bind(this);
+        this.updateEthBalanceLoop = this.updateEthBalanceLoop.bind(this);
         this.readEvents = this.readEvents.bind(this);
     }
 
@@ -46,12 +47,19 @@ class BlockReader {
         if (this.myAddress != "" && this.isRunning == false) {
             this.isRunning = true;
             this.runLoop();
+            this.updateEthBalanceLoop();
         }
     }
 
     async runLoop() {
         await this.readEvents();
         setTimeout(this.runLoop, 5000);
+    }
+
+    async updateEthBalanceLoop() {
+        let balance = await this.web3.eth.getBalance(this.myAddress);
+        LocalData.setBalance(balance);
+        setTimeout(this.updateEthBalanceLoop, 8000);
     }
 
     async getBlockTime(blockNumber) {
@@ -171,7 +179,10 @@ class BlockReader {
                 }
             }
 
-            LocalData.setLastBlockNumber(currentBlockNumber + 1); // Need to plus 1, otherwise it will read the currentblock again
+            // Only if there is a valid account in localStorage, then the lastBlockNumber can be stored.
+            if (LocalData.getAddress() != "") {
+                LocalData.setLastBlockNumber(currentBlockNumber + 1); // Need to plus 1, otherwise it will read the currentblock again
+            }
         }
 
         // console.log('read events done');

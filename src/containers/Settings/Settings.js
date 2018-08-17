@@ -12,6 +12,8 @@ import Input from 'react-validation/build/input';
 import Button from 'react-validation/build/button';
 import {MainBlock} from "../App/App";
 import {MainTitle} from "../App/MainTitle";
+import LocalData from "../../_services/LocalData";
+import {ENV} from '../../_configs/Config';
 
 
 export const Settings = ({route, className}) => {
@@ -37,12 +39,11 @@ const SettingsMain = ({config, route}) => (
 	<MainBlock>
 		<MainTitle>{route.title}</MainTitle>
 		<div className="settings-main">
-			<h2>Leonard, here are the configurations for your messenger.</h2>
+			<h2>{LocalData.getUsername()}, here are the configurations for your messenger.</h2>
 			<div>
-				<div>Your Ethereum balance is: {config.ethBalance} ETH</div>
-				<div>You are on the <b>{config.network}</b></div>
-				<div>Your public address is <b>{config.publicAddress}</b></div>
-				<div>Your gas limit is <b>{config.gasLimit}</b>.</div>
+				<div className="settings-item">Your Ethereum balance is: <b>{LocalData.getBalance()} ETH</b></div>
+				<div className="settings-item">You are on the <b>{ENV.NetworkName}</b></div>
+				<div className="settings-item">Your public address is <b>{LocalData.getAddress()}</b></div>
 			</div>
 		</div>
 	</MainBlock>

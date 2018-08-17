@@ -46,6 +46,7 @@ module.exports.KEY = {
     UNAME: 'uname',
     NAME: 'n',
     ADDRESS: 'a',
+    BALANCE: 'bla',
     AVATAR_URL: 'au',
     PRIVATE_KEY: 'pk',
     LOGGED_IN: 'lin',
