@@ -13,6 +13,7 @@ import {SettingsGas, SettingsNetwork, Settings, SettingsMain} from './containers
 import {MainBlock} from './containers/App/App'
 
 import {withAuth} from "./_components/withAuth"
+import { logout } from "./_components/logout";
 
 
 const routes = [
@@ -51,25 +52,31 @@ const routes = [
 					{
 						path: '/auth',
 						exact: true,
-						component: Auth,
+						component: withAuth(Auth),
 						title: "Auth"
 					},
 					{
 						path: '/auth/signup',
 						exact: true,
-						component: Signup,
+						component: withAuth(Signup),
 						title: "Signup",
 					},
 					{
 						path: '/auth/signin',
 						exact: true,
-						component: Auth,
+						component: withAuth(Auth),
 						title: "Login",
+					},
+					{
+						path: '/auth/logout',
+						exact: true,
+						component: logout(),
+						title: "Logout",
 					},
 					{
 						path: '/settings',
 						exact: true,
-						component: SettingsMain,
+						component: withAuth(SettingsMain),
 						title: "Settings",
 					},
 					{
@@ -78,18 +85,18 @@ const routes = [
 							{
 								path: '/chat/discover/:tab?/:id?',
 								exact: true,
-								component: Discover,
+								component: withAuth(Discover),
 							},
 							{
 								path: '/chat/bids/:tab?/:id?',
 								exact: true,
-								component: Bids,
+								component: withAuth(Bids),
 							}
 							,
 							{
 								path: '/chat/chats/:id?',
 								exact: true,
-								component: Chats,
+								component: withAuth(Chats),
 							}
 						]
 					}
