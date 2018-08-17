@@ -1,4 +1,5 @@
 const compiledContract = require('../ethereum/build/PACore.json');
+const compiledTokenContract = require('../ethereum/build/PAToken.json');
 const compiledUserContract = require('../ethereum/build/PAUser.json');
 const compiledBidContract = require('../ethereum/build/PAAttentionBidding.json');
 const compiledMessagingContract = require('../ethereum/build/PAMessaging.json');
@@ -18,13 +19,16 @@ class BlockReader {
     async initialize() {
         this.contract = await new this.web3.eth.Contract(JSON.parse(compiledContract.interface), 
             this.contractAddress);
+        
 
         // The reason these addresses are loaded from the core contract (instead of loading from Config) 
         // is because it make the code easier for running tests
+        let tokenContractAddress = await this.contract.methods.tokenContract().call();
         let userContractAddress = await this.contract.methods.userContract().call();
         let bidContractAddress = await this.contract.methods.bidContract().call();
         let messagingContractAddress = await this.contract.methods.messagingContract().call();
 
+        this.tokenContract = await new this.web3.eth.Contract(JSON.parse(compiledTokenContract.interface), tokenContractAddress);
         this.userContract = await new this.web3.eth.Contract(JSON.parse(compiledUserContract.interface), 
             userContractAddress);
         this.bidContract = await new this.web3.eth.Contract(JSON.parse(compiledBidContract.interface), 
@@ -58,6 +62,7 @@ class BlockReader {
 
     async updateEthBalanceLoop() {
         let balance = await this.web3.eth.getBalance(this.myAddress);
+        let tokenBalance = await 
         LocalData.setBalance(balance);
         setTimeout(this.updateEthBalanceLoop, 8000);
     }

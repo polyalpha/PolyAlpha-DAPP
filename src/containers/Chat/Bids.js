@@ -38,7 +38,22 @@ class Bids extends Component  {
 		this.loadProps(props);
 	}
 
-	onCancelHandler = () => {
+	onCancelHandler = async () => {
+		this.messagesBlock.clearMessageInput();
+		this.messagesBlock.setInputDisabled(true);
+
+		this.setState({isLoading: true});
+		let result = await blockConnector.cancelBid(this.props.match.params.id);
+		result.on(txConstants.ON_APPROVE, (txHash) => {
+			// do nothing
+		}).on(txConstants.ON_RECEIPT, (receipt) => {
+			// Don't need to end loading, it will automatically disappeared after the transaction is confirmed.
+			// this.setState({isLoading: false});
+		}).on(txConstants.ON_ERROR, (err, txHash) => {
+			this.setState({isLoading: false});
+			this.messagesBlock.setInputDisabled(false);
+			ErrorModal.show(err.message);
+		})
 	};
 
 	onAcceptHandler = async () => {
@@ -58,9 +73,11 @@ class Bids extends Component  {
 		result.on(txConstants.ON_APPROVE, (txHash) => {
 			// do nothing
 		}).on(txConstants.ON_RECEIPT, (receipt) => {
-			this.setState({isLoading: false});
+			// Don't need to end loading, it will automatically disappeared after the transaction is confirmed.
+			// this.setState({isLoading: false});
 		}).on(txConstants.ON_ERROR, (err, txHash) => {
 			this.setState({isLoading: false});
+			this.messagesBlock.setInputDisabled(false);
 			ErrorModal.show(err.message);
 		})
 	}
