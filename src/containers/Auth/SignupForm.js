@@ -11,6 +11,7 @@ import blockReader from '../../_services/blockReader.service';
 import blockConnector from '../../_services/blockConnector.service';
 import ErrorModal from '../Modal/ErrorModal';
 import InfoModal from '../Modal/InfoModal';
+import {userActions} from '../../_actions';
 
 class SignupForm extends Component {
 	constructor(props) {
@@ -67,8 +68,8 @@ class SignupForm extends Component {
 				let name = Utils.hexToString(user[3]);
 				let avatarUrl = Utils.hexToString(user[4]);
 				LocalData.setLoggedIn(username, name, avatarUrl);
+				this.props.dispatch(userActions.loggedIn());
 				blockReader.startRunLoop();
-				this.setState({isLoading: false});
 				history.push("/chat/discover");
 			}).on (txConstants.ON_ERROR, (err, txHash) => {
 				// console.log(err.message);
