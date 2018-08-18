@@ -59,7 +59,7 @@ class BlockReader {
 
     async runLoop() {
         await this.readEvents();
-        setTimeout(this.runLoop, 5000);
+        setTimeout(this.runLoop, 3000);
     }
 
     async updateEthBalanceLoop() {
@@ -81,10 +81,15 @@ class BlockReader {
     }
 
     async readEvents() {
+        // only need to wait for transaction confirmations on main net.
+        let confirmationWait = (ENV.EthNetworkId != 1) ? 0 : 1;
+
         let storedBlockNumber = Utils.parseIntSafe(LocalData.getLastBlockNumber());
-        let currentBlockNumber = Utils.parseIntSafe(await this.web3.eth.getBlockNumber()) - 1;
-        // console.log('reading events from: ' + storedBlockNumber + ' to ' + currentBlockNumber);
+        let currentBlockNumber = Utils.parseIntSafe(await this.web3.eth.getBlockNumber()) - confirmationWait;
+
         if (storedBlockNumber < currentBlockNumber) {
+            console.log('reading events from: ' + storedBlockNumber + ' to ' + currentBlockNumber);
+
             let userEvents = await this.userContract.getPastEvents('allEvents', {
                 filter: {},
                 fromBlock: storedBlockNumber,
