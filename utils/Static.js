@@ -50,6 +50,7 @@ module.exports.KEY = {
     TOKEN_BALANCE: 'tbla',
     AVATAR_URL: 'au',
     PRIVATE_KEY: 'pk',
+    IS_ACCOUNT_GENERATED: 'iag',
     LOGGED_IN: 'lin',
     LAST_BLOCK_NUMBER: 'lbn'
 }

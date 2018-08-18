@@ -307,11 +307,12 @@ class LocalData {
      * Set the account's private key to local storage
      * @param {string} value Private key in form of hex string
      */
-    static setPrivateKey(value) {
+    static setPrivateKey(value, isGenerated) {
         this.setItem(Static.KEY.PRIVATE_KEY, value);
         let valueBuffer = Buffer.from(value, 'hex');
         let address = Utils.privateToAddress(valueBuffer).toLowerCase();
         this.setItem(Static.KEY.ADDRESS, address);
+        this.setItem(Static.KEY.IS_ACCOUNT_GENERATED, isGenerated.toString());
     }
 
     static getPrivateKey() {
@@ -320,6 +321,10 @@ class LocalData {
 
     static getAddress() {
         return this.getItem(Static.KEY.ADDRESS);
+    }
+
+    static isAccountGenerated() {
+        return (this.getItem(Static.KEY.IS_ACCOUNT_GENERATED) == "true");
     }
 
     static getName() {

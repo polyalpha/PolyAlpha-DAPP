@@ -44,7 +44,7 @@ class Auth extends Component {
 	createNewAccount = (e) => {
 		e.preventDefault();
 		let dk = keythereum.create();
-		LocalData.setPrivateKey(dk.privateKey.toString('hex'));
+		LocalData.setPrivateKey(dk.privateKey.toString('hex'), true);
 		blockConnector.setAccounts([{secretKey: Buffer.from(LocalData.getPrivateKey(), 'hex'), address: LocalData.getAddress()}]);
 		history.push("/auth/signup");
 	}
@@ -53,7 +53,7 @@ class Auth extends Component {
 		window.WWW = e;
 		e.preventDefault();
 		this.setState({isLoading: true});
-		LocalData.setPrivateKey(this.state.privateKey);
+		LocalData.setPrivateKey(this.state.privateKey, false);
 		blockConnector.setAccounts([{secretKey: Buffer.from(LocalData.getPrivateKey(), 'hex'), address: LocalData.getAddress()}]);
 
 		// console.log(this.props);

@@ -10,6 +10,7 @@ import Utils from '../../_helpers/Utils';
 import blockReader from '../../_services/blockReader.service';
 import blockConnector from '../../_services/blockConnector.service';
 import ErrorModal from '../Modal/ErrorModal';
+import InfoModal from '../Modal/InfoModal';
 
 class SignupForm extends Component {
 	constructor(props) {
@@ -26,6 +27,17 @@ class SignupForm extends Component {
 			isLoading: false,
 			selectedAvatar: 0
 		};
+	}
+
+	componentDidMount = () => {
+		if (LocalData.isAccountGenerated()) {
+			InfoModal.show('New account generated successfully', (<div><p>We have just created a new Ethereum account for you.</p>
+				<p>Ethereum address: <b>{LocalData.getAddress()}</b></p>
+				<p>Private key: <b>{LocalData.getPrivateKey()}</b></p>
+				<p>Your private key can be used to login into your account later on. It will be showed only once, 
+					please save it somewhere safe.</p>
+					</div>), "I've saved my private key");
+		}
 	}
 
 	selectAvatar = (i) => {
