@@ -42,7 +42,7 @@ class BlockReader {
 
         this.startRunLoop = this.startRunLoop.bind(this);
         this.runLoop = this.runLoop.bind(this);
-        this.updateEthBalanceLoop = this.updateEthBalanceLoop.bind(this);
+        this.updateEthBalance = this.updateEthBalance.bind(this);
         this.readEvents = this.readEvents.bind(this);
     }
 
@@ -53,7 +53,6 @@ class BlockReader {
         if (this.myAddress != "" && this.isRunning == false && LocalData.isLoggedIn()) {
             this.isRunning = true;
             this.runLoop();
-            this.updateEthBalanceLoop();
         }
     }
 
@@ -62,12 +61,13 @@ class BlockReader {
         setTimeout(this.runLoop, 3000);
     }
 
-    async updateEthBalanceLoop() {
+    async updateEthBalance() {
+        console.log('Update balance of: ' + this.myAddress);
         let balance = await this.web3.eth.getBalance(this.myAddress);
         let tokenBalance = await this.tokenContract.methods.balanceOf(this.myAddress).call();
+        console.log('balance: ' + balance + ' : token: ' + tokenBalance);
         LocalData.setBalance(balance);
         LocalData.setTokenBalance(tokenBalance);
-        setTimeout(this.updateEthBalanceLoop, 8000);
     }
 
     async getBlockTime(blockNumber) {
@@ -89,6 +89,7 @@ class BlockReader {
 
         if (storedBlockNumber < currentBlockNumber) {
             console.log('reading events from: ' + storedBlockNumber + ' to ' + currentBlockNumber);
+            this.updateEthBalance();
 
             let userEvents = await this.userContract.getPastEvents('allEvents', {
                 filter: {},
