@@ -9,6 +9,7 @@ import Utils from '../../_helpers/Utils';
 import {KEY} from '../../_constants/Static';
 import {txConstants} from '../../_constants';
 import ErrorModal from '../Modal/ErrorModal';
+import {history} from '../../_helpers/history';
 
 const sideBarTabs = [
 	{
@@ -105,6 +106,26 @@ class Bids extends Component  {
 			users: bidUsers,
 			userId: match.params.id,
 		};
+
+		let idExists = false;
+		for (var i = 0; i < bidAddresses.length; i++) {
+			if (bidAddresses[i] == match.params.id) {
+				idExists = true;
+			}
+		}
+
+		// Redirect if id not exists
+		if (!idExists) {
+			// Automatically select first user if bidAddresses.length > 0
+			
+			if (bidAddresses.length > 0) {
+				history.push('/chat/bids/' + match.params.tab + "/" + bidAddresses[0]);
+			} else {
+				if (match.params.id != undefined && match.params.id != "") {
+					history.push('/chat/bids/' + match.params.tab);
+				}
+			}
+		}
 	}
 
 	render() {

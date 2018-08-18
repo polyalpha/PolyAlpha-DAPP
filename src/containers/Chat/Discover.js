@@ -16,6 +16,7 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import {txConstants} from '../../_constants';
 import ErrorModal from '../Modal/ErrorModal';
 import Config from '../../_configs/Config';
+import {history} from '../../_helpers/history';
 
 const abcValidator = (value) => {
 	if (parseInt(value || 0) < 0) {
@@ -41,7 +42,20 @@ export class CreateNewBid extends Component {
 			isLoading: false,
 			bid: 0,
 			message: "",
+			userId: props.userId
 		};
+	}
+
+	componentWillReceiveProps(props) {
+		if (props.userId != this.state.userId) {
+			this.setState({
+				isSubmitted: false,
+				isLoading: false,
+				bid: 0,
+				message: "",
+				userId: props.userId
+			});
+		}
 	}
 
 	addHandler = (e) => {
@@ -57,7 +71,7 @@ export class CreateNewBid extends Component {
 
 		let {message, bid} = this.state;
 
-		let user = LocalData.getUser(this.props.userId);
+		let user = LocalData.getUser(this.state.userId);
 		let secret = Utils.computeSecret(Buffer.from(LocalData.getPrivateKey(), 'hex'), 
 			Buffer.from('04' + user[KEY.USER_PUBKEY], 'hex'));
 		let encryptedMessage = Utils.encrypt(message, secret);
@@ -67,12 +81,12 @@ export class CreateNewBid extends Component {
 
 		console.log('Token balance' + tokenBalance);
 		if (tokenBalance >= sentAmount) {
-			let result = await blockConnector.createBid(this.props.userId, 
+			let result = await blockConnector.createBid(this.state.userId, 
 				sentAmount, '0x' + encryptedMessage);
 			result.on(txConstants.ON_APPROVE, (txHash) => {
 				// Don't need to do anything
 			}).on(txConstants.ON_RECEIPT, (receipt) => {
-				this.setState({isSubmitted: true});
+				// this.setState({isSubmitted: true});
 			}).on(txConstants.ON_ERROR, (err, txHash) => {
 				// Show error
 				this.setState({isLoading: false});
@@ -219,6 +233,27 @@ class Discover extends Component {
 		};
 
 		this.messages = [<CreateNewBid userId={match.params.id} {...props}/>];
+
+		let idExists = false;
+		if (match.params.tab == "new") {
+			for (var i = 0; i < newAddresses.length; i++) {
+				if (newAddresses[i] == match.params.id) {
+					idExists = true;
+				}
+			}
+		}
+
+		// Redirect if id not exists
+		if (!idExists) {
+			// Automatically select first user if newAddresses.length > 0
+			if (match.params.tab == "new" && newAddresses.length > 0) {
+				history.push('/chat/discover/' + match.params.tab + "/" + newAddresses[0]);
+			} else {
+				if (match.params.id != undefined && match.params.id != "") {
+					history.push('/chat/discover/' + match.params.tab);
+				}
+			}
+		}
 	}
 
 	render() {
