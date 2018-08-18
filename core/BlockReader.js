@@ -50,7 +50,7 @@ class BlockReader {
         this.myAddress = LocalData.getAddress();
         this.myAddressTopic = this.myAddress.slice(0, 2) + '000000000000000000000000' + this.myAddress.slice(2, this.myAddress.length);
 
-        if (this.myAddress != "" && this.isRunning == false) {
+        if (this.myAddress != "" && this.isRunning == false && LocalData.isLoggedIn()) {
             this.isRunning = true;
             this.runLoop();
             this.updateEthBalanceLoop();
