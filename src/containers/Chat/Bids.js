@@ -13,11 +13,11 @@ import {history} from '../../_helpers/history';
 
 const sideBarTabs = [
 	{
-		name: "my",
+		name: "sent",
 		title: "Your bids"
 	},
 	{
-		name: "me",
+		name: "received",
 		title: "Bids for you"
 	}
 ];
@@ -87,17 +87,31 @@ class Bids extends Component  {
 		this.setState({message: newMessage, isAcceptButtonDisabled: (newMessage.length == 0)});
 	}
 
+	compareUserByBids(a, b) {
+		if (parseInt(a[KEY.BID_AMOUNT]) < parseInt(b[KEY.BID_AMOUNT])) {
+			return 1;
+		} else if (parseInt(a[KEY.BID_AMOUNT]) > parseInt(b[KEY.BID_AMOUNT])) {
+			return -1;
+		} else {
+			return 0;
+		}
+	}
+
 	loadProps(props) {
 		let {match, users} = props;
 
 		match.params.tab = match.params.tab || sideBarTabs[0].name;	
 		let bidAddresses;
-		if (match.params.tab == "me") {
+		let bidUsers;
+		if (match.params.tab == "received") {
 			bidAddresses = users.bidAddresses;
+			bidUsers = LocalData.getUsers(bidAddresses);
+			bidUsers.sort(this.compareUserByBids);
 		} else {
 			bidAddresses = users.myBidAddresses;
+			bidUsers = LocalData.getUsers(bidAddresses);
 		}
-		let bidUsers = LocalData.getUsers(bidAddresses);
+		
 
 		this.sidebar = {
 			name: "bids",
