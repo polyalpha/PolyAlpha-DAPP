@@ -796,6 +796,9 @@ $messages-block-radius: 15px;
 			bottom: 0;
 			.top-bar {
 				border-top-left-radius: 6px;
+				.more-select {
+					right: -20px;
+				}
 			}
 			.messages-block {
 				margin: 12px;

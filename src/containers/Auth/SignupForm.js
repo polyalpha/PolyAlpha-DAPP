@@ -30,21 +30,23 @@ class SignupForm extends Component {
 		};
 	}
 
-	componentDidMount = () => {
-		if (LocalData.isAccountGenerated()) {
-			InfoModal.show('New account generated successfully', (<div><p>We have just created a new Ethereum account for you.</p>
-				<p>Ethereum address: <b className="break">{LocalData.getAddress()}</b></p>
-				<p>Private key: <b className="break">{LocalData.getPrivateKey()}</b></p>
-				<p>Your private key can be used to login into your account later on. It will be showed only once,
-					please save it somewhere safe.</p>
-					</div>), "I've saved my private key");
-		}
+	componentDidMount() {
+		// LocalData.isAccountGenerated() && this.showInfoModal()
+	}
+
+	showInfoModal() {
+		InfoModal.show('New account generated successfully', (<div><p>We have just created a new Ethereum account for you.</p>
+			<p>Ethereum address: <b className="break">{LocalData.getAddress()}</b></p>
+			<p>Private key: <b className="break">{LocalData.getPrivateKey()}</b></p>
+			<p>Your private key can be used to login into your account later on. It will be showed only once,
+				please save it somewhere safe.</p>
+		</div>), "I've saved my private key");
 	}
 
 	selectAvatar = (i) => {
 		let avatarUrl = this.avatarsPath + '/' + this.defaultAvatars[i];
 		this.setState({selectedAvatar: i, avatarUrl});
-	}
+	};
 
 	handleSubmit = async(e) => {
 		console.log(this.state);

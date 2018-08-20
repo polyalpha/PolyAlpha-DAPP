@@ -15,6 +15,8 @@ import {userActions} from '../../_actions';
 import blockReader from '../../_services/blockReader.service';
 import blockConnector from '../../_services/blockConnector.service';
 import Utils from '../../_helpers/Utils';
+import "./Auth.scss"
+
 
 class Auth extends Component {
 
@@ -83,9 +85,9 @@ class Auth extends Component {
 	}
 
 	render() {
-		let logginButton = (<Button icon="svg-crown" className="button" isLoading={this.state.isLoading}
-		loadingContent='Logging in...' content='I want my bids, log me in'/>);
+
 		return (
+
 			<Fragment>
 				<MainTitle>{this.props.route.title}</MainTitle>
 				<div id="body-index">
@@ -98,10 +100,10 @@ class Auth extends Component {
 								</DivButton>
 							</Link>
 						</div>
-						<Form className="signin row" method="POST" onSubmit={this.signinHandler}>
+						<div className="signin row">
 							{this.props.route.path === "/auth/signin" && (
-								<Fragment>
-									<div style={{float: 'left', width: '50%'}}>
+								<Form className="form" method="POST" onSubmit={this.signinHandler}>
+									<div className="private-key-block clear">
 									<Textarea
 										autoFocus
 										placeholder="Enter your private key"
@@ -118,18 +120,19 @@ class Auth extends Component {
 										validations={[this.checkIsLoading]}
 									/>
 									</div>
-									<div style={{float: 'left', width: '50%'}}>
-										{logginButton}
+									<div className="login-button-block">
+										<Button icon="svg-crown" className="button" isLoading={this.state.isLoading}
+														loadingContent='Logging in...' content='I want my bids, log me in'/>
 									</div>
-
-								</Fragment>
+								</Form>
 
 							) || (
-								<Fragment>
-									<Link to="/auth/signin">{logginButton}</Link>
-								</Fragment>
-							)}
-						</Form>
+								<Link to="/auth/signin">
+									<DivButton icon="svg-crown" className="button" title='I want my bids, log me in' />
+								</Link>
+							) }
+
+						</div>
 					</div>
 				</div>
 			</Fragment>

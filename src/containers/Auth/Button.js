@@ -25,10 +25,10 @@ export class Button extends Component {
 	}
 }
 
-export const DivButton = ({children, icon, ...props}) => (
+export const DivButton = ({children, icon, title, ...props}) => (
 	<button {...props}>
 		<div className="button-icon"><Svg id={icon} className="icon" /></div>
-		<div className="button-title">{children}</div>
+		<div className="button-title">{children || title}</div>
 	</button>
 );
 
