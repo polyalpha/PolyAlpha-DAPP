@@ -6,7 +6,7 @@ import "./Header.scss"
 import $ from "jquery"
 import {history} from "../../_helpers/history";
 import LocalData from '../../_services/LocalData';
-import {Browser, Mobile} from "./Device";
+import {Browser} from "./Device";
 
 
 
@@ -22,14 +22,32 @@ class HeaderMain extends Component {
 	state = {
 		isOpenProfileMenu: false,
 		isOpenMenu: false,
-		left: 0,
+		left: 240,
 	};
 
-	constructor(props) {
-		super(props);
-		history.listen(() => {
-			this.state.isOpenProfileMenu && this.setState({isOpenProfileMenu: false})
+	onResize = () => {
+		let left = document.getElementById("main-block").offsetLeft;
+		console.log('onResize', {left})
+		if (left < 200) left = 200;
+		this.setState({left})
+	};
+
+	componentDidMount() {
+		this.onResize()
+	}
+
+	componentWillMount() {
+		this.historyUnlisten = history.listen(() => {
+			if (this.state.isOpenProfileMenu || this.state.isOpenMenu) {
+				this.setState({isOpenProfileMenu: false, isOpenMenu:false})
+			}
 		});
+		window.addEventListener("resize", this.onResize)
+	}
+
+	componentWillUnmount() {
+		this.historyUnlisten();
+		window.removeEventListener("resize", this.onResize)
 	}
 
 	toggleProfileMenu = () => {
@@ -47,24 +65,6 @@ class HeaderMain extends Component {
 
 @connect(mapStateToProps)
 class HeaderBrowser extends HeaderMain {
-
-	onResize = () => {
-		let left = $("#main-block").offset().left;
-		if (left < 188) left = 188;
-		this.setState({left})
-	};
-
-	componentDidMount() {
-		this.onResize()
-	}
-
-	componentWillMount() {
-		window.addEventListener("resize", this.onResize)
-	}
-
-	componentWillUnmount() {
-		window.removeEventListener("resize", this.onResize)
-	}
 
 	render() {
 		return (

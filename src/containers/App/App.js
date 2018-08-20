@@ -1,71 +1,55 @@
-import React, {Component, Fragment} from "react";
+import React, {Component} from "react";
 import {Router} from "react-router";
 import {renderRoutes} from "react-router-config"
 import {history} from "../../_helpers";
-import {alertActions, userActions} from '../../_actions';
+import {alertActions} from '../../_actions';
 import { connect } from 'react-redux';
 import "./App.scss"
-import {compose} from "recompose"
 import {withUpdateDevice} from "../../_components/device"
-import classNames from "classnames"
-import LocalData from '../../_services/LocalData';
+import classNames from "classnames";
 
 
-class App extends Component {
 
-	constructor(props) {
-		super(props);
-		history.listen(() => {
+@withUpdateDevice
+@connect(mapStateToProps)
+export class App extends Component {
+
+	componentWillMount() {
+		this.historyUnlisten = history.listen(() => {
 			this.props.alert.message && this.props.dispatch(alertActions.clear());
 		});
-		LocalData.setLoggedIn("taran2L", "Pavel Taran", "/i/avatars/adam.png");
-		this.props.dispatch(userActions.loggedIn());
 	}
 
+	componentWillUnmount() {
+		this.historyUnlisten()
+	}
+
+	componentDidMount() {
+		this.setClassNames(this.props)
+	}
+
+	componentWillReceiveProps(props) {
+		this.setClassNames(props)
+	}
+
+	setClassNames = ({device}) => {
+		const className = classNames("layout-block", {"is-mobile": device.isMobile, "is-browser": device.isBrowser});
+		console.log("setClassNames", {className});
+		document.getElementsByTagName("body")[0].setAttribute("class", className)
+	};
+
 	render(){
-		const className = classNames({"is-mobile": this.props.device.isMobile, "is-browser": this.props.device.isBrowser});
 		return (
-			<div className={className}>
-				<Router history={history}>
-					{renderRoutes(this.props.routes)}
-				</Router>
-			</div>
+			<Router history={history}>
+				{renderRoutes(this.props.routes)}
+			</Router>
 		)
 	}
 }
 
 
-export const MainBlock = ({route, children}) => (
-	<div id="main">
-		<div id="main-block">
-			{route && renderRoutes(route.routes)}
-			{children}
-		</div>
-	</div>
-
-);
-
-export const Context = React.createContext({
-	app: null,
-	title:"Default",
-});
-
-
-export const routesWithContext = (roots, app) => (
-	roots.map( r => ({...r, component: withContext(r.component, app)}))
-);
-
-
-export const withContext = (WrapperComponent, app) => (
-	(props) => <WrapperComponent {...props} Context={Context} app={app} />
-);
-
-
-function mapStateToProps({ alert, auth, device }) {
-	return { alert, auth, device };
+function mapStateToProps({alert, auth}) {
+	return {alert, auth};
 }
-
-const wrappedApp = compose(withUpdateDevice, connect(mapStateToProps))(App);
-export {wrappedApp as App}
 
 

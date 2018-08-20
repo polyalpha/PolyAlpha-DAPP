@@ -1,9 +1,6 @@
 @import 'default';
 
 
-$header-height: 73px;
-
-
 #top {
 	width: 100%;
 	height: $header-height;
@@ -32,30 +29,6 @@ $header-height: 73px;
 			@include fontFamily(Catamaran);
 			&:hover {
 				color: black;
-			}
-		}
-	}
-}
-
-
-.top-bar {
-	.more {
-		position: relative;
-		cursor: pointer;
-		&-select {
-			position: absolute;
-			z-index: 10;
-			top: 30px;
-			right: -30px;
-			background: #555555;
-			box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
-			border-radius: 4px;
-			padding: 14px 28px;
-			&-item {
-				white-space: nowrap;
-				font-size: 14px;
-				text-align: left;
-				color: #FFFFFF;
 			}
 		}
 	}
@@ -203,34 +176,34 @@ $header-height: 73px;
 .is-mobile {
 	#top {
 		z-index: 100;
-	}
-	#logo {
-		left: 24px;
-	}
-	.menu {
-		position: absolute;
-		top: $header-height;
-		left: 0;
-		width: 100%;
-		z-index: 100;
-		background: #FEFAFE;
-		padding-bottom: 75px;
-		.navigation {
-			&-item {
-				width: 100%;
-				display: block;
-				text-align: center;
-				$height: 56px + 18px;
-				line-height: $height;
-				&-selected {
-					color: #141414;
+		#logo {
+			left: 24px;
+		}
+		.menu {
+			position: absolute;
+			top: $header-height;
+			left: 0;
+			width: 100%;
+			z-index: 100;
+			background: #FEFAFE;
+			padding-bottom: 75px;
+			.navigation {
+				&-item {
+					width: 100%;
+					display: block;
+					text-align: center;
+					$height: 56px + 18px;
+					line-height: $height;
+					&-selected {
+						color: #141414;
+					}
 				}
 			}
-		}
-		.user-bar {
-			.avatar {
-			}
-			.name {
+			.user-bar {
+				.avatar {
+				}
+				.name {
+				}
 			}
 		}
 	}

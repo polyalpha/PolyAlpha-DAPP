@@ -1,0 +1,69 @@
+#footer {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	background: #F4F6F7;
+	min-height: 72px;
+	z-index: 10;
+	width: 100%;
+	.text {
+		position: relative;
+		padding: 30px 20px 20px 248px;
+		font-style: normal;
+		font-weight: 400;
+		font-size: 16px;
+		color: #9DA1A3;
+		line-height: 16px;
+	}
+
+}
+
+#gradient {
+	position: absolute;
+	z-index: 1;
+	background: linear-gradient(0deg, #303030 0%, #373737 100%);
+	transform: rotate(-21.86deg);
+	width: 100%;
+	height: 611px;
+	bottom: -200px;
+	left: -100px;
+	padding: 0 200px;
+}
+
+#logo-bg {
+	position: absolute;
+	z-index: 2;
+	height: 419px;
+	width: 419px;
+	background: url("/i/pa-logo-color-3.png") center center no-repeat;
+	background-size: auto 419px;
+	mix-blend-mode: normal;
+	opacity: 0.35;
+	transform: rotate(-153.32deg);
+}
+
+.is-browser {
+	#logo-bg {
+		right: -98px;
+		bottom: 1px;
+	}
+}
+
+
+.is-mobile {
+	#logo-bg {
+		right: -150px;
+		top: -30px;
+	}
+}
+
+
+.logo-bg-gradient {
+	position: absolute;
+	z-index: 1;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	overflow: hidden;
+}

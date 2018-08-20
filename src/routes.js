@@ -6,11 +6,11 @@ import {
 	Chat,
 	Discover,
 	Bids,
-	Chats
+	Chats,
+	MainBlock
 } from "./containers"
 
 import {SettingsGas, SettingsNetwork, Settings, SettingsMain} from './containers/Settings/Settings'
-import {MainBlock} from './containers/App/App'
 
 import {withAuth} from "./_components/withAuth"
 import { logout } from "./_components/logout";

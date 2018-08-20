@@ -10,8 +10,8 @@ import {Link} from "react-router-dom"
 import Form from 'react-validation/build/form';
 import Input from 'react-validation/build/input';
 import Button from 'react-validation/build/button';
-import {MainBlock} from "../App/App";
-import {MainTitle} from "../App/MainTitle";
+import {MainBlock} from "..";
+import {MainTitle} from "..";
 import LocalData from "../../_services/LocalData";
 import {ENV} from '../../_configs/Config';
 

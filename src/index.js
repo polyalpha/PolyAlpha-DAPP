@@ -11,11 +11,15 @@ import "semantic-ui-css/components/button.css";
 import "semantic-ui-css/components/dimmer.css";
 import "semantic-ui-css/components/transition.css";
 
+
+
 ReactDOM.render(
+
 	<Provider store={store}>
 			<App routes={routes} />
 	</Provider>
-,document.getElementById('root'));
+
+, document.getElementById('root') );
 
 
 

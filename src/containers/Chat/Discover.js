@@ -1,11 +1,9 @@
 import React, {Fragment, Component} from "react";
 import { connect } from 'react-redux';
-import {Chat, SideBar, UserList, MainBar, MessagesBlock, MessageContext, ChatLayout, AbtValue, Message} from "./Chat"
+import {MessagesBlock, MessageContext, ChatLayout, AbtValue, Message} from "./Chat"
 import Form from 'react-validation/build/form';
 import Button from 'react-validation/build/button';
 import Input from 'react-validation/build/input';
-import classnames from "classnames"
-import {Link} from "react-router-dom"
 import LocalData from '../../_services/LocalData';
 import {KEY} from '../../_constants/Static';
 import Utils from '../../_helpers/Utils';
@@ -72,7 +70,7 @@ export class CreateNewBid extends Component {
 		let {message, bid} = this.state;
 
 		let user = LocalData.getUser(this.state.userId);
-		let secret = Utils.computeSecret(Buffer.from(LocalData.getPrivateKey(), 'hex'), 
+		let secret = Utils.computeSecret(Buffer.from(LocalData.getPrivateKey(), 'hex'),
 			Buffer.from('04' + user[KEY.USER_PUBKEY], 'hex'));
 		let encryptedMessage = Utils.encrypt(message, secret);
 
@@ -81,7 +79,7 @@ export class CreateNewBid extends Component {
 
 		console.log('Token balance' + tokenBalance);
 		if (tokenBalance >= sentAmount) {
-			let result = await blockConnector.createBid(this.state.userId, 
+			let result = await blockConnector.createBid(this.state.userId,
 				sentAmount, '0x' + encryptedMessage);
 			result.on(txConstants.ON_APPROVE, (txHash) => {
 				// Don't need to do anything
@@ -135,7 +133,7 @@ export class CreateNewBid extends Component {
 						</div>
 						<Form className="form" onSubmit={this.createHandler}>
 							<Input type="hidden" name="value" value={this.state.bid} validations={[abcValidator, this.messageValidator]}/>
-							<Input 
+							<Input
 								hidden
 								value={this.state.isLoading ? "true" : ""} // Change the value of this input to force the form to update the button status
 								validations={[this.checkIsLoading]}
@@ -151,8 +149,8 @@ export class CreateNewBid extends Component {
 								<button className="button" onClick={this.addHandler}>-10</button>
 								<button className="button" onClick={this.addHandler}>+10</button>
 							</div>
-	
-							<Button className="submit">{this.state.isLoading && loadingSpinner} 
+
+							<Button className="submit">{this.state.isLoading && loadingSpinner}
 								{this.state.isLoading ? 'Submitting bid...' : 'Submit bid'}</Button>
 						</Form>
 					</div>
@@ -203,7 +201,6 @@ class Discover extends Component {
 	constructor(props) {
 		super(props);
 		this.loadProps = this.loadProps.bind(this);
-
 		this.loadProps(props);
 	}
 
@@ -235,41 +232,37 @@ class Discover extends Component {
 		this.messages = [<CreateNewBid userId={match.params.id} {...props}/>];
 
 		let idExists = false;
-		if (match.params.tab == "new") {
-			for (var i = 0; i < newAddresses.length; i++) {
-				if (newAddresses[i] == match.params.id) {
+		if (match.params.tab === "new") {
+			for (let i = 0; i < newAddresses.length; i++) {
+				if (newAddresses[i] === match.params.id) {
 					idExists = true;
 				}
 			}
 		}
 
-		// Redirect if id not exists
-		if (!idExists) {
-			// Automatically select first user if newAddresses.length > 0
-			if (match.params.tab == "new" && newAddresses.length > 0) {
-				history.push('/chat/discover/' + match.params.tab + "/" + newAddresses[0]);
-			} else {
-				if (match.params.id != undefined && match.params.id != "") {
-					history.push('/chat/discover/' + match.params.tab);
-				}
-			}
-		}
+		// // Redirect if id not exists
+		// if (!idExists) {
+		// 	// Automatically select first user if newAddresses.length > 0
+		// 	if (this.props.device.isBrowser && match.params.tab === "new" && newAddresses.length > 0) {
+		// 		history.push('/chat/discover/' + match.params.tab + "/" + newAddresses[0]);
+		// 	} else if (!match.params.id) {
+		// 		const path = '/chat/discover/' + match.params.tab;
+		// 		path !== this.props.location.pathname && history.push(path);
+		// 	}
+		// }
 	}
 
 	render() {
 		return (
-		<ChatLayout {...this.props} sidebar={this.sidebar} back="/chat/discover">
-			{this.props.match.params.id && (
-				<MessagesBlock messages={this.messages}/>
-			) || <DiscoverInfo />}
+		<ChatLayout {...this.props} sidebar={this.sidebar} back="/chat/discover/new" more={true}>
+			{this.props.match.params.id && <MessagesBlock messages={this.messages}/>}
 		</ChatLayout>
 		)
 	}
 };
 
-function mapStateToProps(state) {
-	const { auth, users } = state;
-	return { auth, users };
+function mapStateToProps({ auth, users, device }) {
+	return { auth, users, device };
 }
 
 const connectedDiscover = connect(mapStateToProps)(Discover);

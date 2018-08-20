@@ -1,17 +1,26 @@
 import React, {Fragment} from "react";
-import {Browser} from "./Device";
+import {connect} from 'react-redux';
+import "./Footer.scss"
 
 
-export default () => (
+const Footer = ({device}) => (
 	<Fragment>
-		<div id="logo-bg" />
-		<Browser>
-			<div id="gradient" />
+		<div className="logo-bg-gradient">
+			<div id="logo-bg"  />
+			{device.isBrowser && <div id="gradient" />}
+		</div>
+		{device.isBrowser && (
 			<div id="footer">
 				<div className="text catamaran">If you experience any bugs or require help please send a message to “PolyAlpha.io Assistant”.</div>
 			</div>
-		</Browser>
-
+		)}
 	</Fragment>
 );
 
+function mapStateToProps({device}) {
+	return {device};
+}
+
+
+const connectedFooter = connect(mapStateToProps)(Footer);
+export {connectedFooter as Footer}

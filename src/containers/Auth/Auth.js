@@ -34,7 +34,7 @@ class Auth extends Component {
 	// }
 
 	keyValidator = () => {
-		if (!/^[\da-z]{64}$/.test(this.state.privateKey.toString().trim())) {
+		if (!/^[\da-zA-Z]{64}$/.test(this.state.privateKey.toString().trim())) {
 			return <div className="form-error" style={{float: 'left'}}>Invalid format</div>;
 		} else if (!ethereumUtil.isValidPrivate(Buffer.from(this.state.privateKey, 'hex'))) {
 			return <div className="form-error" style={{float: 'left'}}>Invalid private key</div>;
