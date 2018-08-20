@@ -15,20 +15,20 @@ export class Button extends Component {
 		} else {
 			icon = (<Svg id={this.props.icon} className="icon" />);
 		}
+		const title = isLoading ? this.props.loadingContent : this.props.content;
 		return (
 			<ReactButton className={this.props.className}>
-				{icon}
-				{ isLoading ? this.props.loadingContent : this.props.content}
-				{this.props.children}
+				<div className="button-icon">{icon}</div>
+				<div className="button-title">{ title || this.props.children}</div>
 			</ReactButton>
 		);
 	}
 }
 
-export const DivButton = (props) => (
+export const DivButton = ({children, icon, ...props}) => (
 	<button {...props}>
-		<Svg id={props.icon} className="icon" />
-		{props.children}
+		<div className="button-icon"><Svg id={icon} className="icon" /></div>
+		<div className="button-title">{children}</div>
 	</button>
 );
 

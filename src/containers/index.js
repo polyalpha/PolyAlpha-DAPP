@@ -1,4 +1,5 @@
 export {App, Context} from "./App/App"
+export {Browser, Mobile} from "./App/Device"
 export {Root} from "./App/Root"
 export {Auth} from "./Auth/Auth"
 export {Signup} from "./Auth/Signup"

@@ -1,12 +1,18 @@
 import { connect } from 'react-redux';
-import React from "react"
+import React, {Fragment} from "react"
 import {alertActions} from "../../_actions";
+import classNames from "classnames"
 
 
 const Alert = ({alert, dispatch}) => {
-	return <div onClick={
-		() => dispatch(alertActions.clear())
-	} id="alert" className={`alert ${alert.type && alert.type}`}>{alert.message && alert.message}</div>
+	const className = classNames(["alert", alert.type]);
+	return (
+		<Fragment>
+			{alert.message && <div onClick={
+				() => dispatch(alertActions.clear())
+			} id="alert" className={className}>{alert.message}</div>}
+		</Fragment>
+	)
 };
 
 const close = (e) => e.target.remove();

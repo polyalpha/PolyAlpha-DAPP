@@ -5,7 +5,6 @@ body {
 	margin:0;
 	padding:0;
 	height:100%;
-	min-width: 1000px;
 }
 
 body {
@@ -50,10 +49,6 @@ a {
 	@include fontFamily(Raleway);
 }
 
-.animate {
-	transition: .5s;
-}
-
 .svg {
 	fill: currentColor;
 	stroke: currentColor;
@@ -77,6 +72,11 @@ a {
 .svg-select {
 	width: 12px;
 	height: 7px;
+}
+
+.svg-burger {
+	width: 25px;
+	height: 17px;
 }
 
 #alert {
@@ -104,7 +104,6 @@ a {
 #footer {
 	float: left;
 	width: 100%;
-	min-width: 500px;
 }
 
 #root {
@@ -114,153 +113,124 @@ a {
 }
 
 
-
-#logo {
-	position: absolute;
-	top: 8px;
-	left: 43px;
-	height: 56px;
-	background: url("/i/pa-logo-color-2.png") center left no-repeat;
-	background-size: 32px 32px;
-	padding-left: 50px;
-	color: #9A6FA9;
-	font-weight: 500;
-	line-height: 56px;
-	font-size: 16px;
-	text-align: center;
-	letter-spacing: 0.05em;
-}
-
-#menu {
-	left: 240px;
-	height: 73px;
-	white-space: nowrap;
-	width: 945px;
-	margin: 0 auto;
-}
-
-#menu a {
-	margin-right: 48px;
-	float: left;
-	font-style: normal;
-	font-weight: 500;
-	line-height: 73px;
-	font-size: 16px;
-	text-align: center;
-	letter-spacing: 0.05em;
-	color: #9DA1A3;
-	text-decoration: none;
-	height: 71px;
+#main {
+	z-index: 10;
+	position: relative;
+	left: 0px;
+	top: 0px;
 	overflow: hidden;
-}
-
-#menu .selected {
-	color: #141414;
-	border-bottom: 4px solid #303030;
-}
-
-#user-bar {
-	position: absolute;
-	height: 40px;
-	top: 16px;
-	right: 24px;
-}
-
-#user-bar .avatar {
-	position: absolute;
-	top: 0;
-	right: 0;
-	width: 40px;
-	height: 40px;
-	border-radius: 50%;
-
-	img {
-		width: 40px;
-		height: 40px;
+	text-align: center;
+	#main-block {
+		position: relative;
+	}
+	.main-title {
+		font-style: normal;
+		font-weight: 300;
+		line-height: 56px;
+		color: #FFFFFF;
+		white-space: nowrap;
+		overflow: hidden;
+		@include fontFamily(Raleway)
 	}
 }
 
 
-#user-bar .name {
-	position: absolute;
-	top: 0;
-	right: 58px;
-	text-align: right;
-	font-style: normal;
-	font-weight: 500;
-	line-height: 40px;
-	font-size: 16px;
-	white-space: nowrap;
-	color: #9DA1A3;
-	cursor: pointer;
+
+#body-index {
+	.info {
+		font-style: normal;
+		font-weight: 300;
+		color: #FFFFFF;
+		opacity: 0.8;
+		display: block;
+		@include fontFamily(Catamaran);
+	}
+	.buttons-block {
+		.button {
+			position: relative;
+			height: 56px;
+			border-radius: 28px;
+			overflow: hidden;
+			color: white;
+			max-width: 380px;
+			cursor: pointer;
+			border: none;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 100%;
+			.icon {
+				margin: 0;
+			}
+			.button-icon {
+				position: absolute;
+				left: 0;
+				top: 0;
+				bottom: 0;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				width: 20%;
+			}
+			.button-title {
+				position: relative;
+				left: -10px;
+				font-size: 17px;
+				line-height: 20px;
+				font-weight: 500;
+				letter-spacing: 0.5pt;
+				padding: 0 0px 0 15%;
+				text-align: center;
+				@include fontFamily(Catamaran);
+			}
+		}
+	}
 }
 
-#user-bar .name .icon {
-	margin: 0 0 0 5px;
-	width: 12px;
-	height: 7px;
+.is-browser {
+	.info {
+		line-height: 21px;
+		font-size: 18px;
+	}
+	#main {
+		padding-bottom: 72px;
+		#main-block {
+			margin: 0 auto 64px auto;
+			width: 100%;
+			max-width: 945px;
+			z-index: 10;
+			text-align: left;
+			display: inline-block;
+			position: relative;
+		}
+		.main-title {
+			padding: 0 0 12px 0;
+			margin: 64px 12px 0 12px;
+			font-size: 56px;
+		}
+	}
 }
 
-#menu a:hover,
-#user-bar .name:hover {
-	color: #000;
-}
 
-
-#main {
-	position: relative;
-	left: 0px;
-	top: 0px;
-	padding-bottom:72px;
-	overflow: hidden;
-	text-align: center;
-}
-
-#main-block {
-	margin: 0 auto 64px auto;
-	width: 100%;
-	max-width: 945px;
-	z-index: 10;
-	text-align: left;
-	display: inline-block;
-	position: relative;
-}
-
-#main .main-title {
-	font-style: normal;
-	font-weight: 300;
-	line-height: 56px;
-	font-size: 56px;
-	padding: 0 0 12px 0;
-	margin: 64px 0 0 0;
-	color: #FFFFFF;
-}
-
-#body-index .info {
-	font-style: normal;
-	font-weight: 300;
-	line-height: 21px;
-	font-size: 18px;
-	color: #FFFFFF;
-	opacity: 0.8;
-	display: block;
-}
-
-#body-index .buttons-block .button {
-	height: 56px;
-	width: 40%;
-	border-radius: 28px;
-	line-height: 56px;
-	font-size: 17px;
-	text-align: center;
-	white-space: nowrap;
-	overflow: hidden;
-	color: white;
-	font-weight: 500;
-	letter-spacing: 0.5pt;
-	min-width: 355px;
-	cursor: pointer;
-	border: none;
+.is-mobile {
+	.info {
+		$font-size: 16px;
+		line-height: $font-size+2px;
+	}
+	#main {
+		#main-block {
+			margin: 12px;
+		}
+	}
+	#body-index {
+		padding: 0 12px;
+	}
+	.main-title {
+		line-height: 56px;
+		font-size: 32px;
+		padding: 0 0 12px 0;
+		margin: 27px 12px 0 12px;
+	}
 }
 
 #body-index .buttons-block .signup .button {
@@ -399,6 +369,7 @@ a {
 	resize: none;
 	font-size: 19px;
 	color: #9DA1A3;
+	@include fontFamily(Catamaran)
 
 }
 
@@ -439,6 +410,7 @@ a {
 	bottom: 0;
 	background: #F4F6F7;
 	min-height: 72px;
+	z-index: 10;
 
 }
 
@@ -465,22 +437,33 @@ a {
 	padding: 0 200px;
 }
 
-#top, #main, #footer {
-	z-index: 10;
-}
-
 #logo-bg {
 	position: absolute;
 	z-index: 2;
-	width: 338px;
 	height: 419px;
-	right: 0px;
-	bottom: 12px;
-
+	width: 419px;
 	background: url("/i/pa-logo-color-3.png") center center no-repeat;
 	background-size: auto 419px;
 	mix-blend-mode: normal;
+	opacity: 0.35;
+	transform: rotate(-153.32deg);
 }
+
+.is-browser {
+	#logo-bg {
+		right: -98px;
+		bottom: 1px;
+	}
+}
+
+
+.is-mobile {
+	#logo-bg {
+		right: -150px;
+		top: -30px;
+	}
+}
+
 
 #body-chat {
 	display: inline-block;

@@ -1,11 +1,14 @@
 import React, {Component, Fragment} from "react";
 import {Router} from "react-router";
 import {renderRoutes} from "react-router-config"
-import {history} from "../../_helpers/history";
-import { alertActions } from '../../_actions';
+import {history} from "../../_helpers";
+import {alertActions, userActions} from '../../_actions';
 import { connect } from 'react-redux';
 import "./App.scss"
-
+import {compose} from "recompose"
+import {withUpdateDevice} from "../../_components/device"
+import classNames from "classnames"
+import LocalData from '../../_services/LocalData';
 
 
 class App extends Component {
@@ -15,15 +18,18 @@ class App extends Component {
 		history.listen(() => {
 			this.props.alert.message && this.props.dispatch(alertActions.clear());
 		});
+		LocalData.setLoggedIn("taran2L", "Pavel Taran", "/i/avatars/adam.png");
+		this.props.dispatch(userActions.loggedIn());
 	}
 
 	render(){
+		const className = classNames({"is-mobile": this.props.device.isMobile, "is-browser": this.props.device.isBrowser});
 		return (
-			<Fragment>
+			<div className={className}>
 				<Router history={history}>
 					{renderRoutes(this.props.routes)}
 				</Router>
-			</Fragment>
+			</div>
 		)
 	}
 }
@@ -55,12 +61,11 @@ export const withContext = (WrapperComponent, app) => (
 );
 
 
-
-
-function mapStateToProps({ alert, auth }) {
-	return { alert, auth };
+function mapStateToProps({ alert, auth, device }) {
+	return { alert, auth, device };
 }
 
-const connectedApp = connect(mapStateToProps)(App);
-export { connectedApp as App };
+const wrappedApp = compose(withUpdateDevice, connect(mapStateToProps))(App);
+export {wrappedApp as App}
+
 

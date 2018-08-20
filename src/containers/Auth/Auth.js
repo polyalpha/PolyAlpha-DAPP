@@ -83,17 +83,17 @@ class Auth extends Component {
 	}
 
 	render() {
-		let logginButton = (<Button icon="svg-crown" className="button catamaran" isLoading={this.state.isLoading} 
+		let logginButton = (<Button icon="svg-crown" className="button" isLoading={this.state.isLoading}
 		loadingContent='Logging in...' content='I want my bids, log me in'/>);
 		return (
 			<Fragment>
 				<MainTitle>{this.props.route.title}</MainTitle>
 				<div id="body-index">
-					<div className="info catamaran">{this.pp.map((x, i)=><p key={i}>{x}</p>)}</div>
+					<div className="info">{this.pp.map((x, i)=><p key={i}>{x}</p>)}</div>
 					<div className="buttons-block">
 						<div className="signup row">
 							<Link to="/auth/signup">
-								<DivButton icon="svg-lightning"  className="button catamaran" onClick={this.createNewAccount}>
+								<DivButton icon="svg-lightning"  className="button" onClick={this.createNewAccount}>
 									I'm new, create an address pair for me
 								</DivButton>
 							</Link>
@@ -107,13 +107,13 @@ class Auth extends Component {
 										placeholder="Enter your private key"
 										type="text"
 										name="key"
-										className="private-key catamaran"
+										className="private-key"
 										validations={[this.keyValidator]}
 										value={this.privateKey}
 										onChange={(e) => this.setState({privateKey: e.target.value})}
 										rows={1}
 									/>
-									<Input 
+									<Input
 										hidden
 										validations={[this.checkIsLoading]}
 									/>
@@ -121,7 +121,7 @@ class Auth extends Component {
 									<div style={{float: 'left', width: '50%'}}>
 										{logginButton}
 									</div>
-									
+
 								</Fragment>
 
 							) || (

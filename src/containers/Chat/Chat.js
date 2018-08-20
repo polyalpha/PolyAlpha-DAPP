@@ -8,15 +8,12 @@ import Textarea from 'react-validation/build/textarea';
 import "./Chat.scss"
 import classNames from "classnames"
 import {renderRoutes} from "react-router-config";
-import {history} from "../../_helpers/history";
-import {alertActions} from "../../_actions";
-import {MainBlock} from "../App/App";
 import {KEY, MsgStatus} from '../../_constants/Static';
 import Utils from '../../_helpers/Utils';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import Config from '../../_configs/Config';
-
+import {Browser} from "..";
 
 
 export const MessageContext = React.createContext("");
@@ -72,7 +69,7 @@ export class MessagesBlock extends Component {
 	setInputDisabled = (isDisabled) => {
 		this.setState({isInputDisabled: isDisabled});
 	}
-	
+
 	render() {
 
 		let i = 0;
@@ -104,7 +101,7 @@ export class MessagesBlock extends Component {
 						</div>
 						<div className="buttons">
 							{/* <Svg id="svg-mic" className="button" /> */}
-							
+
 							{chatButton}
 							{/* <Svg id="svg-smile" className="button" /> */}
 						</div>
@@ -278,7 +275,9 @@ export const ChatLayout = ({children, match, sidebar, back}) => {
 const Chat = ({auth, title, route}) => {
 	return (
 		<Fragment>
-			<MainTitle>{title || `Hello ${auth.user.name}`}</MainTitle>
+			<Browser>
+				<MainTitle>{title || `Hello ${auth.user.name}`}</MainTitle>
+			</Browser>
 			<div id="body-chat">
 				<div className="block">
 					{route && renderRoutes(route.routes)}

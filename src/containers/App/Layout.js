@@ -4,9 +4,9 @@ import {Header} from "./Header"
 import Footer from "./Footer"
 import {SvgIcons} from "./Svg"
 import {Alert} from "./Alert";
-import {MainTitle} from "./MainTitle"
+import {Browser} from "./Device";
 
-//
+
 const Layout =  ({children, root}) => {
 	return (
 		<Fragment>
