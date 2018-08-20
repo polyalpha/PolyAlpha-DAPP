@@ -95,7 +95,6 @@ export class MessagesBlock extends Component {
 					<div className="block" disabled={this.state.isInputDisabled}>
 						<div className="textarea">
 					<Textarea
-						autoFocus
 						readOnly={this.state.isInputDisabled}
 						placeholder="Type a message..."
 						name="message"

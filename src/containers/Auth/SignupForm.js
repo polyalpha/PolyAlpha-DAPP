@@ -31,7 +31,7 @@ class SignupForm extends Component {
 	}
 
 	componentDidMount() {
-		// LocalData.isAccountGenerated() && this.showInfoModal()
+		LocalData.isAccountGenerated() && this.showInfoModal()
 	}
 
 	showInfoModal() {
