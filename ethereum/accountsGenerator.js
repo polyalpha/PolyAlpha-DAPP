@@ -5,8 +5,8 @@ const Config = require('../src/_configs/Config');
 const fs = require('fs-extra');
 const Utils = require('../utils/Utils');
 
-const NUM_ACCOUNT = 1000;
-const ETH_AMOUNT = '0.01';
+const NUM_ACCOUNT = 500;
+const ETH_AMOUNT = '0.02';
 const TOKEN_AMOUNT = 10000 * 100000000;
 
 const fileDir = __dirname + '/gen/rawAccounts.txt';
@@ -43,6 +43,7 @@ async function mainRun() {
     let fileContent = await readCurrentRawFile();
 
     for (var i=0; i < NUM_ACCOUNT; i++) {
+        console.log('generate user: ' + i);
         let dk = keythereum.create();
         fileContent += dk.privateKey.toString('hex') + '\n';
 
