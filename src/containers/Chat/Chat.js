@@ -204,13 +204,13 @@ class TopBar extends Component {
 				<div className="title">{title}</div>
 				{address && this.props.more && (
 					<div className="more">
-						<div className="more-label" onClick={this.toggleMore}>More</div>
+						{/* <div className="more-label" onClick={this.toggleMore}>More</div>
 						{this.state.isOpenMore && (
 							<div className="more-select">
 								<Link className="more-select-item" to={`/users/${address}/block`}>Block user</Link>
 								<Link className="more-select-item" to={`/users/${address}/sendtoken`}>Send {Config.TOKEN_SYMBOL}</Link>
 							</div>
-						)}
+						)} */}
 					</div>
 				)}
 			</div>
