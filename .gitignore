@@ -68,5 +68,6 @@ build
 
 package-lock.json
 ethereum/build/
+ethereum/gen/
 
 .idea
