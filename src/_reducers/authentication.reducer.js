@@ -3,6 +3,9 @@ import LocalData from '../_services/LocalData';
 
 const initialState = { loggedIn: LocalData.isLoggedIn(), user: LocalData.getCurrentUser() };
 
+// initialState.loggedIn = true;
+// initialState.user = {name: "User Name", avatar: "/i/avatars/adam.png"};
+
 export function authentication(state = initialState, action) {
   switch (action.type) {
     // case userConstants.LOGIN_REQUEST:
@@ -10,7 +13,7 @@ export function authentication(state = initialState, action) {
     //     loggingIn: true,
     //     user: action.user
     //   };
-    case userConstants.LOGIN_SUCCESS: 
+    case userConstants.LOGIN_SUCCESS:
       return {
         loggedIn: true,
         user: LocalData.getCurrentUser()

@@ -5,10 +5,6 @@ import {Layout} from "./Layout";
 
 export class Root extends Component {
 
-	constructor(props) {
-		super(props);
-	}
-
 	render() {
 		const root=this;
 		return (

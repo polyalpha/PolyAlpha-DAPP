@@ -1,66 +1,55 @@
-import React, {Component, Fragment} from "react";
+import React, {Component} from "react";
 import {Router} from "react-router";
 import {renderRoutes} from "react-router-config"
-import {history} from "../../_helpers/history";
-import { alertActions } from '../../_actions';
+import {history} from "../../_helpers";
+import {alertActions} from '../../_actions';
 import { connect } from 'react-redux';
 import "./App.scss"
+import {withUpdateDevice} from "../../_components/device"
+import classNames from "classnames";
 
 
 
-class App extends Component {
+@withUpdateDevice
+@connect(mapStateToProps)
+export class App extends Component {
 
-	constructor(props) {
-		super(props);
-		history.listen(() => {
+	componentWillMount() {
+		this.historyUnlisten = history.listen(() => {
 			this.props.alert.message && this.props.dispatch(alertActions.clear());
 		});
 	}
 
+	componentWillUnmount() {
+		this.historyUnlisten()
+	}
+
+	componentDidMount() {
+		this.setClassNames(this.props)
+	}
+
+	componentWillReceiveProps(props) {
+		this.setClassNames(props)
+	}
+
+	setClassNames = ({device}) => {
+		const className = classNames("layout-block", {"is-mobile": device.isMobile, "is-browser": device.isBrowser});
+		console.log("setClassNames", {className});
+		document.getElementsByTagName("body")[0].setAttribute("class", className)
+	};
+
 	render(){
 		return (
-			<Fragment>
-				<Router history={history}>
-					{renderRoutes(this.props.routes)}
-				</Router>
-			</Fragment>
+			<Router history={history}>
+				{renderRoutes(this.props.routes)}
+			</Router>
 		)
 	}
 }
 
 
-export const MainBlock = ({route, children}) => (
-	<div id="main">
-		<div id="main-block">
-			{route && renderRoutes(route.routes)}
-			{children}
-		</div>
-	</div>
-
-);
-
-export const Context = React.createContext({
-	app: null,
-	title:"Default",
-});
-
-
-export const routesWithContext = (roots, app) => (
-	roots.map( r => ({...r, component: withContext(r.component, app)}))
-);
-
-
-export const withContext = (WrapperComponent, app) => (
-	(props) => <WrapperComponent {...props} Context={Context} app={app} />
-);
-
-
-
-
-function mapStateToProps({ alert, auth }) {
-	return { alert, auth };
+function mapStateToProps({alert, auth}) {
+	return {alert, auth};
 }
 
-const connectedApp = connect(mapStateToProps)(App);
-export { connectedApp as App };
 

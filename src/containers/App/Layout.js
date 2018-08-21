@@ -1,28 +1,28 @@
-import React, {Fragment} from "react";
+import React, {Fragment, Component} from "react";
 import { connect } from 'react-redux';
 import {Header} from "./Header"
-import Footer from "./Footer"
+import {Footer} from "./Footer"
 import {SvgIcons} from "./Svg"
 import {Alert} from "./Alert";
-import {MainTitle} from "./MainTitle"
 
-//
-const Layout =  ({children, root}) => {
-	return (
+
+
+@connect(mapStateToProps)
+export class Layout extends Component {
+
+	render = () => (
 		<Fragment>
 			<SvgIcons />
 			<Alert />
-			<Header root={root}/>
-			{children}
+			<Header />
+			{this.props.children}
 			<Footer />
 		</Fragment>
 	)
-};
 
-
-function mapStateToProps({ alert, routing, auth }) {
-	return { alert, routing, auth };
 }
 
-const connectedLayout = connect(mapStateToProps)(Layout);
-export { connectedLayout as Layout };
+
+function mapStateToProps({device}) {
+	return {device};
+}

@@ -23,7 +23,7 @@ const sideBarTabs = [
 ];
 
 
-class Bids extends Component  {	
+class Bids extends Component  {
 	constructor(props) {
 		super(props);
 		this.loadProps = this.loadProps.bind(this);
@@ -61,7 +61,7 @@ class Bids extends Component  {
 		let { message } = this.state;
 
 		let user = LocalData.getUser(this.props.match.params.id);
-		let secret = Utils.computeSecret(Buffer.from(LocalData.getPrivateKey(), 'hex'), 
+		let secret = Utils.computeSecret(Buffer.from(LocalData.getPrivateKey(), 'hex'),
 			Buffer.from('04' + user[KEY.USER_PUBKEY], 'hex'));
 		let encryptedMessage = Utils.encrypt(message, secret);
 
@@ -100,7 +100,7 @@ class Bids extends Component  {
 	loadProps(props) {
 		let {match, users} = props;
 
-		match.params.tab = match.params.tab || sideBarTabs[0].name;	
+		match.params.tab = match.params.tab || sideBarTabs[0].name;
 		let bidAddresses;
 		let bidUsers;
 		if (match.params.tab == "received") {
@@ -111,7 +111,7 @@ class Bids extends Component  {
 			bidAddresses = users.myBidAddresses;
 			bidUsers = LocalData.getUsers(bidAddresses);
 		}
-		
+
 
 		this.sidebar = {
 			name: "bids",
@@ -129,17 +129,17 @@ class Bids extends Component  {
 		}
 
 		// Redirect if id not exists
-		if (!idExists) {
-			// Automatically select first user if bidAddresses.length > 0
-			
-			if (bidAddresses.length > 0) {
-				history.push('/chat/bids/' + match.params.tab + "/" + bidAddresses[0]);
-			} else {
-				if (match.params.id != undefined && match.params.id != "") {
-					history.push('/chat/bids/' + match.params.tab);
-				}
-			}
-		}
+		// if (!idExists) {
+		// 	// Automatically select first user if bidAddresses.length > 0
+		//
+		// 	if (bidAddresses.length > 0) {
+		// 		history.push('/chat/bids/' + match.params.tab + "/" + bidAddresses[0]);
+		// 	} else {
+		// 		if (match.params.id != undefined && match.params.id != "") {
+		// 			history.push('/chat/bids/' + match.params.tab);
+		// 		}
+		// 	}
+		// }
 	}
 
 	render() {
@@ -154,14 +154,14 @@ class Bids extends Component  {
 		let isButtonDisabled = this.state.isLoading ? true : (mine ? false : this.state.isAcceptButtonDisabled);
 
 		let messages = [
-			<Message my={mine} className="chat-message-big-circle" bid={bidAmount} 
+			<Message my={mine} className="chat-message-big-circle" bid={bidAmount}
 				button={{title: (this.state.isLoading ? loadingTitle : buttonTitle), onClick: action, disabled: isButtonDisabled, isLoading: this.state.isLoading}}>
 				{user[Static.KEY.BID_MESSAGE]}
 			</Message>
 		];
 
 		return (
-			<ChatLayout {...this.props} sidebar={this.sidebar}>
+			<ChatLayout {...this.props} sidebar={this.sidebar} back="/chat/bids" more={true}>
 				{this.props.match.params.id && <MessagesBlock ref={(messagesBlock) => this.messagesBlock = messagesBlock } messages={messages} onMessageChanged={this.onMessageChanged}/>}
 			</ChatLayout>
 		)

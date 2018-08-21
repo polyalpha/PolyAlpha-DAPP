@@ -1,3 +1,13 @@
+$header-height: 73px;
+
+
 @mixin fontFamily($font) {
 	font-family: $font, "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
+
+
+.animate {
+	transition: .5s;
+}
+
+

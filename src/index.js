@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.scss';
 import routes from "./routes"
 import {App} from './containers';
 import registerServiceWorker from './_helpers/registerServiceWorker';
@@ -11,11 +10,15 @@ import "semantic-ui-css/components/button.css";
 import "semantic-ui-css/components/dimmer.css";
 import "semantic-ui-css/components/transition.css";
 
+
+
 ReactDOM.render(
+
 	<Provider store={store}>
 			<App routes={routes} />
 	</Provider>
-,document.getElementById('root'));
+
+, document.getElementById('root') );
 
 
 

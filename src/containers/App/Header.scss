@@ -1,71 +1,227 @@
 @import 'default';
 
 
-$height: 73px;
-
-
 #top {
 	width: 100%;
-	height: $height;
+	height: $header-height;
 	background: #FEFAFE;
 	position: relative;
-	z-index: 10;
+	.menu-burger {
+		@extend .animate;
+		position: absolute;
+		top: 29px;
+		right: 24px;
+		color: #9DA1A3;
+		cursor: pointer;
+		&:hover {
+			color: black;
+		}
+	}
 }
 
 .user-bar-select {
 	&-menu {
 		background: #FEFAFE;
-		z-index: 99999;
-		position: absolute;
-		top: $height;
-		right: 83px;
-		padding: 16px 32px;
 		&-li {
-			display: block;
-			height: 37px;
-			overflow: hidden;
 			white-space: nowrap;
-			font-weight: 300;
-			line-height: normal;
-			font-size: 16px;
+
 			color: #9DA1A3;
 			@include fontFamily(Catamaran);
-
 			&:hover {
 				color: black;
 			}
 		}
 	}
-	&-bg {
-		position: absolute;
-		z-index: 9998;
-		top:$height;
-		width: 100%;
-		height: 100%;
-		background: rgba(0,0,0,0.5);
+}
+
+
+#logo {
+	position: absolute;
+	top: 8px;
+	height: 56px;
+	background: url("/i/pa-logo-color-2.png") center left no-repeat;
+	background-size: 32px 32px;
+	padding-left: 50px;
+	color: #9A6FA9;
+	font-weight: 500;
+	line-height: 56px;
+	font-size: 16px;
+	text-align: center;
+	letter-spacing: 0.05em;
+}
+
+.menu {
+
+	.navigation  a:hover, .user-bar .name:hover {
+		color: #000;
+	}
+
+	.navigation {
+		@include fontFamily(Catamaran);
+		&-item {
+			@extend .animate;
+			font-style: normal;
+			font-weight: 500;
+			font-size: 16px;
+			text-align: center;
+			letter-spacing: 0.05em;
+			color: #9DA1A3;
+			text-decoration: none;
+		}
+
+	}
+
+	.user-bar {
+		.avatar {
+			width: 40px;
+			height: 40px;
+			border-radius: 50%;
+			img {
+				width: 40px;
+				height: 40px;
+			}
+		}
+		.name {
+			font-style: normal;
+			font-weight: 500;
+			font-size: 16px;
+			white-space: nowrap;
+			color: #9DA1A3;
+			cursor: pointer;
+			@include fontFamily(Catamaran);
+			@extend .animate;
+			.icon {
+				margin: 0 0 0 5px;
+				width: 12px;
+				height: 7px;
+			}
+		}
 	}
 }
 
 
-.top-bar {
-	.more {
-		position: relative;
-		cursor: pointer;
-		&-select {
+.is-browser {
+	#top {
+		z-index: 100;
+	}
+	#logo {
+		left: 43px;
+	}
+	.menu {
+		.navigation {
 			position: absolute;
-			z-index: 10;
-			top: 30px;
-			right: -30px;
-			background: #555555;
-			box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
-			border-radius: 4px;
-			padding: 14px 28px;
+			height: 73px;
+			white-space: nowrap;
+			margin: 0 auto;
 			&-item {
-				white-space: nowrap;
-				font-size: 14px;
-				text-align: left;
-				color: #FFFFFF;
+				margin-right: 48px;
+				float: left;
+				line-height: 73px;
+				height: 71px;
+				&-selected {
+					color: #141414;
+					border-bottom: 4px solid #303030;
+				}
 			}
+		}
+		.user-bar {
+			position: absolute;
+			height: 40px;
+			top: 16px;
+			right: 24px;
+			.avatar {
+				position: absolute;
+				top: 0;
+				right: 0;
+			}
+			.name {
+				text-align: right;
+				position: absolute;
+				top: 0;
+				right: 58px;
+				line-height: 40px;
+			}
+		}
+	}
+	.user-bar-select {
+		&-menu {
+			background: #FEFAFE;
+			z-index: 99999;
+			position: absolute;
+			top: $header-height;
+			right: 83px;
+			padding: 16px 32px;
+			&-li {
+				display: block;
+				height: 37px;
+				overflow: hidden;
+				white-space: nowrap;
+				font-weight: 300;
+				line-height: normal;
+				font-size: 16px;
+			}
+		}
+		&-bg {
+			position: absolute;
+			z-index: 9998;
+			top:$header-height;
+			width: 100%;
+			height: 100%;
+			background: rgba(0,0,0,0.5);
+		}
+	}
+}
+
+
+.is-mobile {
+	#top {
+		z-index: 100;
+		#logo {
+			left: 24px;
+		}
+		.menu {
+			position: absolute;
+			top: $header-height;
+			left: 0;
+			width: 100%;
+			z-index: 100;
+			background: #FEFAFE;
+			padding-bottom: 75px;
+			.navigation {
+				&-item {
+					width: 100%;
+					display: block;
+					text-align: center;
+					$height: 56px + 18px;
+					line-height: $height;
+					&-selected {
+						color: #141414;
+					}
+				}
+			}
+			.user-bar {
+				.avatar {
+				}
+				.name {
+				}
+			}
+		}
+	}
+	.user-bar-select {
+		text-align: left;
+		width: 200px;
+		margin: 0 auto;
+		&-menu {
+			&-li {
+				width: 100%;
+				display: block;
+				$height: 32px;
+				line-height: $height;
+				white-space: nowrap;
+			}
+		}
+		&-bg {
+			display: none;
 		}
 	}
 }
