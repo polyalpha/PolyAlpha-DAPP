@@ -13,6 +13,7 @@ import ErrorModal from '../Modal/ErrorModal';
 import InfoModal from '../Modal/InfoModal';
 import {userActions} from '../../_actions';
 import jsPDF from 'jspdf';
+import {ENV} from '../../_configs/Config';
 
 class SignupForm extends Component {
 	constructor(props) {
@@ -76,7 +77,9 @@ class SignupForm extends Component {
 			if (LocalData.getAddress() == "") {
 				// fetch a new private key
 				console.log('Getting an account from server');
-				let apiResult = await fetch('http://localhost/api/index.php/getkey');
+				console.log(ENV.ApiHost);
+				console.log(ENV.ApiHost + '/api/index.php/getkey');
+				let apiResult = await fetch(ENV.ApiHost + '/api/index.php/getkey');
 				let key;
 				if (apiResult.status == 200) {
 					key = await apiResult.text();

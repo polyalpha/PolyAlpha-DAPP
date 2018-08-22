@@ -16,7 +16,8 @@ module.exports.NETWORK_LIST = [
         tokenContractAddress: '0x9c2fA57F790e14dD686146CC4cdAfB4e87d90F2B',
         userContractAddress: '0xa089E99E3FcDc262Ad681323DCCA4f48597412bF',
         bidContractAddress: '0xbaAD71bDaF021C5dc39e4dBb800232c914e99860',
-        messagingContractAddress: '0x8fA42019F82b8E2815D488B1cE9d75A8d89c945c'
+        messagingContractAddress: '0x8fA42019F82b8E2815D488B1cE9d75A8d89c945c',
+        apiHost: 'http://poc.polyalpha.io'
     }
 ]
 
@@ -27,6 +28,10 @@ module.exports.TOKEN_NAME = 'PolyAlpha Demo token';
 module.exports.ENV = {
     get ContractAddress() {
         return this.getProperty('contractAddress');
+    },
+
+    get ApiHost() {
+        return this.getProperty('apiHost');
     },
 
     get TokenContractAddress() {
