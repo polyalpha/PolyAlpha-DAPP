@@ -14,7 +14,7 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import {txConstants} from '../../_constants';
 import ErrorModal from '../Modal/ErrorModal';
 import Config from '../../_configs/Config';
-import {history} from '../../_helpers/history';
+
 
 const abcValidator = (value) => {
 	if (parseInt(value || 0) < 0) {

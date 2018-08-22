@@ -12,6 +12,7 @@ import blockConnector from '../../_services/blockConnector.service';
 import ErrorModal from '../Modal/ErrorModal';
 import InfoModal from '../Modal/InfoModal';
 import {userActions} from '../../_actions';
+import jsPDF from 'jspdf';
 
 class SignupForm extends Component {
 	constructor(props) {
@@ -40,10 +41,16 @@ class SignupForm extends Component {
 			<p>Private key: <b className="break">{LocalData.getPrivateKey()}</b></p>
 			<p>Your private key can be used to login into your account later on. It will be showed only once,
 				please save it somewhere safe.</p>
-		</div>), "Download as PDF", "Go to chats", true, 
+		</div>), "Download account details", "Open PolyAlpha Messenger", true, 
 			() => {
-				// action handler
-				// Download pdf
+				// action handler: Save pdf file
+				var doc = new jsPDF();
+				doc.setFontSize(13);
+				doc.text('Address: ' + LocalData.getAddress(), 25, 25);
+				doc.text('Private key:', 25, 32);
+				doc.text(LocalData.getPrivateKey(), 25, 39);
+
+				doc.save('PolyAlpha_' + LocalData.getAddress() + '.pdf');
 			}, () => {
 				// close handler
 				// go to chats
