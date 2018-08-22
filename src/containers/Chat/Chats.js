@@ -11,9 +11,9 @@ import {history} from '../../_helpers/history';
 
 
 
-const SearchInput = () => (
+const SearchInput = (props) => (
 	<input placeholder="Search" className="tabs-search" type="text" name="search" onChange={
-		e => console.log(e.target.value)
+		e => props.onChange && props.onChange(e)
 	}/>
 );
 
@@ -23,8 +23,9 @@ const SearchInput = () => (
 export class Chats extends Component {
 	constructor(props) {
 		super(props);
-		this.loadUser = this.loadUser.bind(this);
-		this.onMessageSent = this.onMessageSent.bind(this);
+
+		this.tabs = [<SearchInput key="chats-search" onChange={this.searchOnChanged} />];
+
 		this.loadUser(props, false);
 	}
 
@@ -44,11 +45,14 @@ export class Chats extends Component {
 		}
 	}
 
-	loadUser(props, fromUpdateProps) {
+	searchOnChanged = (e) => {
+		this.setState({searchTerm: e.target.value});
+	}
+
+	loadUser = (props, fromUpdateProps) => {
 		let userId = props.match.params.id;
 		console.log({userId})
 
-		let tabs = [<SearchInput key="chats-search" />];
 		let chatAddresses = props.users.chatAddresses;
 		let chatUsers = LocalData.getUsers(chatAddresses);
 
@@ -59,11 +63,6 @@ export class Chats extends Component {
 				// history.push(path);
 			}
 		}
-		this.sidebar = {
-			name: "chats",
-			tabs, users: chatUsers,
-			userId
-		};
 
 		let user = LocalData.getUser(userId);
 		let messages = user[KEY.MESSAGES];
@@ -72,11 +71,10 @@ export class Chats extends Component {
 		}
 
 		if (fromUpdateProps) {
-			this.setState({messages, user, userId});
+			this.setState({messages, user, userId, users: chatUsers});
 		} else {
-			this.state = {messages, user, userId};
+			this.state = {messages, user, userId, users: chatUsers, searchTerm: ""};
 		}
-
 	}
 
 	onMessageSent = async (message) => {
@@ -104,6 +102,14 @@ export class Chats extends Component {
 		console.log(result);
 	}
 
+	checkUsername = (user) => {
+		if (this.state.searchTerm.length == 0) {
+			return true;
+		} else {
+			return (user[KEY.USER_UNAME].toLowerCase().indexOf(this.state.searchTerm.toLowerCase()) !== -1);
+		}
+	}
+
 	render() {
 		let {messages, user} = this.state;
 		let bidAmount = parseInt(user[KEY.BID_AMOUNT] / TOKEN_DECIMAL);
@@ -122,6 +128,12 @@ export class Chats extends Component {
 				this.messageElements.push(<Message key={2 + i} my={mine} status={messages[i][KEY.MESSAGE_STATUS]}>{messages[i][KEY.MESSAGE_CONTENT]}</Message>);
 			}
 		}
+
+		this.sidebar = {
+			name: "chats",
+			tabs: this.tabs, users: this.state.users.filter(this.checkUsername),
+			userId: this.props.match.params.id
+		};
 
 		return (
 			<ChatLayout {...this.props} sidebar={this.sidebar} back="/chat/chats" more={true}>
