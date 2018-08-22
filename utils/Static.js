@@ -29,6 +29,8 @@ module.exports.KEY = {
     USER_PUBKEY: 'upk',
     USER_BLOCKNUMBER: 'ublkn',
     USER_LIST: 'ul',
+    USER_NUM_BIDS: 'unbid',
+    USER_BIDS_AMOUNT: 'ubida',
     MESSAGES: 'msgs',
     MESSAGE_TYPE: 'msgt',
     MESSAGE_CONTENT: 'msgc',

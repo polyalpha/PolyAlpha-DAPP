@@ -14,6 +14,7 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import {txConstants} from '../../_constants';
 import ErrorModal from '../Modal/ErrorModal';
 import Config from '../../_configs/Config';
+import BigNumber from 'big-number';
 
 
 const abcValidator = (value) => {
@@ -208,15 +209,38 @@ class Discover extends Component {
 		this.loadProps(props);
 	}
 
+	compareUserByTotalBid(a, b) {
+		let aValue = new BigNumber(a[KEY.USER_BIDS_AMOUNT]);
+		let bValue = new BigNumber(b[KEY.USER_BIDS_AMOUNT]);
+		if (aValue.lt(bValue)) {
+			return 1;
+		} else if (aValue.gt(bValue)) {
+			return -1;
+		} else {
+			return 0;
+		}
+	}
+
 	loadProps(props) {
 		let {match, users} = props;
 
 		let newAddresses = props.users.newAddresses;
 		let newUsers = LocalData.getUsers(newAddresses);
+		let topUsers = LocalData.getUsers(newAddresses);
 
 		let userLists = [];
 		userLists.push(newUsers);
-		userLists.push([]);
+
+		topUsers.sort(this.compareUserByTotalBid);
+		while (topUsers.length >=0) {
+			let user = topUsers[topUsers.length - 1];
+			if (Utils.parseIntSafe(user[KEY.USER_BIDS_AMOUNT]) == 0) {
+				topUsers.splice(-1, 1);
+			} else {
+				break;
+			}
+		}
+		userLists.push(topUsers);
 
 		match.params.tab = match.params.tab || sideBarTabs[0].name;
 		users = userLists[sideBarTabs.findIndex(x=>x.name === match.params.tab )];

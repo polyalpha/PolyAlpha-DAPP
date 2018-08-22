@@ -6,7 +6,7 @@ function getAddresses() {
   result.chatAddresses = LocalData.getConenctedAddresses();
   result.bidAddresses = LocalData.getBidAddresses();
   result.myBidAddresses = LocalData.getMyBidAddresses();
-  result.newAddresses = LocalData.getNewUserAddresses();
+  result.newAddresses = LocalData.getNewUserAddresses().reverse();
   return result;
 }
 

@@ -241,6 +241,38 @@ class LocalData {
         }
     }
 
+    static increaseBid(fromAddress, toAddress, amount) {
+        console.log('increase bid: ' + fromAddress + ' : ' + toAddress);
+        this.updateBid(toAddress, amount, 1);
+
+        let bidKey = fromAddress.substring(2, 8) + toAddress.substring(2, 8);
+        this.setItem(bidKey, amount);
+    }
+
+    static decreaseBid(fromAddress, toAddress) {
+        console.log('decrease bid: ' + fromAddress + ' : ' + toAddress);
+        let bidKey = fromAddress.substring(2, 8) + toAddress.substring(2, 8);
+        let amount = this.getItem(bidKey);
+
+        this.updateBid(toAddress, amount, -1);
+    }
+
+    static updateBid(userAddress, amount, countUpdate) {
+        let user = this.getObjectItem(userAddress);
+        let currentAmount = user[Static.KEY.USER_BIDS_AMOUNT];
+        if (currentAmount == undefined) {
+            currentAmount = new BigNumber('0');
+        } else {
+            currentAmount = new BigNumber(currentAmount);
+        }
+        user[Static.KEY.USER_BIDS_AMOUNT] = currentAmount.plus(amount).toString();
+
+        let currentCount = user[Static.KEY.USER_NUM_BIDS];
+        user[Static.KEY.USER_NUM_BIDS] = Utils.parseIntSafe(currentCount) + countUpdate;
+
+        this.setObjectItem(userAddress, user);
+    }
+
     /**
      * Add message to localStorage. If a message with the same txHash exists, it will replace that message
      * @param {hex string} userAddress 
@@ -450,7 +482,14 @@ class LocalData {
         if (result == undefined) {
             return {};
         } else {
-            return JSON.parse(result);
+            try {
+                return JSON.parse(result);
+            } catch (err) {
+                if (err) {
+                    console.log(err.message);
+                    console.log(result);
+                }
+            }
         }
     }
 

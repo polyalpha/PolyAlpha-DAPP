@@ -96,19 +96,24 @@ class BlockReader {
                 fromBlock: storedBlockNumber,
                 toBlock: currentBlockNumber
             });
-            let bidEvents_to = await this.bidContract.getPastEvents('allEvents', {
-                // filter: {sender: this.myAddress},
-                topics: [null, this.myAddressTopic],
+            // let bidEvents_to = await this.bidContract.getPastEvents('allEvents', {
+            //     // filter: {sender: this.myAddress},
+            //     topics: [null, this.myAddressTopic],
+            //     fromBlock: storedBlockNumber,
+            //     toBlock: currentBlockNumber
+            // });
+            // let bidEvents_from = await this.bidContract.getPastEvents('allEvents', {
+            //     // filter: {receiver: this.myAddress},
+            //     topics: [null, null, this.myAddressTopic],
+            //     fromBlock: storedBlockNumber,
+            //     toBlock: currentBlockNumber
+            // });
+            // let bidEvents = this.mergeEvents(bidEvents_to, bidEvents_from);
+
+            let bidEvents = await this.bidContract.getPastEvents('allEvents', {
                 fromBlock: storedBlockNumber,
                 toBlock: currentBlockNumber
             });
-            let bidEvents_from = await this.bidContract.getPastEvents('allEvents', {
-                // filter: {receiver: this.myAddress},
-                topics: [null, null, this.myAddressTopic],
-                fromBlock: storedBlockNumber,
-                toBlock: currentBlockNumber
-            });
-            let bidEvents = this.mergeEvents(bidEvents_to, bidEvents_from);
 
             let messageEvents_to = await this.messagingContract.getPastEvents('MessageSent', {
                 // filter: {sender: this.myAddress},
@@ -149,26 +154,28 @@ class BlockReader {
                 if (name == 'BidCreated') {
                     if (values.sender == this.myAddress) {
                         LocalData.addBid(values.receiver, values.message, values.tokenAmount, Static.BidType.TO, blockNumber);
-                    } else {
+                    } else if (values.receiver == this.myAddress) {
                         LocalData.addBid(values.sender, values.message, values.tokenAmount, Static.BidType.FROM, blockNumber);
                     }
+                    LocalData.increaseBid(values.sender, values.receiver, values.tokenAmount);
                 } else if (name == 'BidCancelled') {
                     if (values.sender == this.myAddress) {
                         LocalData.cancelMyBid(values.receiver);
-                    } else {
+                    } else if (values.receiver == this.myAddress) {
                         LocalData.bidGetCancelled(values.sender);
                     }
+                    LocalData.decreaseBid(values.sender, values.receiver);
                 } else if (name == 'BidAccepted') {
                     if (values.sender == this.myAddress) {
                         // If you are the one who accepted a bid, it mean the bid is FROM the other side user
                         LocalData.acceptBid(values.receiver, values.message, txHash, Static.BidType.FROM, blockNumber);
-                    } else {
+                    } else if (values.receiver == this.myAddress) {
                         LocalData.acceptBid(values.sender, values.message, txHash, Static.BidType.TO, blockNumber);
                     }
                 } else if (name == 'BidBlocked') {
                     if (values.sender == this.myAddress) {
                         LocalData.blockBid(values.receiver);
-                    } else {
+                    } else if (values.receiver == this.myAddress) {
                         LocalData.myBidGetBlocked(values.sender);
                     }
                 }

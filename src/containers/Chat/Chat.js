@@ -123,20 +123,23 @@ export const UserList = ({userId, name, tab, users}) => (
 				if (!tab) {
 					link = `/chat/${name}/${user[KEY.USER_ADDRESS]}`
 				}
+
+				let info = (<div></div>)
+				if (user[KEY.BID_AMOUNT] && name === 'bids') {
+					info = (<div className="users-bid-abt">
+						<div className="users-bid-abt-abt">{Utils.parseIntSafe(user[KEY.BID_AMOUNT]) / Config.TOKEN_DECIMAL} {Config.TOKEN_SYMBOL}</div>
+					</div>);
+				} else if (user[KEY.USER_BIDS_AMOUNT] && name === 'discover' && tab === 'top') {
+					info = (<div className="users-bid-abt">
+						<div className="users-bid-abt-bid">{Utils.parseIntSafe(user[KEY.USER_NUM_BIDS])} bids</div>
+						<div className="users-bid-abt-abt">{Utils.parseIntSafe(user[KEY.USER_BIDS_AMOUNT]) / Config.TOKEN_DECIMAL} {Config.TOKEN_SYMBOL}</div>
+					</div>);
+				}
 				return (
 				<Link className={classNames(["user", {selected: String(user[KEY.USER_ADDRESS]) === userId}])} key={user[KEY.USER_ADDRESS]} to={link}>
 					<ImgBg src={user[KEY.USER_AVARTAR_URL]} className="avatar" />
 					<div className="name">{user[KEY.USER_UNAME]}</div>
-					{user[KEY.BID_AMOUNT] && name === 'bids' && (
-						<div className="users-bid-abt">
-							{/* <div className="users-bid-abt-bid">{user.bid} bids</div> */}
-							<div className="users-bid-abt-abt">{Utils.parseIntSafe(user[KEY.BID_AMOUNT]) / Config.TOKEN_DECIMAL} {Config.TOKEN_SYMBOL}</div>
-						</div>
-
-					) || (
-						<div/>
-						// user.date && <div className="date">{user.date}</div>
-					)}
+					{info}
 				</Link>
 			)
 			}
