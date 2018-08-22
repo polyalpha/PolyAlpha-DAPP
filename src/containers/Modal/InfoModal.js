@@ -5,10 +5,11 @@ const ReactDOM = require('react-dom');
 
 var modalElement;
 
-module.exports.show = (title, message, closeButton) => {
+module.exports.show = (title, message, actionButton, closeButton, actionTurnOnClose, actionHandler, closeHandler) => {
 	modalElement = document.createElement('div');
     document.body.appendChild(modalElement);
-    let modalComponent = (<InfoModal title={title} message={message} closeButton={closeButton}/>);
+    let modalComponent = (<InfoModal title={title} message={message} closeButton={closeButton} actionButton={actionButton} 
+        actionTurnOnClose={actionTurnOnClose} actionHandler={actionHandler} closeHandler={closeHandler} />);
 	ReactDOM.render(modalComponent, modalElement);
 }
 
@@ -20,11 +21,21 @@ function unmountModal() {
 class InfoModal extends Component {
     constructor(props) {
         super(props);
-        this.state = {visible: false};
+        this.state = {visible: false, closeButtonDisabled: props.actionTurnOnClose};
     }
 
     handleClose = () => {
+        if (this.props.closeHandler) {
+            this.props.closeHandler();
+        }
         unmountModal();
+    }
+
+    handleAction = () => {
+        if (this.props.actionHandler) {
+            this.props.actionHandler();
+        }
+        this.setState({closeButtonDisabled: false});
     }
 
     componentDidMount() {
@@ -38,16 +49,17 @@ class InfoModal extends Component {
                     <Modal.Header>{this.props.title}</Modal.Header>
                     <Modal.Content>
                         <Modal.Description>
-                        {/* Your private key can be used to login into your account later on. 
-                        Please save it somewhere safe:<br />
-                            <b>{'alsdfjklajf'}</b> */}
                             {this.props.message}
                         </Modal.Description>
                     </Modal.Content>
                     <Modal.Actions>
-                        <Button basic color='green' onClick={this.handleClose}>
+                        <Button basic color='red' onClick={this.handleAction}>
+                            {this.props.actionButton}
+                        </Button>
+                        <Button basic color='red' onClick={this.handleClose} disabled={this.state.closeButtonDisabled}>
                             {this.props.closeButton}
                         </Button>
+                        
                     </Modal.Actions>
                 </Modal>
             </Transition>

@@ -9,7 +9,7 @@ import Input from 'react-validation/build/input';
 import Textarea from 'react-validation/build/textarea';
 import {Button} from './Button';
 import ethereumUtil from 'ethereumjs-util';
-import keythereum from 'keythereum';
+// import keythereum from 'keythereum';
 import LocalData from '../../_services/LocalData';
 import {userActions} from '../../_actions';
 import blockReader from '../../_services/blockReader.service';
@@ -45,9 +45,6 @@ class Auth extends Component {
 
 	createNewAccount = (e) => {
 		e.preventDefault();
-		let dk = keythereum.create();
-		LocalData.setPrivateKey(dk.privateKey.toString('hex'), true);
-		blockConnector.setAccounts([{secretKey: Buffer.from(LocalData.getPrivateKey(), 'hex'), address: LocalData.getAddress()}]);
 		history.push("/auth/signup");
 	}
 

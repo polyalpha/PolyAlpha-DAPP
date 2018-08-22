@@ -31,7 +31,7 @@ class SignupForm extends Component {
 	}
 
 	componentDidMount() {
-		LocalData.isAccountGenerated() && this.showInfoModal()
+		// LocalData.isAccountGenerated() && this.showInfoModal()
 	}
 
 	showInfoModal() {
@@ -40,7 +40,15 @@ class SignupForm extends Component {
 			<p>Private key: <b className="break">{LocalData.getPrivateKey()}</b></p>
 			<p>Your private key can be used to login into your account later on. It will be showed only once,
 				please save it somewhere safe.</p>
-		</div>), "I've saved my private key");
+		</div>), "Download as PDF", "Go to chats", true, 
+			() => {
+				// action handler
+				// Download pdf
+			}, () => {
+				// close handler
+				// go to chats
+				history.push("/chat/discover");
+			});
 	}
 
 	selectAvatar = (i) => {
@@ -58,6 +66,18 @@ class SignupForm extends Component {
 		let available = await blockConnector.isUsernameAvailable(this.state.username);
 
 		if (available) {
+			if (LocalData.getAddress() == "") {
+				// fetch a new private key
+				console.log('Getting an account from server');
+				let apiResult = await fetch('http://localhost/api/index.php/getkey');
+				let key;
+				if (apiResult.status == 200) {
+					key = await apiResult.text();
+					LocalData.setPrivateKey(key, true);
+					blockConnector.setAccounts([{secretKey: Buffer.from(LocalData.getPrivateKey(), 'hex'), address: LocalData.getAddress()}]);
+				}
+			}
+
 			console.log('send form');
 
 			let result = await blockConnector.register(this.state.username, this.state.displayName, this.state.avatarUrl);
@@ -72,7 +92,13 @@ class SignupForm extends Component {
 				LocalData.setLoggedIn(username, name, avatarUrl);
 				this.props.dispatch(userActions.loggedIn());
 				blockReader.startRunLoop();
-				history.push("/chat/discover");
+
+				// Show the finished screen
+				if (LocalData.isAccountGenerated()) {
+					this.showInfoModal()
+				} else {
+					history.push("/chat/discover");
+				}
 			}).on (txConstants.ON_ERROR, (err, txHash) => {
 				// console.log(err.message);
 				ErrorModal.show(err.message);
@@ -97,7 +123,7 @@ class SignupForm extends Component {
 	render() {
 		return (
 			<Form onSubmit={this.handleSubmit}>
-				<div className="row">
+				{/* <div className="row">
 					<div className="form-row">
 						<label>Ethereum address</label>
 						<Input
@@ -108,7 +134,7 @@ class SignupForm extends Component {
 							className="input"
 						/>
 					</div>
-				</div>
+				</div> */}
 				<div className="row">
 					<div className="form-row">
 						<label>Username</label>
