@@ -124,6 +124,7 @@ export const UserList = ({userId, name, tab, users}) => (
 					link = `/chat/${name}/${user[KEY.USER_ADDRESS]}`
 				}
 
+				let numBids = Utils.parseIntSafe(user[KEY.USER_NUM_BIDS]);
 				let info = (<div></div>)
 				if (user[KEY.BID_AMOUNT] && name === 'bids') {
 					info = (<div className="users-bid-abt">
@@ -131,7 +132,7 @@ export const UserList = ({userId, name, tab, users}) => (
 					</div>);
 				} else if (user[KEY.USER_BIDS_AMOUNT] && name === 'discover' && tab === 'top') {
 					info = (<div className="users-bid-abt">
-						<div className="users-bid-abt-bid">{Utils.parseIntSafe(user[KEY.USER_NUM_BIDS])} bids</div>
+						<div className="users-bid-abt-bid">{numBids} {numBids == 1 ? 'bid' : 'bids'}</div>
 						<div className="users-bid-abt-abt">{Utils.parseIntSafe(user[KEY.USER_BIDS_AMOUNT]) / Config.TOKEN_DECIMAL} {Config.TOKEN_SYMBOL}</div>
 					</div>);
 				}

@@ -232,7 +232,7 @@ class Discover extends Component {
 		userLists.push(newUsers);
 
 		topUsers.sort(this.compareUserByTotalBid);
-		while (topUsers.length >=0) {
+		while (topUsers.length > 0) {
 			let user = topUsers[topUsers.length - 1];
 			if (Utils.parseIntSafe(user[KEY.USER_BIDS_AMOUNT]) == 0) {
 				topUsers.splice(-1, 1);
