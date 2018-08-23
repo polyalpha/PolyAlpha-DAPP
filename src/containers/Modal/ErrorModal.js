@@ -10,8 +10,8 @@ export default class ErrorModal extends Modal {
     title: "Error",
   };
 
-  static show(message) {
-    return super.show.call(this, {message})
+  static show(message, closeHandler) {
+    return super.show.call(this, {message, closeHandler})
   }
 
   getActions = () => {

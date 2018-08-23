@@ -34,6 +34,9 @@ export class Modal extends Component {
   }
 
   close = () => {
+    if (this.props.closeHandler) {
+      this.props.closeHandler();
+    }
     ReactDOM.unmountComponentAtNode(ReactDOM.findDOMNode(this).parentNode);
   };
 

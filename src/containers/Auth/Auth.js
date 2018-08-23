@@ -26,14 +26,7 @@ class Auth extends Component {
 		this.state = {privateKey: "", isLoading: false};
 
 		this.signinHandler = this.signinHandler.bind(this);
-		// this.loadContract();
 	}
-
-	// loadContract = async () => {
-	// 	this.blockConnector = new BlockConnector(web3, [{secretKey: Buffer.from(LocalData.getPrivateKey(), 'hex'), address: LocalData.getAddress()}]);
-	// 	await this.blockConnector.load();
-	// 	console.log('Connected to smart contracts');
-	// }
 
 	keyValidator = () => {
 		if (!/^[\da-zA-Z]{64}$/.test(this.state.privateKey.toString().trim())) {
@@ -54,8 +47,6 @@ class Auth extends Component {
 		this.setState({isLoading: true});
 		LocalData.setPrivateKey(this.state.privateKey, false);
 		blockConnector.setAccounts([{secretKey: Buffer.from(LocalData.getPrivateKey(), 'hex'), address: LocalData.getAddress()}]);
-
-		// console.log(this.props);
 
 		// Need to show LOADING
 		console.log(LocalData.getAddress());

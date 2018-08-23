@@ -8,34 +8,40 @@ const Static = require('../utils/Static');
 const Utils = require('../utils/Utils');
 const {ENV} = require('../src/_configs/Config');
 
-
 class BlockReader {
-    constructor(web3, contractAddress, updateHandler) {
+    constructor(web3, contractAddress, updateHandler, errorHandler) {
         this.web3 = web3;
         this.contractAddress = contractAddress;
         this.updateHandler = updateHandler;
+        this.errorHandler = errorHandler;
         this.initialize();
     }
 
     async initialize() {
-        this.contract = await new this.web3.eth.Contract(JSON.parse(compiledContract.interface), 
-            this.contractAddress);
+        try {
+            this.contract = await new this.web3.eth.Contract(JSON.parse(compiledContract.interface), 
+                this.contractAddress);
 
-        // The reason these addresses are loaded from the core contract (instead of loading from Config) 
-        // is because it make the code easier for running tests
-        let userContractAddress = await this.contract.methods.userContract().call();
-        let bidContractAddress = await this.contract.methods.bidContract().call();
-        let messagingContractAddress = await this.contract.methods.messagingContract().call();
+            // The reason these addresses are loaded from the core contract (instead of loading from Config) 
+            // is because it make the code easier for running tests
+            let userContractAddress = await this.contract.methods.userContract().call();
+            let bidContractAddress = await this.contract.methods.bidContract().call();
+            let messagingContractAddress = await this.contract.methods.messagingContract().call();
 
-        this.userContract = await new this.web3.eth.Contract(JSON.parse(compiledUserContract.interface), 
-            userContractAddress);
-        this.bidContract = await new this.web3.eth.Contract(JSON.parse(compiledBidContract.interface), 
-            bidContractAddress);
-        this.messagingContract = await new this.web3.eth.Contract(JSON.parse(compiledMessagingContract.interface), 
-            messagingContractAddress);
+            this.userContract = await new this.web3.eth.Contract(JSON.parse(compiledUserContract.interface), 
+                userContractAddress);
+            this.bidContract = await new this.web3.eth.Contract(JSON.parse(compiledBidContract.interface), 
+                bidContractAddress);
+            this.messagingContract = await new this.web3.eth.Contract(JSON.parse(compiledMessagingContract.interface), 
+                messagingContractAddress);
 
-        // Token contract address currently not accessible from the smart contract, so, load it from Config instead
-        this.tokenContract = await new this.web3.eth.Contract(JSON.parse(compiledTokenContract.interface), ENV.TokenContractAddress);
+            // Token contract address currently not accessible from the smart contract, so, load it from Config instead
+            this.tokenContract = await new this.web3.eth.Contract(JSON.parse(compiledTokenContract.interface), ENV.TokenContractAddress);
+        } catch (err) {
+            if (err && this.errorHandler) {
+                this.errorHandler(err);
+            }
+        }
 
         this.isRunning = false;
         this.startRunLoop();
