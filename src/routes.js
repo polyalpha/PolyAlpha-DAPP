@@ -7,10 +7,10 @@ import {
 	Discover,
 	Bids,
 	Chats,
-	MainBlock
+	MainBlock,
 } from "./containers"
 
-import {SettingsGas, SettingsNetwork, Settings, SettingsMain} from './containers/Settings/Settings'
+import {SettingsGas, SettingsNetwork, SettingsPublicAddress, SettingsMain} from './containers/Settings/Settings'
 
 import {withAuth} from "./_components/withAuth"
 import { logout } from "./_components/logout";
@@ -20,27 +20,6 @@ const routes = [
 	{
 		component: Root,
 		routes: [
-			{
-				component: Settings,
-				path: '/settings/:name',
-				routes: [
-					{
-						path: '/settings/network',
-						exact: true,
-						component: SettingsNetwork,
-					},
-					{
-						path: '/settings/public',
-						exact: true,
-						component: SettingsGas,
-					},
-					{
-						path: '/settings/gas',
-						exact: true,
-						component: SettingsGas,
-					},
-				]
-			},
 			{
 				component: MainBlock,
 				routes: [
@@ -74,13 +53,8 @@ const routes = [
 						title: "Logout",
 					},
 					{
-						path: '/settings',
-						exact: true,
-						component: withAuth(SettingsMain),
-						title: "Settings",
-					},
-					{
 						component: Chat,
+            path: '/chat/:type',
 						routes: [
 							{
 								path: '/chat/discover/:tab?/:id?',
@@ -99,7 +73,28 @@ const routes = [
 								component: withAuth(Chats),
 							}
 						]
-					}
+					},
+          {
+            path: '/settings',
+            exact: true,
+            component: SettingsMain,
+            title: "Settings",
+          },
+          {
+            path: '/settings/network',
+            exact: true,
+            component: SettingsNetwork,
+          },
+          {
+            path: '/settings/public',
+            exact: true,
+            component: SettingsPublicAddress,
+          },
+          {
+            path: '/settings/gas',
+            exact: true,
+            component: SettingsGas,
+          }
 				]
 			},
 

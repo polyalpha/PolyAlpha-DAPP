@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, {Component, Fragment} from "react";
 import Form from 'react-validation/build/form';
 import Input from 'react-validation/build/input';
 import {Button} from './Button';
@@ -11,6 +11,7 @@ import blockReader from '../../_services/blockReader.service';
 import blockConnector from '../../_services/blockConnector.service';
 import ErrorModal from '../Modal/ErrorModal';
 import InfoModal from '../Modal/InfoModal';
+import {AccountCreatedModal} from '../Modal/AccountCreatedModal'
 import {userActions} from '../../_actions';
 
 class SignupForm extends Component {
@@ -35,12 +36,7 @@ class SignupForm extends Component {
 	}
 
 	showInfoModal() {
-		InfoModal.show('New account generated successfully', (<div><p>We have just created a new Ethereum account for you.</p>
-			<p>Ethereum address: <b className="break">{LocalData.getAddress()}</b></p>
-			<p>Private key: <b className="break">{LocalData.getPrivateKey()}</b></p>
-			<p>Your private key can be used to login into your account later on. It will be showed only once,
-				please save it somewhere safe.</p>
-		</div>), "I've saved my private key");
+    AccountCreatedModal.show();
 	}
 
 	selectAvatar = (i) => {

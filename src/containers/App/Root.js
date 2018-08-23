@@ -6,9 +6,8 @@ import {Layout} from "./Layout";
 export class Root extends Component {
 
 	render() {
-		const root=this;
 		return (
-			<Layout root={root}>
+			<Layout>
 				{renderRoutes(this.props.route.routes)}
 			</Layout>
 		)
