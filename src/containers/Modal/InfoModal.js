@@ -1,9 +1,6 @@
-const {Component} = require('react');
-const React = require('react');
-const {Modal, Button, Transition} = require('semantic-ui-react');
-const ReactDOM = require('react-dom');
+import React, {Component} from 'react';
+import {Modal} from './Modal';
 
-var modalElement;
 
 module.exports.show = (title, message, actionButton, closeButton, actionTurnOnClose, actionHandler, closeHandler) => {
 	modalElement = document.createElement('div');
@@ -11,11 +8,6 @@ module.exports.show = (title, message, actionButton, closeButton, actionTurnOnCl
     let modalComponent = (<InfoModal title={title} message={message} closeButton={closeButton} actionButton={actionButton} 
         actionTurnOnClose={actionTurnOnClose} actionHandler={actionHandler} closeHandler={closeHandler} />);
 	ReactDOM.render(modalComponent, modalElement);
-}
-
-function unmountModal() {
-    ReactDOM.unmountComponentAtNode(modalElement);
-    document.body.removeChild(modalElement);
 }
 
 class InfoModal extends Component {
@@ -65,5 +57,4 @@ class InfoModal extends Component {
             </Transition>
         )
     }
- }
-
+}

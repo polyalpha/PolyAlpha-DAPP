@@ -15,8 +15,6 @@ const Alert = ({alert, dispatch}) => {
 	)
 };
 
-const close = (e) => e.target.remove();
-
 function mapStateToProps(state) {
 	const { alert } = state;
 	return { alert };

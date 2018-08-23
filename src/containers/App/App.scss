@@ -145,8 +145,8 @@ a {
 			position: relative;
 		}
 		.main-title {
-			padding: 0 0 15px 0;
-			margin: 57px 12px 0 12px;
+			padding: 57px 12px 15px 12px;
+			margin: 0;
 			font-size: 56px;
 		}
 	}
@@ -195,11 +195,6 @@ a {
 	margin-bottom:100px;
 }
 
-
-.break {
-	word-break: break-all;
-}
-
 .is-mobile {
 	.ui.basic.modal {
 	}
@@ -216,5 +211,18 @@ a {
 	.ui.modal > .content {
 		width: auto !important;
 	}
+}
+
+.transparent-black-bg {
+    &::after {
+        content: "";
+        position: absolute;
+        z-index: 999;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0,0,0,0.5);
+    }
 }
 

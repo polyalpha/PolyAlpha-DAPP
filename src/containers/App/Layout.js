@@ -17,6 +17,7 @@ export class Layout extends Component {
 			<Header />
 			{this.props.children}
 			<Footer />
+      <div id="modal" />
 		</Fragment>
 	)
 

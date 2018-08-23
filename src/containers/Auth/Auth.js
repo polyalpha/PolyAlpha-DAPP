@@ -84,7 +84,6 @@ class Auth extends Component {
 	render() {
 
 		return (
-
 			<Fragment>
 				<MainTitle>{this.props.route.title}</MainTitle>
 				<div id="body-index">

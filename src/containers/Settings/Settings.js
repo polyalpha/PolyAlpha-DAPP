@@ -4,52 +4,67 @@ import { connect } from 'react-redux';
 import {renderRoutes} from "react-router-config"
 import { alertActions, userActions, configActions } from '../../_actions'
 import {Svg} from '../App/Svg'
-import classnames from 'classnames'
+import classNames from 'classnames'
 import './Settings.scss'
 import {Link} from "react-router-dom"
 import Form from 'react-validation/build/form';
 import Input from 'react-validation/build/input';
 import Button from 'react-validation/build/button';
-import {MainBlock} from "..";
 import {MainTitle} from "..";
 import LocalData from "../../_services/LocalData";
 import {ENV} from '../../_configs/Config';
+import {ImgBg} from "..";
 
 
-export const Settings = ({route, className}) => {
-	console.log("render Settings", route);
-	return (
-		<div className={classnames(["config-window", className])}>
-			<div className="config-window-bg" />
-			<div className="config-window-window">
-				<div className="config-window-window-block">
-					<div className="config-window-window-close">
-						<Svg id="svg-close" />
-					</div>
-					<div className="config-window-window-block-content">
-						{route && renderRoutes(route.routes)}
-					</div>
-				</div>
-			</div>
-		</div>
-	)
-};
+export class SettingsLayout extends Component {
 
-const SettingsMain = ({config, route}) => (
-	<MainBlock>
-		<MainTitle>{route.title}</MainTitle>
-		<div className="settings-main">
-			<h2>{LocalData.getUsername()}, here are the configurations for your messenger.</h2>
-			<div>
-				<div className="settings-item">Your Ethereum balance is: <b>{LocalData.getBalance()} ETH</b></div>
-				<div className="settings-item">Your PADT token balance is: <b>{LocalData.getTokenBalance()} PADT</b></div>
-				<div className="settings-item">You are on the <b>{ENV.NetworkName}</b></div>
-				<div className="settings-item">Your public address is <b>{LocalData.getAddress()}</b></div>
-			</div>
-		</div>
-	</MainBlock>
+  static defaultProps = {
+    title: "Settings"
+  };
+
+	render() {
+    console.log("render Settings", this.props.route, this.props.children);
+    return (
+      <div className={classNames("settings-block", this.props.className)}>
+        {this.props.title && <MainTitle>{this.props.title}</MainTitle>}
+        <div className={classNames(["config-window", this.props.className])}>
+          <div className="window">
+            <div className="block">
+              <div className="content">
+                <div className="settings-main">
+                  {this.props.children}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+	}
+
+}
+
+export const SettingsMain = () => (
+  <SettingsLayout title="Settings">
+    <h2>{LocalData.getUsername()}, here are the configurations for your messenger.</h2>
+    <div>
+      <div className="item">Your Ethereum balance is: <b>{LocalData.getBalance()} ETH</b></div>
+      <div className="item">Your PADT token balance is: <b>{LocalData.getTokenBalance()} PADT</b></div>
+      <div className="item">You are on the <b>{ENV.NetworkName}</b></div>
+      <div className="item">Your public address is <b className="break">{LocalData.getAddress()}</b></div>
+    </div>
+  </SettingsLayout>
 );
 
+
+export const SettingsPublicAddress = () => (
+  <SettingsLayout title="Address" className="settings-address">
+    <h2>Your public address is</h2>
+    <div>
+      <ImgBg src="/i/address-icon.png" className="address-icon icon" /><b className="break">{LocalData.getAddress()}</b>
+    </div>
+  </SettingsLayout>
+);
 
 
 const SettingsNetwork = ({config, dispatch}) => {
@@ -61,7 +76,7 @@ const SettingsNetwork = ({config, dispatch}) => {
 	];
 
 	return (
-		<div className="settings-network">
+		<SettingsLayout title="Network" className="settings-network">
 			<h2>Change Ethereum Networks</h2>
 			<div className="settings-network-list">
 				{nn.map(x=>{
@@ -73,13 +88,13 @@ const SettingsNetwork = ({config, dispatch}) => {
 					)
 				})}
 			</div>
-		</div>
+		</SettingsLayout>
 	)
 };
 
 
 const SettingsGas = ({config, dispatch}) => (
-	<Fragment>
+	<SettingsLayout title="Gas" className="settings-gas">
 		<h2>Set gas limit</h2>
 		<Form onSubmit={
 			(e) => {
@@ -89,7 +104,7 @@ const SettingsGas = ({config, dispatch}) => (
 			}
 		}>
 			<label>
-				Enter new gas limit:
+        <div className="label-message">Enter new gas limit:</div>
 				<Input
 					autoFocus
 					placeholder="0"
@@ -103,7 +118,7 @@ const SettingsGas = ({config, dispatch}) => (
 				<Button>Save</Button>
 			</div>
 		</Form>
-	</Fragment>
+	</SettingsLayout>
 );
 
 
@@ -128,5 +143,3 @@ export {connectedSettingsGas as SettingsGas}
 const connectedSettingsNetwork = connect(mapStateToProps)(SettingsNetwork);
 export {connectedSettingsNetwork as SettingsNetwork}
 
-const connectedSettingsMain = connect(mapStateToProps)(SettingsMain);
-export {connectedSettingsMain as SettingsMain}

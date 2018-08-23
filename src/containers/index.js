@@ -11,7 +11,7 @@ export {Chat} from "./Chat/Chat"
 export {Discover} from "./Chat/Discover"
 export {Bids} from "./Chat/Bids"
 export {Chats} from "./Chat/Chats"
-
+export {Modal} from "./Modal/Modal"
 
 
 
