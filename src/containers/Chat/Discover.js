@@ -78,7 +78,6 @@ export class CreateNewBid extends Component {
 		let sentAmount = Utils.parseIntSafe(bid) * TOKEN_DECIMAL;
 		let tokenBalance = Utils.parseIntSafe(await blockConnector.getTokenBalance(LocalData.getAddress()));
 
-		console.log('Token balance' + tokenBalance);
 		if (tokenBalance >= sentAmount) {
 			let result = await blockConnector.createBid(this.state.userId,
 				sentAmount, '0x' + encryptedMessage);
@@ -109,16 +108,13 @@ export class CreateNewBid extends Component {
 	};
 
 	checkIsLoading = () => {
-		console.log('check is loading: ' + this.state.isLoading);
 		if (this.state.isLoading) {
 			return "false";
 		}
-		// return "false";
 	}
 
 	render() {
 		let loadingSpinner = (<FontAwesomeIcon icon={faSpinner} spin style={{marginRight: '14px'}}/>)
-		console.log('render discover');
 		return (
 			<Fragment>
 				{this.state.isSubmitted && (

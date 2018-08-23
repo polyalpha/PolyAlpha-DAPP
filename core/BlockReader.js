@@ -62,10 +62,8 @@ class BlockReader {
     }
 
     async updateEthBalance() {
-        console.log('Update balance of: ' + this.myAddress);
         let balance = await this.web3.eth.getBalance(this.myAddress);
         let tokenBalance = await this.tokenContract.methods.balanceOf(this.myAddress).call();
-        console.log('balance: ' + balance + ' : token: ' + tokenBalance);
         LocalData.setBalance(balance);
         LocalData.setTokenBalance(tokenBalance);
     }
