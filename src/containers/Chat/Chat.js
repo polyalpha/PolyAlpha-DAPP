@@ -128,12 +128,12 @@ export const UserList = ({userId, name, tab, users}) => (
 				let info = (<div></div>)
 				if (user[KEY.BID_AMOUNT] && name === 'bids') {
 					info = (<div className="users-bid-abt">
-						<div className="users-bid-abt-abt">{Utils.parseIntSafe(user[KEY.BID_AMOUNT]) / Config.TOKEN_DECIMAL} {Config.TOKEN_SYMBOL}</div>
+						<div className="users-bid-abt-mid">{Utils.parseIntSafe(user[KEY.BID_AMOUNT]) / Config.TOKEN_DECIMAL} {Config.TOKEN_SYMBOL}</div>
 					</div>);
 				} else if (user[KEY.USER_BIDS_AMOUNT] && name === 'discover' && tab === 'top') {
 					info = (<div className="users-bid-abt">
-						<div className="users-bid-abt-bid">{numBids} {numBids == 1 ? 'bid' : 'bids'}</div>
-						<div className="users-bid-abt-abt">{Utils.parseIntSafe(user[KEY.USER_BIDS_AMOUNT]) / Config.TOKEN_DECIMAL} {Config.TOKEN_SYMBOL}</div>
+						<div className="users-bid-abt-top">{numBids} {numBids == 1 ? 'bid' : 'bids'}</div>
+						<div className="users-bid-abt-bottom">{Utils.parseIntSafe(user[KEY.USER_BIDS_AMOUNT]) / Config.TOKEN_DECIMAL} {Config.TOKEN_SYMBOL}</div>
 					</div>);
 				}
 				return (

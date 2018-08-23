@@ -270,19 +270,20 @@ $messages-block-radius: 15px;
 .users {
 	.users-bid-abt {
 		position: absolute;
-		top: 16px;
 		right: 6px;
-		width: 60px;
 		font-size: 12px;
 		line-height: 15px;
 		text-align: right;
 		color: #FFFFFF;
 		opacity: 0.5;
-		&-bid {
-
+		&-top {
+			margin-top: 10px;
 		}
-		&-abt {
-
+		&-bottom {
+			margin-top: 0px;
+		}
+		&-mid {
+			margin-top: 16px;
 		}
 	}
 }
