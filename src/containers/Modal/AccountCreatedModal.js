@@ -1,6 +1,7 @@
-import React, {Component, Fragment} from 'react';
+import React, {Fragment} from 'react';
 import {Modal} from './Modal';
-
+import jsPDF from 'jspdf';
+import LocalData from '../../_services/LocalData';
 
 export class AccountCreatedModal extends Modal {
 
@@ -22,12 +23,18 @@ export class AccountCreatedModal extends Modal {
   }
 
   onClickDownload = () => {
-    alert("onClickDownload");
+    var doc = new jsPDF();
+    doc.setFontSize(13);
+    doc.text('Address: ' + LocalData.getAddress(), 25, 25);
+    doc.text('Private key:', 25, 32);
+    doc.text(LocalData.getPrivateKey(), 25, 39);
+
+    doc.save('PolyAlpha_' + LocalData.getAddress() + '.pdf');
+    
     this.openButtonRef.current.setState({disabled:false})
   };
 
   onClickOpen = () => {
-    console.log("onClickOpen");
     this.close();
   };
 
