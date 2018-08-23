@@ -125,10 +125,11 @@ const SelectProfileMenu = ({config}) => (
 	<div className="user-bar-select">
 		<div className="user-bar-select-bg" />
 		<div className="user-bar-select-menu">
-			<Link to="/settings" className="user-bar-select-menu-li">{`Eth balance: ${LocalData.getBalance()} ETH`}</Link>
-      <Link to="/settings/network" className="user-bar-select-menu-li">Change network</Link>
-      <Link to="/settings/public" className="user-bar-select-menu-li">View Public address</Link>
-      <Link to="/settings/gas" className="user-bar-select-menu-li">Set gas limit</Link>
+			<div className="user-bar-select-menu-li">{`Eth balance: ${LocalData.getBalance()} ETH`}</div>
+			<Link to="/settings" className="user-bar-select-menu-li">Settings</Link>
+      {/* <Link to="/settings/network" className="user-bar-select-menu-li">Change network</Link> */}
+      {/* <Link to="/settings/public" className="user-bar-select-menu-li">View Public address</Link> */}
+      {/* <Link to="/settings/gas" className="user-bar-select-menu-li">Set gas limit</Link> */}
 			<Link to="/auth/logout" className="user-bar-select-menu-li">Log out</Link>
 		</div>
 	</div>

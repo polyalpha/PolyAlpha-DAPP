@@ -14,6 +14,11 @@ import {MainTitle} from "..";
 import LocalData from "../../_services/LocalData";
 import {ENV} from '../../_configs/Config';
 import {ImgBg} from "..";
+import blockConnector from '../../_services/blockConnector.service';
+import {txConstants} from '../../_constants';
+import ErrorModal from "../Modal/ErrorModal";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
 
 export class SettingsLayout extends Component {
@@ -44,17 +49,66 @@ export class SettingsLayout extends Component {
 
 }
 
-export const SettingsMain = () => (
-  <SettingsLayout title="Settings">
-    <h2>{LocalData.getUsername()}, here are the configurations for your messenger.</h2>
-    <div>
-      <div className="item">Your Ethereum balance is: <b>{LocalData.getBalance()} ETH</b></div>
-      <div className="item">Your PADT token balance is: <b>{LocalData.getTokenBalance()} PADT</b></div>
-      <div className="item">You are on the <b>{ENV.NetworkName}</b></div>
-      <div className="item">Your public address is <b className="break">{LocalData.getAddress()}</b></div>
-    </div>
-  </SettingsLayout>
-);
+export class SettingsMain extends Component {
+
+	constructor(props) {
+		super(props);
+		this.state = {isCheckLoading: false, isUncheckLoading: false};
+	}
+	updateMyAvailability = async(availability) => {
+		console.log('updating availability: ' + availability);
+		let result = await blockConnector.updateAvailability(availability);
+		result.on(txConstants.ON_RECEIPT, async (receipt) => {
+			LocalData.updateUserAvailability(LocalData.getAddress(), availability.toString());
+			this.setState({isCheckLoading: false, isUncheckLoading: false});
+		}).on(txConstants.ON_ERROR, (err, txHash) => {
+			this.setState({isCheckLoading: false, isUncheckLoading: false});
+			if (err) {
+				ErrorModal.show(err.message);
+			}
+		}).on(txConstants.ON_APPROVE, (txHash) => {
+			// do nothing
+		});
+	}
+
+	enableAvailability = async() => {
+		if (!LocalData.getAvailability()) {
+			this.setState({isCheckLoading: true, isUncheckLoading: false});
+			this.updateMyAvailability(true);
+		}
+	}
+
+	disableAvailability = async() => {
+		if (LocalData.getAvailability()) {
+			this.setState({isCheckLoading: false, isUncheckLoading: true});
+			this.updateMyAvailability(false);
+		}
+	}
+
+	render() {
+		let avail = LocalData.getAvailability();
+		let discoverCheck = '/i/discover_check_' + (avail ? 'on' : 'off') + '.png';
+		let discoverUncheck = '/i/discover_uncheck_' + (avail ? 'off' : 'on') + '.png';
+		return (
+			<SettingsLayout title="Settings">
+				<h2>{LocalData.getUsername()}, here are the configurations for your messenger.</h2>
+				<div>
+					<div className="item">Your Ethereum balance is: <b>{LocalData.getBalance()} ETH</b></div>
+					<div className="item">Your PADT token balance is: <b>{LocalData.getTokenBalance()} PADT</b></div>
+					<div className="item">You are on the <b>{ENV.NetworkName}</b></div>
+					<div className="item">Your public address is <a href={ENV.ExplorerUrl + 'address/' + LocalData.getAddress()} target='_blank'>{LocalData.getAddress()}</a></div>
+					<div className="subtitle">Discover me</div>
+					<div className="item">Let others bid for my attention
+						{(this.state.isCheckLoading && <FontAwesomeIcon icon={faSpinner} spin/>)
+							|| <img src={discoverCheck} onClick={this.enableAvailability}/>}
+						{(this.state.isUncheckLoading && <FontAwesomeIcon icon={faSpinner} spin/>)
+							|| <img src={discoverUncheck} onClick={this.disableAvailability}/>}
+					</div>
+				</div>
+			</SettingsLayout>
+		);
+	}
+}
 
 
 export const SettingsPublicAddress = () => (

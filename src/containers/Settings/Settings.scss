@@ -161,8 +161,26 @@
         margin-bottom: 15px;
         b {
             color: #aa89b5;
-        }
-    }
+		}
+		a {
+			color: #aa89b5;
+			font-weight: bold;
+		}
+		img {
+			display: inline-block;
+			margin: 0px 0px -6px 20px;
+		}
+		svg {
+			display: inline-block;
+			margin: 0px 0px 0px 20px;
+		}
+	}
+	
+	.subtitle {
+		margin-top: 30px;
+		margin-bottom: 15px;
+		font-weight: bold;
+	}
 }
 
 .settings-gas {

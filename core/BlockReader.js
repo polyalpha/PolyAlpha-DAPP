@@ -92,23 +92,9 @@ class BlockReader {
             this.updateEthBalance();
 
             let userEvents = await this.userContract.getPastEvents('allEvents', {
-                filter: {},
                 fromBlock: storedBlockNumber,
                 toBlock: currentBlockNumber
             });
-            // let bidEvents_to = await this.bidContract.getPastEvents('allEvents', {
-            //     // filter: {sender: this.myAddress},
-            //     topics: [null, this.myAddressTopic],
-            //     fromBlock: storedBlockNumber,
-            //     toBlock: currentBlockNumber
-            // });
-            // let bidEvents_from = await this.bidContract.getPastEvents('allEvents', {
-            //     // filter: {receiver: this.myAddress},
-            //     topics: [null, null, this.myAddressTopic],
-            //     fromBlock: storedBlockNumber,
-            //     toBlock: currentBlockNumber
-            // });
-            // let bidEvents = this.mergeEvents(bidEvents_to, bidEvents_from);
 
             let bidEvents = await this.bidContract.getPastEvents('allEvents', {
                 fromBlock: storedBlockNumber,
@@ -141,6 +127,8 @@ class BlockReader {
                 } else if (name == 'UserProfileUpdated') {
                     LocalData.addUser(values.sender, Utils.hexToString(values.username), 
                         Utils.hexToString(values.name), Utils.hexToString(values.avatarUrl), userEvents[i].blockNumber);
+                } else if (name == 'UserAvailabilityUpdated') {
+                    LocalData.updateUserAvailability(values.sender, values.availability);
                 }
             }
 

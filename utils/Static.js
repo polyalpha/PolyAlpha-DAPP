@@ -49,6 +49,7 @@ module.exports.KEY = {
     NAME: 'n',
     ADDRESS: 'a',
     BALANCE: 'bla',
+    AVAILABLE: 'avail',
     TOKEN_BALANCE: 'tbla',
     AVATAR_URL: 'au',
     PRIVATE_KEY: 'pk',

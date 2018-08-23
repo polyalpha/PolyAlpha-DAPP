@@ -122,16 +122,21 @@ class LocalData {
     }
 
     static updateUserAvailability(address, available) {
-        let user = this.getObjectItem(address);
-        let users = this.getArrayItem(Static.KEY.USER_LIST);
-        if (available) {
-            if (user[Static.KEY.BID_STATUS] == Static.BidStatus.NOBID) {
-                users.push(address);
-            }
+        address = address.toLowerCase();
+        if (address == this.getAddress()) {
+            this.setItem(Static.KEY.AVAILABLE, available);
         } else {
-            users.remove(address);
+            let user = this.getObjectItem(address);
+            let users = this.getArrayItem(Static.KEY.USER_LIST);
+            if (available) {
+                if (user[Static.KEY.BID_STATUS] == Static.BidStatus.NOBID) {
+                    users.push(address);
+                }
+            } else {
+                users.remove(address);
+            }
+            this.setObjectItem(Static.KEY.USER_LIST, users);
         }
-        this.setObjectItem(Static.KEY.USER_LIST, users);
     }
 
     /// Cancel a bid that you have sent
@@ -410,6 +415,11 @@ class LocalData {
         let value = new BigNumber(valueString);
         value = value.div(Config.TOKEN_DECIMAL);
         return value.toString();
+    }
+
+    static getAvailability() {
+        // default availability is true
+        return (this.getItem(Static.KEY.AVAILABLE) != 'false' && this.getItem(Static.KEY.AVAILABLE) != 'null');
     }
 
     
