@@ -10,10 +10,8 @@ import Utils from '../../_helpers/Utils';
 import blockReader from '../../_services/blockReader.service';
 import blockConnector from '../../_services/blockConnector.service';
 import ErrorModal from '../Modal/ErrorModal';
-import InfoModal from '../Modal/InfoModal';
 import {AccountCreatedModal} from '../Modal/AccountCreatedModal'
 import {userActions} from '../../_actions';
-import jsPDF from 'jspdf';
 import {ENV} from '../../_configs/Config';
 
 class SignupForm extends Component {
@@ -33,35 +31,8 @@ class SignupForm extends Component {
 		};
 	}
 
-	componentDidMount() {
-		// LocalData.isAccountGenerated() && this.showInfoModal()
-	}
-
 	showInfoModal() {
-// <<<<<<< HEAD
-// 		InfoModal.show('New account generated successfully', (<div><p>We have just created a new Ethereum account for you.</p>
-// 			<p>Ethereum address: <b className="break">{LocalData.getAddress()}</b></p>
-// 			<p>Private key: <b className="break">{LocalData.getPrivateKey()}</b></p>
-// 			<p>Your private key can be used to login into your account later on. It will be showed only once,
-// 				please save it somewhere safe.</p>
-// 		</div>), "Download account details", "Open PolyAlpha Messenger", true, 
-// 			() => {
-// 				// action handler: Save pdf file
-// 				var doc = new jsPDF();
-// 				doc.setFontSize(13);
-// 				doc.text('Address: ' + LocalData.getAddress(), 25, 25);
-// 				doc.text('Private key:', 25, 32);
-// 				doc.text(LocalData.getPrivateKey(), 25, 39);
-
-// 				doc.save('PolyAlpha_' + LocalData.getAddress() + '.pdf');
-// 			}, () => {
-// 				// close handler
-// 				// go to chats
-// 				history.push("/chat/discover");
-// 			});
-// =======
-    AccountCreatedModal.show();
-// >>>>>>> mobile
+    	AccountCreatedModal.show();
 	}
 
 	selectAvatar = (i) => {
@@ -81,9 +52,6 @@ class SignupForm extends Component {
 		if (available) {
 			if (LocalData.getAddress() == "") {
 				// fetch a new private key
-				console.log('Getting an account from server');
-				console.log(ENV.ApiHost);
-				console.log(ENV.ApiHost + '/api/index.php/getkey');
 				let apiResult = await fetch(ENV.ApiHost + '/api/index.php/getkey');
 				let key;
 				if (apiResult.status == 200) {
@@ -138,18 +106,6 @@ class SignupForm extends Component {
 	render() {
 		return (
 			<Form onSubmit={this.handleSubmit}>
-				{/* <div className="row">
-					<div className="form-row">
-						<label>Ethereum address</label>
-						<Input
-							disabled
-							type="text"
-							name="username"
-							value={LocalData.getAddress()}
-							className="input"
-						/>
-					</div>
-				</div> */}
 				<div className="row">
 					<div className="form-row">
 						<label>Username</label>
