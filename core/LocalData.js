@@ -217,7 +217,7 @@ class LocalData {
         }
     }
 
-    static addBid(userAddress, message, tokenAmount, bidType, blockNumber) {
+    static addBid(userAddress, message, tokenAmount, bidType, bidTxHash, blockNumber) {
         userAddress = userAddress.toLowerCase();
 
         let arrayKey = Static.KEY.BIDS;
@@ -239,6 +239,7 @@ class LocalData {
             user[Static.KEY.BID_TYPE] = bidType;
             user[Static.KEY.BID_STATUS] = Static.BidStatus.CREATED;
             user[Static.KEY.BID_AMOUNT] = tokenAmount;
+            user[Static.KEY.BID_TXHASH] = bidTxHash;
             user[Static.KEY.USER_BLOCKNUMBER] = blockNumber;
             user[Static.KEY.BID_MESSAGE] = this.decryptMessage(userAddress, message);
             

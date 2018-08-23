@@ -118,14 +118,15 @@ export class Chats extends Component {
 		console.log({user})
 
 		this.messageElements = [
-			<Message my={mine} bid={bidAmount} isEarned={false} key={1}>{user[KEY.BID_MESSAGE]}</Message>,
+			<Message my={mine} bid={bidAmount} txHash={user[KEY.BID_TXHASH]} isEarned={false} key={1}>{user[KEY.BID_MESSAGE]}</Message>,
 		];
 
 		if (messages && messages.length) {
 			for (let i=0;i<messages.length;i++) {
 				let mine = messages[i][KEY.MESSAGE_TYPE] === MsgType.TO;
 				console.log(messages[i])
-				this.messageElements.push(<Message key={2 + i} my={mine} status={messages[i][KEY.MESSAGE_STATUS]}>{messages[i][KEY.MESSAGE_CONTENT]}</Message>);
+				this.messageElements.push(<Message key={2 + i} my={mine} txHash={messages[i][KEY.MESSAGE_TXHASH]} 
+					status={messages[i][KEY.MESSAGE_STATUS]}>{messages[i][KEY.MESSAGE_CONTENT]}</Message>);
 			}
 		}
 

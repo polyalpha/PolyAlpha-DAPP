@@ -145,9 +145,9 @@ class BlockReader {
                 values.receiver = values.receiver.toLowerCase();
                 if (name == 'BidCreated') {
                     if (values.sender == this.myAddress) {
-                        LocalData.addBid(values.receiver, values.message, values.tokenAmount, Static.BidType.TO, blockNumber);
+                        LocalData.addBid(values.receiver, values.message, values.tokenAmount, Static.BidType.TO, txHash, blockNumber);
                     } else if (values.receiver == this.myAddress) {
-                        LocalData.addBid(values.sender, values.message, values.tokenAmount, Static.BidType.FROM, blockNumber);
+                        LocalData.addBid(values.sender, values.message, values.tokenAmount, Static.BidType.FROM, txHash, blockNumber);
                     }
                     LocalData.increaseBid(values.sender, values.receiver, values.tokenAmount);
                 } else if (name == 'BidCancelled') {

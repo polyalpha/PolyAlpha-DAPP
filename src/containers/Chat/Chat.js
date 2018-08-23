@@ -12,7 +12,7 @@ import {KEY, MsgStatus} from '../../_constants/Static';
 import Utils from '../../_helpers/Utils';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-import Config from '../../_configs/Config';
+import Config, { ENV } from '../../_configs/Config';
 import {Browser, Mobile} from "..";
 import LocalData from '../../_services/LocalData';
 import Static from '../../_services/Static';
@@ -343,13 +343,15 @@ class Chat extends Component {
 }
 
 
-export const Message = ({children, my, bid, isEarned, button, className, status = MsgStatus.SENT}) => (
+export const Message = ({children, my, bid, txHash, isEarned, button, className, status = MsgStatus.SENT}) => (
 	<div className={classNames([className, "chat-message", {"chat-message-my": my, "chat-message-bid": !!bid}])}>
 		<div className="chat-message-block">
-			<div className="chat-message-block-message">
-				<div className="message-text">{children}</div>
-				{bid && <AbtValue value={bid} isEarned={isEarned} className="chat-message-block-abt"/>}
-			</div>
+			<a href={ENV.ExplorerUrl + 'tx/' + txHash} target='_blank'>
+				<div className="chat-message-block-message">
+					<div className="message-text">{children}</div>
+					{bid && <AbtValue value={bid} isEarned={isEarned} className="chat-message-block-abt"/>}
+				</div>
+			</a>
 			<div style={{fontSize: '0.7em'}}>{status === MsgStatus.SENT ? "" : "sending..."}</div>
 			{button &&  (
 				<div className="chat-message-buttons">
