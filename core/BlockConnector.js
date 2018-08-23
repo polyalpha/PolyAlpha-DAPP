@@ -127,22 +127,7 @@ class BlockConnector {
             await method.send({from: this.accounts[fromAccountId], gas: this.defaultGas});
         } else {
             let emitter = this.transactionManager.executeMethod(method);
-            // console.log('transaction emitter');
-            // console.log(emitter);
-            // emitter.on(txConstants.ON_APPROVE, (txHash) => {
-            //     console.log('fuck approve');
-            //     console.log(txHash);
-            // }).on(txConstants.ON_RECEIPT, (receipt) => {
-            //     console.log('received receipt');
-            //     console.log(receipt);
-            // }).on(txConstants.ON_ERROR, (err, data) => {
-            //     console.log('received error');
-            //     console.log(err);
-            // }).on(txConstants.ON_REJECT, (txHash) => {
-            //     console.log('fuck reject');
-            //     console.log(txHash);
-            // });
-            return emitter; //this.transactionManager.executeMethod(method);;
+            return emitter;
         }
     }
 
