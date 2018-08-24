@@ -112,7 +112,6 @@ class Bids extends Component  {
 			bidUsers = LocalData.getUsers(bidAddresses);
 		}
 
-
 		this.sidebar = {
 			name: "bids",
 			tab: match.params.tab,
@@ -162,7 +161,7 @@ class Bids extends Component  {
 
 		return (
 			<ChatLayout {...this.props} sidebar={this.sidebar} back="/chat/bids" more={true}>
-				{this.props.match.params.id && <MessagesBlock ref={(messagesBlock) => this.messagesBlock = messagesBlock } messages={messages} onMessageChanged={this.onMessageChanged}/>}
+				{this.props.match.params.id && <MessagesBlock isInputDisabled={this.props.match.params.tab == 'sent'} ref={(messagesBlock) => this.messagesBlock = messagesBlock } messages={messages} onMessageChanged={this.onMessageChanged}/>}
 			</ChatLayout>
 		)
 	}

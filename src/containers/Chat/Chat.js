@@ -25,15 +25,16 @@ export const MessageContext = React.createContext("");
 
 export class MessagesBlock extends Component {
 
-	state = {
-		message: "",
-		isLoading: false,
-		isInputDisabled: false,
-	};
-
 	constructor(props) {
 		super(props);
 		this.scrollToBottom = this.scrollToBottom.bind(this);
+
+		this.state = {
+			message: "",
+			isLoading: false,
+			isInputDisabled: (this.props.isInputDisabled ? this.props.isInputDisabled : false),
+		};
+
 		const parent = this;
 		this.children = React.Children.map(this.props.children, child => {
 			return React.cloneElement(child, {parent});
