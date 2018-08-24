@@ -36,6 +36,7 @@ class Bids extends Component  {
 	}
 
 	componentWillReceiveProps(props) {
+		this.setState({message: "", isAcceptButtonDisabled: true, isLoading: false});
 		this.loadProps(props);
 	}
 
@@ -97,7 +98,11 @@ class Bids extends Component  {
 		}
 	}
 
-	loadProps(props) {
+	loadProps(props, fromUpdateProps) {
+		if (fromUpdateProps) {
+			this.setState({});
+		}
+
 		let {match, users} = props;
 
 		match.params.tab = match.params.tab || sideBarTabs[0].name;
@@ -127,18 +132,9 @@ class Bids extends Component  {
 			}
 		}
 
-		// Redirect if id not exists
-		// if (!idExists) {
-		// 	// Automatically select first user if bidAddresses.length > 0
-		//
-		// 	if (bidAddresses.length > 0) {
-		// 		history.push('/chat/bids/' + match.params.tab + "/" + bidAddresses[0]);
-		// 	} else {
-		// 		if (match.params.id != undefined && match.params.id != "") {
-		// 			history.push('/chat/bids/' + match.params.tab);
-		// 		}
-		// 	}
-		// }
+		if (!idExists && match.params.id != undefined && match.params.id.length > 0) {
+			history.push('/chat/bids/' + match.params.tab);
+		}
 	}
 
 	render() {

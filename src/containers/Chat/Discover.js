@@ -15,6 +15,7 @@ import {txConstants} from '../../_constants';
 import ErrorModal from '../Modal/ErrorModal';
 import Config from '../../_configs/Config';
 import BigNumber from 'big-number';
+import {history} from '../../_helpers/history';
 
 
 const abcValidator = (value) => {
@@ -73,18 +74,20 @@ export class CreateNewBid extends Component {
 		let user = LocalData.getUser(this.state.userId);
 		let secret = Utils.computeSecret(Buffer.from(LocalData.getPrivateKey(), 'hex'),
 			Buffer.from('04' + user[KEY.USER_PUBKEY], 'hex'));
-		let encryptedMessage = Utils.encrypt(message, secret);
+		let encryptedMessage = '0x' + Utils.encrypt(message, secret);
 
 		let sentAmount = Utils.parseIntSafe(bid) * TOKEN_DECIMAL;
 		let tokenBalance = Utils.parseIntSafe(await blockConnector.getTokenBalance(LocalData.getAddress()));
 
 		if (tokenBalance >= sentAmount) {
 			let result = await blockConnector.createBid(this.state.userId,
-				sentAmount, '0x' + encryptedMessage);
+				sentAmount, encryptedMessage);
 			result.on(txConstants.ON_APPROVE, (txHash) => {
 				// Don't need to do anything
 			}).on(txConstants.ON_RECEIPT, (receipt) => {
 				// this.setState({isSubmitted: true});
+				// LocalData.addBid(this.state.userId, encryptedMessage, sentAmount, Static.BidType.TO, receipt.transactionHash);
+				// history.push('chat/bids/sent/' + this.state.userId);
 			}).on(txConstants.ON_ERROR, (err, txHash) => {
 				// Show error
 				this.setState({isLoading: false});
@@ -260,16 +263,9 @@ class Discover extends Component {
 			}
 		}
 
-		// // Redirect if id not exists
-		// if (!idExists) {
-		// 	// Automatically select first user if newAddresses.length > 0
-		// 	if (this.props.device.isBrowser && match.params.tab === "new" && newAddresses.length > 0) {
-		// 		history.push('/chat/discover/' + match.params.tab + "/" + newAddresses[0]);
-		// 	} else if (!match.params.id) {
-		// 		const path = '/chat/discover/' + match.params.tab;
-		// 		path !== this.props.location.pathname && history.push(path);
-		// 	}
-		// }
+		if (!idExists && match.params.id != undefined && match.params.id.length > 0) {
+			history.push('/chat/discover/' + match.params.tab);
+		}
 	}
 
 	render() {
