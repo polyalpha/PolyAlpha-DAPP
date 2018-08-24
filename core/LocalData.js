@@ -15,6 +15,13 @@ Array.prototype.remove = function() {
     return this;
 };
 
+Array.prototype.pushWithoutDuplicate = function(object) {
+    let index = this.indexOf(object);
+    if (index == -1) {
+        this.push(object);
+    }
+}
+
 
 
 class LocalData {
@@ -103,7 +110,7 @@ class LocalData {
             this.setObjectItem(address, user);
             
             let userList = this.getArrayItem(Static.KEY.USER_LIST);
-            userList.push(address);
+            userList.pushWithoutDuplicate(address);
             this.setObjectItem(Static.KEY.USER_LIST, userList);
         }
     }
@@ -130,7 +137,7 @@ class LocalData {
             let users = this.getArrayItem(Static.KEY.USER_LIST);
             if (available) {
                 if (user[Static.KEY.BID_STATUS] == Static.BidStatus.NOBID) {
-                    users.push(address);
+                    users.pushWithoutDuplicate(address);
                 }
             } else {
                 users.remove(address);
@@ -153,7 +160,7 @@ class LocalData {
             this.setObjectItem(Static.KEY.MY_BIDS, myBids);
 
             let users = this.getArrayItem(Static.KEY.USER_LIST);
-            users.push(toAddress);
+            users.pushWithoutDuplicate(toAddress);
             this.setObjectItem(Static.KEY.USER_LIST, users);
         }
     }
@@ -179,7 +186,7 @@ class LocalData {
             this.setObjectItem(Static.KEY.BIDS, bids);
 
             let users = this.getArrayItem(Static.KEY.USER_LIST);
-            users.push(address);
+            users.pushWithoutDuplicate(address);
             this.setObjectItem(Static.KEY.USER_LIST, users);
         }
     }
@@ -209,7 +216,7 @@ class LocalData {
             this.setObjectItem(arrayKey, bids);
 
             let accepteds = this.getArrayItem(Static.KEY.ACCEPTED_BIDS);
-            accepteds.push(address);
+            accepteds.pushWithoutDuplicate(address);
             this.setObjectItem(Static.KEY.ACCEPTED_BIDS, accepteds);
 
             this.addMessage(address, message, txHash, Static.MsgStatus.SENT, 
@@ -229,7 +236,7 @@ class LocalData {
             let user = this.getObjectItem(userAddress);
 
             let addresses = this.getArrayItem(arrayKey);
-            addresses.push(userAddress);
+            addresses.pushWithoutDuplicate(userAddress);
             this.setObjectItem(arrayKey, addresses);
 
             let users = this.getArrayItem(Static.KEY.USER_LIST);
