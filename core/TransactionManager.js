@@ -56,6 +56,7 @@ class TransactionsManager {
         emitter.emit(txConstants.ON_APPROVE, txHash);
         this.web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'))
                 .on('receipt', (receipt) => {
+                    // The web3 version 1.0.0-beta.34 keeps sending receipt after the transaction get confirmed
                     this.updatePendingTx(this.numPendingTx-1);
                     emitter.emit(txConstants.ON_RECEIPT, receipt);
                 }).on('error', (err, txHash) => {
