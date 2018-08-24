@@ -6,7 +6,9 @@ export const logout = () => {
 	const c = (props) => 
 	{
 		localStorage.clear();
-		window.location.reload();
+		setTimeout(() => {
+			window.location.reload();
+		}, 500);
 		return(
 			<Redirect to={{ pathname: '/auth', state: { from: props.location } }} />
 		);
