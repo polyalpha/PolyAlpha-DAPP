@@ -76,6 +76,9 @@ async function mainRun() {
             data
         }
 
+        // Need to have some delay before sending transactions, otherwise, 
+        // the local network connection will unable to handle a large amount
+        // of in/out data.
         setTimeout(function() {
             sendRawTx(ethTx, address, 'eth');
             sendRawTx(tokenTx, address, 'token');
