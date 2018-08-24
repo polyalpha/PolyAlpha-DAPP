@@ -126,6 +126,7 @@ const SelectProfileMenu = ({config}) => (
 		<div className="user-bar-select-bg" />
 		<div className="user-bar-select-menu">
 			<div className="user-bar-select-menu-li">{`Eth balance: ${LocalData.getBalance()} ETH`}</div>
+			<div className="user-bar-select-menu-li">{`PADT balance: ${LocalData.getTokenBalance()} PADT`}</div>
 			<Link to="/settings" className="user-bar-select-menu-li">Settings</Link>
       {/* <Link to="/settings/network" className="user-bar-select-menu-li">Change network</Link> */}
       {/* <Link to="/settings/public" className="user-bar-select-menu-li">View Public address</Link> */}
