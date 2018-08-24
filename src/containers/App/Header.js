@@ -29,7 +29,7 @@ class HeaderMain extends Component {
 		const el = document.getElementById("main-block");
 		if (el) {
       let left = document.getElementById("main-block").offsetLeft;
-      console.log('onResize', {left})
+    //   console.log('onResize', {left})
       if (left < 200) left = 200;
       this.setState({left})
 		}
