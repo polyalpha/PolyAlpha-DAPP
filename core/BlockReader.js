@@ -129,7 +129,7 @@ class BlockReader {
                         Utils.hexToString(values.username), Utils.hexToString(values.name), Utils.hexToString(values.avatarUrl), 
                         userEvents[i].blockNumber);
                 } else if (name == 'UserProfileUpdated') {
-                    LocalData.addUser(values.sender, Utils.hexToString(values.username), 
+                    LocalData.updateUserProfile(values.sender, Utils.hexToString(values.username), 
                         Utils.hexToString(values.name), Utils.hexToString(values.avatarUrl), userEvents[i].blockNumber);
                 } else if (name == 'UserAvailabilityUpdated') {
                     LocalData.updateUserAvailability(values.sender, values.availability);
