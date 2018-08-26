@@ -174,8 +174,9 @@ module.exports = {
             loader: require.resolve('babel-loader'),
             options: {
               // @remove-on-eject-begin
-              babelrc: true,
-              presets: [require.resolve('babel-preset-react-app')],
+              babelrc: false,
+              presets: [require.resolve('babel-preset-es2015')],
+              plugins: ["transform-decorators-legacy", "transform-react-jsx", "transform-class-properties", "transform-object-rest-spread"],
               // @remove-on-eject-end
               compact: true,
             },
