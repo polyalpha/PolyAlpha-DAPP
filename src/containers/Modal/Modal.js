@@ -5,7 +5,47 @@ import {Svg} from "../App/Svg";
 import "./Modal.scss"
 import {history} from "../../_helpers";
 
+const ModalLayout = ({className, hideClose, close, children}) => (
+  <div className={classNames(["modal-container", className])}>
+    <div className="window">
+      <div className="block">
+        {!hideClose && (
+          <div className="close">
+            <Svg id="svg-close" onClick={close} />
+          </div>
+        )}
+        {children}
+      </div>
+    </div>
+  </div>
+);
 
+class ModalButton extends Component {
+
+  state = {
+    disabled: false
+  };
+
+  constructor(props) {
+    super(props);
+    this.state.disabled = props.disabled;
+  }
+
+  render() {
+    const {className, onClick, disabled, title, ...props} = this.props;
+    return (
+      <button
+        className={classNames("button", className)}
+        onClick={this.props.onClick}
+        disabled={this.state.disabled}
+        {...props}
+      >
+        {title}
+      </button>
+    )
+  }
+
+}
 
 export class Modal extends Component {
 
@@ -57,48 +97,6 @@ export class Modal extends Component {
         </div>
         {buttons && buttons.length > 0 && <div className="actions">{buttons}</div>}
       </ModalLayout>
-    )
-  }
-
-}
-
-const ModalLayout = ({className, hideClose, close, children}) => (
-  <div className={classNames(["modal-container", className])}>
-    <div className="window">
-      <div className="block">
-        {!hideClose && (
-          <div className="close">
-            <Svg id="svg-close" onClick={close} />
-          </div>
-        )}
-        {children}
-      </div>
-    </div>
-  </div>
-);
-
-class ModalButton extends Component {
-
-  state = {
-    disabled: false
-  };
-
-  constructor(props) {
-    super(props);
-    this.state.disabled = props.disabled;
-  }
-
-  render() {
-    const {className, onClick, disabled, title, ...props} = this.props;
-    return (
-      <button
-        className={classNames("button", className)}
-        onClick={this.props.onClick}
-        disabled={this.state.disabled}
-        {...props}
-      >
-        {title}
-      </button>
     )
   }
 
