@@ -126,8 +126,8 @@ const SelectProfileMenu = ({config}) => (
 	<div className="user-bar-select">
 		<div className="user-bar-select-bg" />
 		<div className="user-bar-select-menu">
-			<Link to={ENV.ExplorerUrl + 'address/' + LocalData.getAddress} className="user-bar-select-menu-li">{`Eth balance: ${LocalData.getBalance()} ETH`}</Link>
-			<Link to={ENV.ExplorerUrl + 'address/' + LocalData.getAddress} className="user-bar-select-menu-li">{`PADT balance: ${LocalData.getTokenBalance()} PADT`}</Link>
+			<a target='_blank' href={ENV.ExplorerUrl + 'address/' + LocalData.getAddress()} className="user-bar-select-menu-li">{`Eth balance: ${LocalData.getBalance()} ETH`}</a>
+			<a target='_blank' href={ENV.ExplorerUrl + 'address/' + LocalData.getAddress()} className="user-bar-select-menu-li">{`PADT balance: ${LocalData.getTokenBalance()} PADT`}</a>
 			<Link to="/settings" className="user-bar-select-menu-li">Settings</Link>
       {/* <Link to="/settings/network" className="user-bar-select-menu-li">Change network</Link> */}
       {/* <Link to="/settings/public" className="user-bar-select-menu-li">View Public address</Link> */}
