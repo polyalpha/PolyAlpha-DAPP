@@ -85,11 +85,16 @@ class BlockReader {
     }
 
     async readEvents() {
+        console.log('readEvents');
         // only need to wait for transaction confirmations on main net.
         let confirmationWait = (ENV.EthNetworkId != 1) ? 0 : 1;
 
         let storedBlockNumber = Utils.parseIntSafe(LocalData.getLastBlockNumber());
+        if (storedBlockNumber == 0) {
+            storedBlockNumber = 2800664;
+        }
         let currentBlockNumber = Utils.parseIntSafe(await this.web3.eth.getBlockNumber()) - confirmationWait;
+        console.log(currentBlockNumber);
 
         if (storedBlockNumber < currentBlockNumber) {
             console.log('reading events from: ' + storedBlockNumber + ' to ' + currentBlockNumber);
