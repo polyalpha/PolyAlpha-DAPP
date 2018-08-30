@@ -261,6 +261,12 @@ class Discover extends Component {
 					idExists = true;
 				}
 			}
+		} else if (match.params.tab === "top") {
+			for (let i = 0; i < topUsers.length; i++) {
+				if (topUsers[i][KEY.USER_ADDRESS] === match.params.id) {
+					idExists = true;
+				}
+			}
 		}
 
 		if (!idExists && match.params.id != undefined && match.params.id.length > 0) {
