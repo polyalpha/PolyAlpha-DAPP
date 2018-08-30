@@ -8,9 +8,6 @@ const ErrorModal = require('../containers/Modal/ErrorModal').default;
 let blockReader = new BlockReader(web3, ENV.ContractAddress, updateHandler, errorHandler);
 
 function updateHandler() {
-    console.log('events update handler');
-    
-    console.log(store);
     store.dispatch(userActions.updateUserList());
 }
 

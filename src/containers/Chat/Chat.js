@@ -315,7 +315,7 @@ class Chat extends Component {
 
 	onResize = (e) => {
 		const y = window.innerHeight - 73;
-		console.log({y})
+		// console.log({y})
 
 	};
 

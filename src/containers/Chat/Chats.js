@@ -51,7 +51,6 @@ export class Chats extends Component {
 
 	loadUser = (props, fromUpdateProps) => {
 		let userId = props.match.params.id;
-		console.log({userId})
 
 		let chatAddresses = props.users.chatAddresses;
 		let chatUsers = LocalData.getUsers(chatAddresses);
@@ -98,8 +97,6 @@ export class Chats extends Component {
 			LocalData.addMessage(this.state.userId, encryptedMessage, txHash, MsgStatus.FAILED, MsgType.TO);
 			this.setState({messages: LocalData.getUser(this.state.userId)[KEY.MESSAGES]});
 		})
-		console.log('send message result')
-		console.log(result);
 	}
 
 	checkUsername = (user) => {
@@ -115,8 +112,6 @@ export class Chats extends Component {
 		let bidAmount = parseInt(user[KEY.BID_AMOUNT] / TOKEN_DECIMAL);
 		let mine = user[KEY.BID_TYPE] === BidType.TO;
 
-		console.log({user})
-
 		this.messageElements = [
 			<Message my={mine} bid={bidAmount} txHash={user[KEY.BID_TXHASH]} isEarned={false} key={1}>{user[KEY.BID_MESSAGE]}</Message>,
 		];
@@ -124,7 +119,6 @@ export class Chats extends Component {
 		if (messages && messages.length) {
 			for (let i=0;i<messages.length;i++) {
 				let mine = messages[i][KEY.MESSAGE_TYPE] === MsgType.TO;
-				console.log(messages[i])
 				this.messageElements.push(<Message key={2 + i} my={mine} txHash={messages[i][KEY.MESSAGE_TXHASH]} 
 					status={messages[i][KEY.MESSAGE_STATUS]}>{messages[i][KEY.MESSAGE_CONTENT]}</Message>);
 			}

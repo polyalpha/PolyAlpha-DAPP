@@ -54,7 +54,6 @@ export class AccountCreatedModal extends Modal {
   };
 
   componentDidMount() {
-    console.log("componentDidMount", this)
   }
 
 }

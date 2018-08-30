@@ -41,7 +41,6 @@ class SignupForm extends Component {
 	};
 
 	handleSubmit = async(e) => {
-		console.log(this.state);
 		e.preventDefault();
 
 		this.setState({isLoading: true})
@@ -60,8 +59,6 @@ class SignupForm extends Component {
 					blockConnector.setAccounts([{secretKey: Buffer.from(LocalData.getPrivateKey(), 'hex'), address: LocalData.getAddress()}]);
 				}
 			}
-
-			console.log('send form');
 
 			let result = await blockConnector.register(this.state.username, this.state.displayName, this.state.avatarUrl);
 

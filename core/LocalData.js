@@ -255,7 +255,6 @@ class LocalData {
     }
 
     static increaseBid(fromAddress, toAddress, amount) {
-        console.log('increase bid: ' + fromAddress + ' : ' + toAddress);
         this.updateBid(toAddress, amount, 1);
 
         let bidKey = fromAddress.substring(2, 8) + toAddress.substring(2, 8);
@@ -263,7 +262,6 @@ class LocalData {
     }
 
     static decreaseBid(fromAddress, toAddress) {
-        console.log('decrease bid: ' + fromAddress + ' : ' + toAddress);
         let bidKey = fromAddress.substring(2, 8) + toAddress.substring(2, 8);
         let amount = this.getItem(bidKey);
 

@@ -28,7 +28,6 @@ export class SettingsLayout extends Component {
   };
 
 	render() {
-    console.log("render Settings", this.props.route, this.props.children);
     return (
       <div className={classNames("settings-block", this.props.className)}>
         {this.props.title && <MainTitle>{this.props.title}</MainTitle>}
