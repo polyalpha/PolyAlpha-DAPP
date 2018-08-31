@@ -21,6 +21,15 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>PolyAlpha Proof of Concept</title>
+    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+    <script>
+      var OneSignal = window.OneSignal || [];
+      OneSignal.push(function() {
+        OneSignal.init({
+          appId: "d11b1194-c07b-4152-906c-3950722ea81d",
+        });
+      });
+    </script>
   </head>
   <body>
     <noscript>
