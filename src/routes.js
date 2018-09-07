@@ -32,19 +32,19 @@ const routes = [
 						path: '/auth',
 						exact: true,
 						component: withAuth(Auth),
-						title: "Auth"
+						title: "Hello!"
 					},
 					{
 						path: '/auth/signup',
 						exact: true,
 						component: withAuth(Signup),
-						title: "Signup",
+						title: "Hello!",
 					},
 					{
 						path: '/auth/signin',
 						exact: true,
 						component: withAuth(Auth),
-						title: "Login",
+						title: "Hello!",
 					},
 					{
 						path: '/auth/logout',
