@@ -13,6 +13,7 @@ import ErrorModal from '../Modal/ErrorModal';
 import {AccountCreatedModal} from '../Modal/AccountCreatedModal'
 import {userActions} from '../../_actions';
 import {ENV} from '../../_configs/Config';
+import $ from "jquery"
 
 class SignupForm extends Component {
 	constructor(props) {
@@ -99,6 +100,23 @@ class SignupForm extends Component {
 			return "false";
 		}
 	}
+
+	componentDidMount() {
+	  window.addEventListener("resize", this.resizeAvatars)
+    $(this.resizeAvatars)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.resizeAvatars)
+  }
+
+	resizeAvatars = () => {
+	  let x = window;
+    let m = 104, w = (x.innerWidth - 24*2 - 8*2)/3-2;
+    if (w>m) w = m;
+    console.log(m);
+    $(".select-avatar .avatar").css({width: w, height: w})
+  };
 
 	render() {
 		return (
