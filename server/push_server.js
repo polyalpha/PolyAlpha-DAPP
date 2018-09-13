@@ -72,7 +72,7 @@ var sendNotification = function(message, userAddress) {
 
 var processEventsLoop = async function() {
   await processEvents();
-  // setTimeout(processEventsLoop, 5000);
+  setTimeout(processEventsLoop, 3000);
 }
 
 var processEvents = async function() {
@@ -121,8 +121,8 @@ var processEvents = async function() {
       let message = 'You received a message from ' + Utils.hexToString(sender[2]);
       sendNotification(message, values.receiver);
     }
-    storedBlockNumber = currentBlockNumber;
-    storeBlockNumber(currentBlockNumber);
+    storedBlockNumber = currentBlockNumber + 1;
+    storeBlockNumber(storedBlockNumber);
   }
 }
 
