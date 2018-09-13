@@ -71,3 +71,5 @@ ethereum/build/
 ethereum/gen/
 
 .idea
+
+server/currentBlock.txt
