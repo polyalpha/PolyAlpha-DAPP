@@ -16,6 +16,7 @@ import ErrorModal from '../Modal/ErrorModal';
 import Config from '../../_configs/Config';
 import BigNumber from 'big-number';
 import {history} from '../../_helpers/history';
+import oneSignal from '../../_services/oneSignal.service';
 
 
 const abcValidator = (value) => {
@@ -206,6 +207,10 @@ class Discover extends Component {
 
 	componentWillReceiveProps(props) {
 		this.loadProps(props);
+	}
+
+	componentDidMount() {
+		oneSignal.initialize();
 	}
 
 	compareUserByTotalBid(a, b) {

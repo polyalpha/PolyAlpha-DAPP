@@ -11,8 +11,8 @@ module.exports.NETWORK_LIST = [
         id: 4,
         name: 'Rinkeby Test Network',
         explorerUrl: 'https://rinkeby.etherscan.io/',
-        // providerUrl: 'https://rinkeby.infura.io/mwjFDyYH5IAp9wbvZpT8',
-        providerUrl: 'https://poc.polyalpha.io:8123',
+        providerUrl: 'https://rinkeby.infura.io/mwjFDyYH5IAp9wbvZpT8',
+        // providerUrl: 'https://poc.polyalpha.io:8123',
         contractAddress: '0xbE233C4bc5C4e4f0c9C7D2B1908047dC51F98748',
         tokenContractAddress: '0x9c2fA57F790e14dD686146CC4cdAfB4e87d90F2B',
         userContractAddress: '0xa089E99E3FcDc262Ad681323DCCA4f48597412bF',
@@ -25,6 +25,7 @@ module.exports.NETWORK_LIST = [
 module.exports.TOKEN_DECIMAL = 100000000; // 8 decimals
 module.exports.TOKEN_SYMBOL = 'PADT';
 module.exports.TOKEN_NAME = 'PolyAlpha Demo token';
+module.exports.PUSH_APP_ID = '46982f9a-7dff-40d2-99e1-a295b33ab2dd';
 
 module.exports.ENV = {
     get ContractAddress() {
@@ -65,7 +66,7 @@ module.exports.ENV = {
 
     getProperty(propertyName) {
         var network = this.EthNetworkId;
-        // console.log('current network: ' + network + '::' + localStorage.ethNetwork);
+        // console.log('current network: ' + network);
         for (var i=0;i<module.exports.NETWORK_LIST.length;i++) {
             if (network == module.exports.NETWORK_LIST[i].id) {
                 return module.exports.NETWORK_LIST[i][propertyName];
@@ -87,10 +88,11 @@ module.exports.ENV = {
     },
 
     get EthNetworkId() {
-        if (typeof(Storage) !== 'undefined' || localStorage.ethNetwork == undefined) {
+        if (typeof(Storage) !== 'undefined' && localStorage.ethNetwork != undefined) {
+            console.log('has storage');
             return parseInt(localStorage.ethNetwork);
         } else {
-            return 0;
+            return 4;
         }
     }
 }
