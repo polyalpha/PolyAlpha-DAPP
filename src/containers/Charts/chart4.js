@@ -84,7 +84,7 @@ class Chart4 extends React.Component {
     labels: this.state.timestamp,
     datasets: [
       {
-        label: 'Accumulative Gas Used',
+        label: 'Accumulative Gas Used = '+this.state.accgasarray[this.state.accgasarray.length-1],
         fill: false,
         lineTension: 0.1,
         backgroundColor: 'orange',

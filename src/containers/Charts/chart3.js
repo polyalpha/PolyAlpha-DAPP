@@ -82,7 +82,7 @@ class Chart3 extends React.Component {
     labels: this.state.timestamp,
     datasets: [
       {
-        label: 'Accumulative Interctions',
+        label: 'Accumulative Interactions = '+this.state.transarr[this.state.transarr.length-1],
         fill: false,
         lineTension: 0.1,
         backgroundColor: 'orange',

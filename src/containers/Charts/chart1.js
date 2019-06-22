@@ -87,7 +87,7 @@ class Chart1 extends React.Component {
     labels: this.state.timestamp,
     datasets: [
       {
-        label: 'Accumulative Gas Fees',
+        label: 'Accumulative Gas Fees = '+this.state.cumgasprices[this.state.cumgasprices.length-1],
         fill: false,
         lineTension: 0.1,
         backgroundColor: 'orange',
