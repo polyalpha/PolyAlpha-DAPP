@@ -126,6 +126,8 @@ const SelectProfileMenu = ({config}) => (
 	<div className="user-bar-select">
 		<div className="user-bar-select-bg" />
 		<div className="user-bar-select-menu">
+			<Link to="/buy.html" className="user-bar-select-menu-li">top-up</Link>
+			<Link to="/verify.html" className="user-bar-select-menu-li">redeem</Link>
 			<a target='_blank' href={ENV.ExplorerUrl + 'address/' + LocalData.getAddress()} className="user-bar-select-menu-li">{`Eth balance: ${LocalData.getBalance()} ETH`}</a>
 			<a target='_blank' href={ENV.ExplorerUrl + 'address/' + LocalData.getAddress()} className="user-bar-select-menu-li">{`PADT balance: ${LocalData.getTokenBalance()} PADT`}</a>
 			<Link to="/settings" className="user-bar-select-menu-li">Settings</Link>
