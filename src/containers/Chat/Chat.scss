@@ -662,6 +662,10 @@ $messages-block-radius: 15px;
 				overflow: hidden;
 				text-overflow: ellipsis;
 				white-space: nowrap;
+				width: 24px;
+				height: 24px;
+				line-height: 1;
+				border-radius: 50%;
 			}
 			.more {
 				right: 16px;
