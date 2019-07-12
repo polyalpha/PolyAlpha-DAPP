@@ -3,10 +3,6 @@ import {
 	Home,
 	Signup,
 	Auth,
-	Chart1,
-	Chart2,
-	Chart3,
-	Chart4,
 	Chat,
 	Discover,
 	Bids,
@@ -32,26 +28,7 @@ const routes = [
 						exact: true,
 						component: withAuth(Home),
 					},
-					{
-						path: '/charts/chart1',
-						exact: true,
-						component: Chart1,
-					},
-					{
-						path: '/charts/chart2',
-						exact: true,
-						component: Chart2,
-					},
-					{
-						path: '/charts/chart3',
-						exact: true,
-						component: Chart3,
-					},
-					{
-						path: '/charts/chart4',
-						exact: true,
-						component: Chart4,
-					},
+					
 					{
 						path: '/auth',
 						exact: true,
