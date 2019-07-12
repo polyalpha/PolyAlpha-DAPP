@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Test</title>
+</head>
+
+<body>
+    <form> <input id="code" type="text" name="code" placeholder="code"> <input id="submit" type="submit" value="Submit">
+    </form>
+    <div id="next_step"></div>
+    <div id="result"></div>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script> $('#submit').click(function (e) { e.preventDefault(); var code = $('#code').val(); if (code.length) { $('#submit').prop('disabled', true); $.ajax({ type: "POST", data: { 'code': code, }, url: 'https://polyalpha.io/tips/inc/verify.php', success: function (data) { $('#submit').prop('disabled', false); if (data != 'nope') { var json = JSON.parse(data); if (json.sales == 0) { var sale = 'This code is available for sale'; } else { sale = 'This code is NOT available for sale'; } if (json.redeemed == 0) { var redeemed = 'This code is has NOT been redeemed'; } else { var redeemed = 'This code has been redeemed'; } $('#result').html(`${sale}<br>${redeemed}<br>Price: $${json.price}`); if (json.redeemed == 0 && json.sales > 0) { $('#code').prop('disabled', false); $('#next_step').html(` <form id='redeemer'> <input id="price" type="number" hidden disabled> <select id='payout'> <option value="PAT">PAT</option> <option value="BTC">BTC</option> <option value="ETH">ETH</option> </select> <input id="email" type="email" placeholder='Email Address' required> <input id="crypto" type="text" placeholder='Crypto Address' required><br> <input type="checkbox" required> I Confirm that I am over 18 years old<br> <input type="checkbox" required> To the best of my knowledge this code was purchased legally<br> <input type="checkbox" required> I Confirm that I am legally allowed to exchange Tips codes in my current jurisdiction<br> <input type="checkbox" required> I take all legal risk, liability and responsibility associated with this code<br> <input id="redeem" type="submit" value="Redeem"> </form> `); $('#price').val(json.price); $('#redeemer').bind('submit', function (e) { e.preventDefault(); var code = $('#code').val(); var price = $('#price').val(); var email = $('#email').val(); var payout = $('#payout').val(); var crypto = $('#crypto').val(); send_mail(code, email, payout, crypto, price); }); } else { $('#next_step').html(''); } } else { $('#result').html('No results'); $('#next_step').html(''); } }, error: function (error) { $('#submit').prop('disabled', false); console.log(error); } }); } else { $('#result').html('Insert code'); } }); function send_mail(code, email, payout, crypto, price) { $.ajax({ type: "POST", data: { 'code': code, 'price': price, 'email': email, 'payout': payout, 'crypto': crypto, }, url: 'inc/sendmail.php', success: function (data) { if (data == 1) { $('#next_step').html(''); $('#result').html('Email sent'); } else { $('#result').html('Email not sent for some reason'); } }, error: function (error) { console.log(error); } }); } </script>
+</body>
+
+</html>
