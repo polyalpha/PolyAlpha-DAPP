@@ -207,7 +207,7 @@ class TopBar extends Component {
 			<div className="top-bar">
 				{this.props.back && <Link to={this.props.back} className="back"><Svg id="svg-back" className="icon"/>Back</Link>}
 				<div className="title">{title}</div>
-				<div className="title">{title}</div>
+				<div className="newbid">{title}</div>
 				{address && this.props.more && (
 					<div className="more">
 						{/* <div className="more-label" onClick={this.toggleMore}>More</div>

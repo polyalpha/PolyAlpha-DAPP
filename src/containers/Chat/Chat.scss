@@ -653,6 +653,16 @@ $messages-block-radius: 15px;
 					border-radius: 50%;
 				}
 			}
+			.newbid {
+				position: absolute;
+				left: 100px;
+				right: 100px;
+				text-align: right;
+				font-weight: bold;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
 			.more {
 				right: 16px;
 				position: relative;
