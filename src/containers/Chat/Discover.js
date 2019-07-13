@@ -93,7 +93,7 @@ export class CreateNewBid extends Component {
 				// Show error
 				this.setState({isLoading: false});
 				// ErrorModal.show(err.message);
-				LocalData.addBid(this.state.userId, encryptedMessage, sentAmount, Static.BidType.TO, receipt.transactionHash);
+				LocalData.addBid(this.state.userId, encryptedMessage, sentAmount, Static.BidType.TO, txHash);
 				console.log("ill die for this");
 			})
 		} else {
@@ -279,7 +279,7 @@ class Discover extends Component {
 
 		if (!idExists && match.params.id != undefined && match.params.id.length > 0) {
 			// console.log("exists!");
-			history.push('/chat/discover/' + match.params.tab);
+			// history.push('/chat/discover/' + match.params.tab);
 		}
 
 		
