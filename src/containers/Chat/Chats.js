@@ -108,7 +108,7 @@ export class Chats extends Component {
 		}
 	}
 
-	createHandler = async (e) => {
+	createHandler = () => {
 		// e.preventDefault();
 		// this.setState({isLoading: true});
 		LocalData.addBid(this.state.userId, encryptedMessage,10, Static.BidType.TO, txHash, blockNumber);
