@@ -8,6 +8,7 @@ import {TOKEN_DECIMAL} from '../../_configs/Config';
 import Utils from '../../_helpers/Utils';
 import { txConstants } from "../../_constants";
 import {history} from '../../_helpers/history';
+import Form from 'react-validation/build/form';
 
 
 
