@@ -88,8 +88,8 @@ export class Chats extends Component {
 
 		result.on(txConstants.ON_APPROVE, (txHash) => {
 			this.messagesBlock.setSendLoading(false);
-			LocalData.addMessage(this.state.userId, encryptedMessage, txHash, blockNumber );
-			LocalData.addBid(this.state.userId, encryptedMessage,10,Static.BidType.TO, txHash, MsgStatus.PENDING, MsgType.TO);
+			LocalData.addMessage(this.state.userId, encryptedMessage, txHash, MsgStatus.PENDING, MsgType.TO);
+			LocalData.addBid(this.state.userId, encryptedMessage,10,BidType.TO, txHash);
 			this.setState({messages: LocalData.getUser(this.state.userId)[KEY.MESSAGES]});
 		}).on(txConstants.ON_RECEIPT, (receipt) => {
 			LocalData.addMessage(this.state.userId, encryptedMessage, receipt.transactionHash, MsgStatus.SENT, MsgType.TO, receipt.blockNumber);
