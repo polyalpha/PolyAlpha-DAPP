@@ -86,9 +86,9 @@ export class CreateNewBid extends Component {
 			result.on(txConstants.ON_APPROVE, (txHash) => {
 				// Don't need to do anything
 			}).on(txConstants.ON_RECEIPT, (receipt) => {
-				// this.setState({isSubmitted: true});
-				// LocalData.addBid(this.state.userId, encryptedMessage, sentAmount, Static.BidType.TO, receipt.transactionHash);
-				// history.push('chat/bids/sent/' + this.state.userId);
+				this.setState({isSubmitted: true});
+				LocalData.addBid(this.state.userId, encryptedMessage, sentAmount, Static.BidType.TO, receipt.transactionHash);
+				history.push('chat/bids/sent/' + this.state.userId);
 			}).on(txConstants.ON_ERROR, (err, txHash) => {
 				// Show error
 				this.setState({isLoading: false});
@@ -263,7 +263,7 @@ class Discover extends Component {
 		if (match.params.tab === "new") {
 			for (let i = 0; i < newAddresses.length; i++) {
 				if (newAddresses[i] === match.params.id) {
-					console.log("this is where it exists!");
+					// console.log("this is where it exists!");
 					idExists = true;
 				}
 			}
@@ -276,7 +276,7 @@ class Discover extends Component {
 		}
 
 		if (!idExists && match.params.id != undefined && match.params.id.length > 0) {
-			console.log("exists!");
+			// console.log("exists!");
 			history.push('/chat/discover/' + match.params.tab);
 		}
 
