@@ -263,6 +263,7 @@ class Discover extends Component {
 		if (match.params.tab === "new") {
 			for (let i = 0; i < newAddresses.length; i++) {
 				if (newAddresses[i] === match.params.id) {
+					console.log("this is where it exists!")
 					idExists = true;
 				}
 			}
@@ -276,8 +277,10 @@ class Discover extends Component {
 
 		if (!idExists && match.params.id != undefined && match.params.id.length > 0) {
 			console.log("exists!")
-			// history.push('/chat/discover/' + match.params.tab);
+			history.push('/chat/discover/' + match.params.tab);
 		}
+
+		
 	}
 
 	render() {
