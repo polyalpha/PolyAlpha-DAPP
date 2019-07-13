@@ -275,8 +275,7 @@ class Discover extends Component {
 		}
 
 		if (!idExists && match.params.id != undefined && match.params.id.length > 0) {
-			LocalData.cancelMyBid(match.params.id);
-			console.log("bid cancelled!")
+			
 			// idExists = false;
 			history.push('/chat/discover/' + match.params.tab);
 		}
