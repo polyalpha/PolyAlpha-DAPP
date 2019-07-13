@@ -87,8 +87,8 @@ export class CreateNewBid extends Component {
 				// Don't need to do anything
 			}).on(txConstants.ON_RECEIPT, (receipt) => {
 				// this.setState({isSubmitted: true});
-				LocalData.addBid(this.state.userId, encryptedMessage, sentAmount, Static.BidType.TO, receipt.transactionHash);
-				history.push('chat/bids/sent/' + this.state.userId);
+				// LocalData.addBid(this.state.userId, encryptedMessage, sentAmount, Static.BidType.TO, receipt.transactionHash);
+				// history.push('chat/bids/sent/' + this.state.userId);
 			}).on(txConstants.ON_ERROR, (err, txHash) => {
 				// Show error
 				this.setState({isLoading: false});
