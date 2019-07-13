@@ -146,8 +146,9 @@ export class Chats extends Component {
 					onMessageSent={this.onMessageSent}
 					ref={messagesBlock => this.messagesBlock = messagesBlock}
 				/>}
-				<Button className="submit" onClick={this.createHandler}>
-								</Button>
+				<Form className="form" onSubmit={this.createHandler}>
+					<Button className="submit"></Button>
+				</Form>
 			</ChatLayout>
 		)
 	}
