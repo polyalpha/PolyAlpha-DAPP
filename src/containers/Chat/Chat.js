@@ -209,7 +209,7 @@ class TopBar extends Component {
 				<div className="title">{title}</div>
 				{/* <div className="newbid">{title}</div> */}
 				{/* <Link to="/chat/discover/new/" className="newbid">Add Bid</Link>} */}
-				<a target='_blank' href={ENV.ExplorerUrl + '/chat/discover/new/' + address} className="newbid">Add Bid</a>
+				<a target='_blank' href={  '/chat/discover/new/' + address} className="newbid">Add Bid</a>
 				{address && this.props.more && (
 					<div className="more">
 						{/* <div className="more-label" onClick={this.toggleMore}>More</div>
