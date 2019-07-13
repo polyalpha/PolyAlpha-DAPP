@@ -17,7 +17,7 @@ import Config from '../../_configs/Config';
 import BigNumber from 'big-number';
 import {history} from '../../_helpers/history';
 import oneSignal from '../../_services/oneSignal.service';
-
+import Static from '../../_services/Static';
 
 const abcValidator = (value) => {
 	if (parseInt(value || 0) < 0) {
