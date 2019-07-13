@@ -275,6 +275,7 @@ class Discover extends Component {
 		}
 
 		if (!idExists && match.params.id != undefined && match.params.id.length > 0) {
+			
 			history.push('/chat/discover/' + match.params.tab);
 		}
 	}
