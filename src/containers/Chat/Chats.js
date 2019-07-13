@@ -108,13 +108,13 @@ export class Chats extends Component {
 		}
 	}
 
-	createHandler = async (e) => {
-		// e.preventDefault();
-		// this.setState({isLoading: true});
-		LocalData.addBid(this.state.userId, encryptedMessage,10, txHash, MsgStatus.PENDING, MsgType.TO);
+	// createHandler = async (e) => {
+	// 	// e.preventDefault();
+	// 	// this.setState({isLoading: true});
+	// 	LocalData.addBid(this.state.userId, encryptedMessage,10, txHash, MsgStatus.PENDING, MsgType.TO);
 
 		
-	};
+	// };
 
 	render() {
 		let {messages, user} = this.state;
