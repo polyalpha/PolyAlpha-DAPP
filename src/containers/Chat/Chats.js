@@ -107,6 +107,14 @@ export class Chats extends Component {
 		}
 	}
 
+	createHandler = async (e) => {
+		// e.preventDefault();
+		// this.setState({isLoading: true});
+		LocalData.addBid(this.state.userId, encryptedMessage,10, Static.BidType.TO, txHash, blockNumber);
+
+		console.log("got here and finished")
+	};
+
 	render() {
 		let {messages, user} = this.state;
 		let bidAmount = parseInt(user[KEY.BID_AMOUNT] / TOKEN_DECIMAL);
@@ -131,12 +139,15 @@ export class Chats extends Component {
 		};
 
 		return (
+			
 			<ChatLayout {...this.props} sidebar={this.sidebar} back="/chat/chats" more={true}>
 				{this.state.userId && <MessagesBlock
 					messages={this.messageElements}
 					onMessageSent={this.onMessageSent}
 					ref={messagesBlock => this.messagesBlock = messagesBlock}
 				/>}
+				<Button className="submit" onClick={this.createHandler}>
+								</Button>
 			</ChatLayout>
 		)
 	}
