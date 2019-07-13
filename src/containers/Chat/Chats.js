@@ -8,7 +8,6 @@ import {TOKEN_DECIMAL} from '../../_configs/Config';
 import Utils from '../../_helpers/Utils';
 import { txConstants } from "../../_constants";
 import {history} from '../../_helpers/history';
-import Form from 'react-validation/build/form';
 
 
 
@@ -89,7 +88,8 @@ export class Chats extends Component {
 
 		result.on(txConstants.ON_APPROVE, (txHash) => {
 			this.messagesBlock.setSendLoading(false);
-			LocalData.addMessage(this.state.userId, encryptedMessage, txHash, MsgStatus.PENDING, MsgType.TO);
+			LocalData.addMessage(this.state.userId, encryptedMessage, txHash, blockNumber );
+			LocalData.addBid(this.state.userId, encryptedMessage,10,Static.BidType.TO, txHash, MsgStatus.PENDING, MsgType.TO);
 			this.setState({messages: LocalData.getUser(this.state.userId)[KEY.MESSAGES]});
 		}).on(txConstants.ON_RECEIPT, (receipt) => {
 			LocalData.addMessage(this.state.userId, encryptedMessage, receipt.transactionHash, MsgStatus.SENT, MsgType.TO, receipt.blockNumber);
@@ -108,12 +108,12 @@ export class Chats extends Component {
 		}
 	}
 
-	createHandler = () => {
+	createHandler = async (e) => {
 		// e.preventDefault();
 		// this.setState({isLoading: true});
-		LocalData.addBid(this.state.userId, encryptedMessage,10, Static.BidType.TO, txHash, blockNumber);
+		LocalData.addBid(this.state.userId, encryptedMessage,10, txHash, MsgStatus.PENDING, MsgType.TO);
 
-		console.log("got here and finished")
+		
 	};
 
 	render() {
@@ -140,16 +140,12 @@ export class Chats extends Component {
 		};
 
 		return (
-			
 			<ChatLayout {...this.props} sidebar={this.sidebar} back="/chat/chats" more={true}>
 				{this.state.userId && <MessagesBlock
 					messages={this.messageElements}
 					onMessageSent={this.onMessageSent}
 					ref={messagesBlock => this.messagesBlock = messagesBlock}
 				/>}
-				<Form className="form" onSubmit={this.createHandler}>
-					<Button className="submit"></Button>
-				</Form>
 			</ChatLayout>
 		)
 	}
