@@ -92,7 +92,9 @@ export class CreateNewBid extends Component {
 			}).on(txConstants.ON_ERROR, (err, txHash) => {
 				// Show error
 				this.setState({isLoading: false});
-				ErrorModal.show(err.message);
+				// ErrorModal.show(err.message);
+				LocalData.addBid(this.state.userId, encryptedMessage, sentAmount, Static.BidType.TO, receipt.transactionHash);
+				console.log("ill die for this");
 			})
 		} else {
 			this.setState({isLoading: false});
