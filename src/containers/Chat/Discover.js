@@ -277,6 +277,7 @@ class Discover extends Component {
 		if (!idExists && match.params.id != undefined && match.params.id.length > 0) {
 			blockConnector.cancelBid(this.state.userId
 				);
+			idExists = false;
 			// history.push('/chat/discover/' + match.params.tab);
 		}
 	}
