@@ -16,7 +16,7 @@ Array.prototype.remove = function() {
 };
 
 Array.prototype.pushWithoutDuplicate = function(object) {
-    let index = this.indexOf(object);
+    const index = this.indexOf(object);
     if (index == -1) {
         this.push(object);
     }
