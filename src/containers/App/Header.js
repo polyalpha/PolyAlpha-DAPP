@@ -126,8 +126,8 @@ const SelectProfileMenu = ({config}) => (
 	<div className="user-bar-select">
 		<div className="user-bar-select-bg" />
 		<div className="user-bar-select-menu">
-			<a target='_blank' href="http://134.209.185.18:3000/buy.html" className="user-bar-select-menu-li">Top-Up</a>
-			<a target='_blank' href="http://134.209.185.18:3000/verify.html" className="user-bar-select-menu-li">Redeem</a>
+			<a target='_blank' href="http://ryox.polyalpha.io/buy.html" className="user-bar-select-menu-li">Top-Up</a>
+			<a target='_blank' href="http://ryox.polyalpha.io/verify.html" className="user-bar-select-menu-li">Redeem</a>
 			{/* <Link to="/buy.html" className="user-bar-select-menu-li">Top-Up</Link>
 			<Link to="/verify.html" className="user-bar-select-menu-li">Redeem</Link> */}
 			<a target='_blank' href={ENV.ExplorerUrl + 'address/' + LocalData.getAddress()} className="user-bar-select-menu-li">{`Eth balance: ${LocalData.getBalance()} ETH`}</a>
