@@ -136,7 +136,7 @@ export class Chats extends Component {
 		this.sidebar = {
 			name: "chats",
 			tabs: this.tabs, users: this.state.users.filter(this.checkUsername),
-			userId: this.props.match.params.id
+			userId: this.props.match.params.id66
 		};
 
 		return (
